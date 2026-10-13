@@ -1,0 +1,120 @@
+"""Exercise real polling/event routing with synthetic bridge data."""
+
+import asyncio
+from types import SimpleNamespace
+from unittest.mock import Mock
+
+from homeassistant.core import Event
+
+from custom_components.hue_rotary_fast.api import BridgeError
+from custom_components.hue_rotary_fast.const import CONF_MODE, EVENT_FAST
+from custom_components.hue_rotary_fast.runtime import Runtime
+
+
+def make_runtime(monkeypatch, options):
+    monkeypatch.setattr(
+        "custom_components.hue_rotary_fast.runtime.aiohttp_client.async_get_clientsession",
+        lambda *a, **kw: None,
+    )
+    fired = []
+    hass = SimpleNamespace(
+        bus=SimpleNamespace(async_fire=lambda name, data: fired.append((name, data)))
+    )
+    entry = SimpleNamespace(
+        options=options,
+        data={},
+        async_create_background_task=lambda h, coro, name, **kw: asyncio.create_task(coro),
+    )
+    runtime = Runtime(hass, entry)
+    runtime.device = lambda owner: SimpleNamespace(id=owner, name_by_user=None, name=owner)
+    return runtime, fired
+
+
+async def test_active_polling_sleeps_and_native_events_only_wake(monkeypatch, resource):
+    runtime, fired = make_runtime(monkeypatch, {"poll_interval": 0.01, "active_window": 0.04})
+    runtime.resources = [resource()]
+    runtime.tracker.baseline(runtime.resources)
+    calls = []
+
+    async def fetch():
+        calls.append(1)
+        return [resource(1)]
+
+    runtime.client.rotary_resources = fetch
+    runtime.task = asyncio.create_task(runtime.poll())
+    await asyncio.sleep(0.02)
+    assert not calls
+    runtime.on_hue_event(Event("hue_event", {"unique_id": "dial-a", "steps": 9999}))
+    await asyncio.sleep(0.09)
+    count = len(calls)
+    await asyncio.sleep(0.04)
+    assert len(calls) == count
+    assert len(fired) == 1 and fired[0][0] == EVENT_FAST
+    assert fired[0][1]["steps"] == 15  # REST, not delayed native steps.
+    await runtime.close()
+    assert runtime.task.done()
+
+
+async def test_hundred_resources_use_one_batch_request(monkeypatch, resource):
+    runtime, fired = make_runtime(monkeypatch, {CONF_MODE: "continuous", "poll_interval": 0.02})
+    baseline = [resource(resource_id=f"dial-{i}") for i in range(100)]
+    runtime.resources = baseline
+    runtime.tracker.baseline(baseline)
+    fetch = Mock(side_effect=lambda: None)
+
+    async def batch():
+        fetch()
+        return [resource(1, resource_id=f"dial-{i}") for i in range(100)]
+
+    runtime.client.rotary_resources = batch
+    runtime.task = asyncio.create_task(runtime.poll())
+    await asyncio.sleep(0.03)
+    await runtime.close()
+    assert fetch.call_count == 2
+    assert len(fired) == 100
+
+
+async def test_failed_read_backs_off_and_recovery_baselines(monkeypatch, resource):
+    runtime, fired = make_runtime(monkeypatch, {CONF_MODE: "continuous", "poll_interval": 0.01})
+    runtime.tracker.baseline([resource()])
+    failed = asyncio.Event()
+    calls = []
+
+    async def fetch():
+        calls.append(1)
+        failed.set()
+        raise BridgeError("test outage")
+
+    runtime.client.rotary_resources = fetch
+    runtime.task = asyncio.create_task(runtime.poll())
+    await failed.wait()
+    await asyncio.sleep(0.03)
+    assert len(calls) == 1 and runtime.error_count == 1
+    assert not runtime.available and not fired
+    await runtime.close()
+
+
+async def test_button_only_short_release_and_matching_device(monkeypatch, resource):
+    binding = {"enabled": True, "lights": ["light.test"], "button_1": "scene.test"}
+    runtime, _ = make_runtime(monkeypatch, {"controllers": {"dial-a": binding}})
+    runtime.resources = [resource()]
+    calls = []
+
+    async def button(*args):
+        calls.append(args)
+
+    runtime.button = button
+    for device, event_type in [
+        ("other", "short_release"),
+        ("owner-a", "initial_press"),
+        ("owner-a", "short_release"),
+    ]:
+        runtime.on_hue_event(
+            Event(
+                "hue_event",
+                {"unique_id": "button-a", "device_id": device, "type": event_type, "subtype": 1},
+            )
+        )
+    await asyncio.sleep(0)
+    assert len(calls) == 1
+    await runtime.close()

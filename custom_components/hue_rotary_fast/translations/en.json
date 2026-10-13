@@ -1,0 +1,64 @@
+{
+  "title": "Hue Rotary Fast",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Select your Hue bridge",
+        "description": "Select a loaded official Philips Hue v2 integration. No additional pairing is needed.",
+        "data": {
+          "hue_entry_id": "Hue bridge"
+        }
+      }
+    },
+    "abort": {
+      "no_hue": "Configure and load the official Philips Hue v2 integration first.",
+      "already_configured": "This bridge is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Hue Rotary Fast settings",
+        "menu_options": {
+          "polling": "Polling",
+          "controller": "Controller"
+        }
+      },
+      "polling": {
+        "title": "Bridge polling",
+        "description": "Active mode waits for the first official Hue event. Continuous mode uses bridge traffic while idle. The interval is in seconds.",
+        "data": {
+          "polling_mode": "Polling mode",
+          "poll_interval": "Read interval (seconds)",
+          "active_window": "Active window after movement (seconds)"
+        }
+      },
+      "controller": {
+        "title": "Select controller",
+        "data": {
+          "controller": "Controller"
+        }
+      },
+      "binding": {
+        "title": "Controller settings",
+        "description": "Disable its existing dimming automation before enabling control. Sensitivity is brightness percentage points per 15 reported steps; transition is the native light ramp. Buttons activate scenes/scripts or toggle lights on short release.",
+        "data": {
+          "enabled": "Enable light and button control",
+          "lights": "Lights controlled by the dial",
+          "sensitivity": "Sensitivity",
+          "transition": "Transition (seconds)",
+          "button_1": "Button 1 (optional)",
+          "button_2": "Button 2 (optional)",
+          "button_3": "Button 3 (optional)",
+          "button_4": "Button 4 (optional)"
+        }
+      }
+    },
+    "error": {
+      "lights_required": "Select at least one light before enabling control."
+    },
+    "abort": {
+      "no_controllers": "No rotary controllers found. Pair a controller with Hue and reload this integration."
+    }
+  }
+}

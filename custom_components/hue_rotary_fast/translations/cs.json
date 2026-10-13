@@ -1,0 +1,64 @@
+{
+  "title": "Hue Rotary Fast",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Vyber Hue Bridge",
+        "description": "Vyber načtenou oficiální integraci Philips Hue v2. Další párování není potřeba.",
+        "data": {
+          "hue_entry_id": "Hue Bridge"
+        }
+      }
+    },
+    "abort": {
+      "no_hue": "Nejprve nastav a načti oficiální integraci Philips Hue v2.",
+      "already_configured": "Tento Bridge je již nastavený."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Nastavení Hue Rotary Fast",
+        "menu_options": {
+          "polling": "Čtení Bridge",
+          "controller": "Ovladač"
+        }
+      },
+      "polling": {
+        "title": "Čtení Bridge",
+        "description": "Režim při otáčení čeká na první oficiální událost Hue. Trvalý režim čte Bridge i v klidu. Interval se zadává v sekundách.",
+        "data": {
+          "polling_mode": "Režim čtení",
+          "poll_interval": "Interval čtení (sekundy)",
+          "active_window": "Doba čtení po pohybu (sekundy)"
+        }
+      },
+      "controller": {
+        "title": "Vyber ovladač",
+        "data": {
+          "controller": "Ovladač"
+        }
+      },
+      "binding": {
+        "title": "Nastavení ovladače",
+        "description": "Před zapnutím vypni původní automatizaci stmívání. Citlivost určuje procentní body jasu na 15 hlášených kroků; přechod určuje délku rampy světla. Krátké uvolnění tlačítka spustí scénu či skript nebo přepne světlo.",
+        "data": {
+          "enabled": "Zapnout ovládání světel a tlačítek",
+          "lights": "Světla ovládaná kolečkem",
+          "sensitivity": "Citlivost",
+          "transition": "Plynulý přechod (sekundy)",
+          "button_1": "Tlačítko 1 (volitelné)",
+          "button_2": "Tlačítko 2 (volitelné)",
+          "button_3": "Tlačítko 3 (volitelné)",
+          "button_4": "Tlačítko 4 (volitelné)"
+        }
+      }
+    },
+    "error": {
+      "lights_required": "Před zapnutím ovládání vyber alespoň jedno světlo."
+    },
+    "abort": {
+      "no_controllers": "Nenalezen žádný otočný ovladač. Spáruj ovladač s Hue a načti tuto integraci znovu."
+    }
+  }
+}
