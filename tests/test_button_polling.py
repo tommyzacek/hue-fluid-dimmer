@@ -196,3 +196,17 @@ async def test_continuous_button_polling_is_one_bridge_batch(monkeypatch, resour
     await asyncio.sleep(0.035)
     await runtime.close()
     assert 2 <= len(calls) <= 5
+
+
+async def test_slow_query_cannot_prove_quiet_time_after_its_start(runtime_clock):
+    runtime, clock, emitted = runtime_clock
+    sse(runtime, "initial_press", 1)
+    sse(runtime, "short_release", 1.08)
+    clock[0] = 0.1
+    runtime.consume_button_snapshots([button("short_release", 1.08)], checked_at=0.05)
+    clock[0] = 0.8
+    runtime.consume_button_snapshots([button("short_release", 1.08)], checked_at=0.2)
+    assert not emitted  # A slow response may contain a snapshot from before the deadline.
+    clock[0] = 0.9
+    runtime.consume_button_snapshots([button("short_release", 1.08)], checked_at=0.85)
+    assert [row[2] for row in emitted] == ["short"]

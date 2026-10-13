@@ -183,8 +183,11 @@ class Runtime:
             ):
                 self.gestures.finish(key)
 
-    def consume_button_snapshots(self, buttons: list[dict], baseline: bool = False) -> None:
+    def consume_button_snapshots(
+        self, buttons: list[dict], baseline: bool = False, checked_at: float | None = None
+    ) -> None:
         now = time.monotonic()
+        checked = now if checked_at is None else checked_at
         self.map_buttons(buttons)
         for item in buttons:
             key = self.button_map.get(item.get("id"))
@@ -196,7 +199,7 @@ class Runtime:
             if previous and updated < previous[0]:
                 continue
             first_seen = previous[2] if previous and previous[:2] == report else now
-            self.button_snapshots[key] = (updated, event, first_seen, now)
+            self.button_snapshots[key] = (updated, event, first_seen, checked)
             if not baseline and (previous is None or updated > previous[0]):
                 self.wake_buttons()
         if not baseline:
@@ -221,7 +224,9 @@ class Runtime:
             try:
                 buttons = await self.client.button_resources()
                 self.button_poll_count += 1
-                self.consume_button_snapshots(buttons, baseline=baseline or bool(failures))
+                self.consume_button_snapshots(
+                    buttons, baseline=baseline or bool(failures), checked_at=started
+                )
                 failures = 0
                 baseline = False
                 delay = max(0, interval - (time.monotonic() - started))
