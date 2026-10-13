@@ -6,14 +6,14 @@ from unittest.mock import Mock
 
 from homeassistant.core import Event
 
-from custom_components.hue_rotary_fast.api import BridgeError
-from custom_components.hue_rotary_fast.const import CONF_MODE, EVENT_FAST
-from custom_components.hue_rotary_fast.runtime import Runtime
+from custom_components.hue_fluid_dimmer.api import BridgeError
+from custom_components.hue_fluid_dimmer.const import CONF_MODE, EVENT_ROTATION
+from custom_components.hue_fluid_dimmer.runtime import Runtime
 
 
 def make_runtime(monkeypatch, options):
     monkeypatch.setattr(
-        "custom_components.hue_rotary_fast.runtime.aiohttp_client.async_get_clientsession",
+        "custom_components.hue_fluid_dimmer.runtime.aiohttp_client.async_get_clientsession",
         lambda *a, **kw: None,
     )
     fired = []
@@ -49,7 +49,7 @@ async def test_active_polling_sleeps_and_native_events_only_wake(monkeypatch, re
     count = len(calls)
     await asyncio.sleep(0.04)
     assert len(calls) == count
-    assert len(fired) == 1 and fired[0][0] == EVENT_FAST
+    assert len(fired) == 1 and fired[0][0] == EVENT_ROTATION
     assert fired[0][1]["steps"] == 15  # REST, not delayed native steps.
     await runtime.close()
     assert runtime.task.done()

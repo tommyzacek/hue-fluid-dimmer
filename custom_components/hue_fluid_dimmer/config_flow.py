@@ -38,13 +38,13 @@ def number(minimum: float, maximum: float, step: float) -> selector.NumberSelect
     return selector.NumberSelector({"min": minimum, "max": maximum, "step": step, "mode": "box"})
 
 
-class HueRotaryFlow(ConfigFlow, domain=DOMAIN):
+class HueFluidDimmerFlow(ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     @staticmethod
     @callback
     def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlow:
-        return HueRotaryOptionsFlow()
+        return HueFluidDimmerOptionsFlow()
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         bridges = {
@@ -61,14 +61,14 @@ class HueRotaryFlow(ConfigFlow, domain=DOMAIN):
             await self.async_set_unique_id(entry_id)
             self._abort_if_unique_id_configured()
             return self.async_create_entry(
-                title=f"Hue Rotary Fast – {bridges[entry_id]}", data={CONF_HUE_ENTRY: entry_id}
+                title=f"Hue Fluid Dimmer – {bridges[entry_id]}", data={CONF_HUE_ENTRY: entry_id}
             )
         return self.async_show_form(
             step_id="user", data_schema=p.Schema({p.Required(CONF_HUE_ENTRY): select(bridges)})
         )
 
 
-class HueRotaryOptionsFlow(OptionsFlow):
+class HueFluidDimmerOptionsFlow(OptionsFlow):
     resource_id: str | None = None
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:

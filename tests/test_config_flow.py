@@ -4,8 +4,11 @@ import pytest
 from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.core import HomeAssistant
 
-from custom_components.hue_rotary_fast.config_flow import HueRotaryFlow, HueRotaryOptionsFlow
-from custom_components.hue_rotary_fast.const import CONF_BINDINGS, DOMAIN
+from custom_components.hue_fluid_dimmer.config_flow import (
+    HueFluidDimmerFlow,
+    HueFluidDimmerOptionsFlow,
+)
+from custom_components.hue_fluid_dimmer.const import CONF_BINDINGS, DOMAIN
 
 
 def entry(options=None):
@@ -24,7 +27,7 @@ def entry(options=None):
 
 
 def options_flow(tmp_path, options=None):
-    flow = HueRotaryOptionsFlow()
+    flow = HueFluidDimmerOptionsFlow()
     flow.hass = HomeAssistant(str(tmp_path))
     config_entry = entry(options)
     flow.handler = config_entry.entry_id
@@ -65,7 +68,7 @@ async def test_enabled_requires_lights(tmp_path):
 
 
 async def test_setup_requires_official_hue_v2(tmp_path):
-    flow = HueRotaryFlow()
+    flow = HueFluidDimmerFlow()
     flow.hass = HomeAssistant(str(tmp_path))
     flow.hass.config_entries = SimpleNamespace(
         async_entries=lambda domain: [

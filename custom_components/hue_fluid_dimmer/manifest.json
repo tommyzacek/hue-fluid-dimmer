@@ -1,0 +1,13 @@
+{
+  "domain": "hue_fluid_dimmer",
+  "name": "Hue Fluid Dimmer",
+  "codeowners": ["@tommyzacek"],
+  "config_flow": true,
+  "dependencies": ["hue"],
+  "documentation": "https://github.com/tommyzacek/hue-fluid-dimmer",
+  "integration_type": "hub",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/tommyzacek/hue-fluid-dimmer/issues",
+  "requirements": [],
+  "version": "0.1.1"
+}

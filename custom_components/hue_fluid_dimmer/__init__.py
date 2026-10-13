@@ -1,4 +1,4 @@
-"""Hue Rotary Fast companion integration."""
+"""Hue Fluid Dimmer companion integration."""
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
@@ -8,11 +8,11 @@ from homeassistant.exceptions import ConfigEntryNotReady
 from .api import BridgeError
 from .runtime import Runtime
 
-type HueRotaryEntry = ConfigEntry[Runtime]
+type HueFluidDimmerEntry = ConfigEntry[Runtime]
 PLATFORMS = [Platform.EVENT]
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: HueRotaryEntry) -> bool:
+async def async_setup_entry(hass: HomeAssistant, entry: HueFluidDimmerEntry) -> bool:
     runtime = Runtime(hass, entry)
     try:
         await runtime.initialize()
@@ -25,11 +25,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: HueRotaryEntry) -> bool:
     return True
 
 
-async def async_reload_entry(hass: HomeAssistant, entry: HueRotaryEntry) -> None:
+async def async_reload_entry(hass: HomeAssistant, entry: HueFluidDimmerEntry) -> None:
     await hass.config_entries.async_reload(entry.entry_id)
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: HueRotaryEntry) -> bool:
+async def async_unload_entry(hass: HomeAssistant, entry: HueFluidDimmerEntry) -> bool:
     if await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
         await entry.runtime_data.close()
         return True

@@ -1,8 +1,8 @@
-"""Constants for Hue Rotary Fast."""
+"""Constants for Hue Fluid Dimmer."""
 
-DOMAIN = "hue_rotary_fast"
+DOMAIN = "hue_fluid_dimmer"
 HUE_DOMAIN = "hue"
-EVENT_FAST = "hue_rotary_fast_event"
+EVENT_ROTATION = "hue_fluid_dimmer_event"
 CONF_HUE_ENTRY = "hue_entry_id"
 CONF_MODE = "polling_mode"
 CONF_INTERVAL = "poll_interval"

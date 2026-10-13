@@ -1,5 +1,5 @@
 {
-  "title": "Hue Rotary Fast",
+  "title": "Hue Fluid Dimmer",
   "config": {
     "step": {
       "user": {
@@ -18,7 +18,7 @@
   "options": {
     "step": {
       "init": {
-        "title": "Hue Rotary Fast settings",
+        "title": "Hue Fluid Dimmer settings",
         "menu_options": {
           "polling": "Polling",
           "controller": "Controller"

@@ -21,7 +21,7 @@ from .const import (
     CONF_WINDOW,
     DEFAULT_INTERVAL,
     DEFAULT_WINDOW,
-    EVENT_FAST,
+    EVENT_ROTATION,
     HUE_DOMAIN,
     MODE_ACTIVE,
     MODE_CONTINUOUS,
@@ -54,7 +54,7 @@ class Runtime:
 
     def create_task(self, coro) -> asyncio.Task:
         return self.entry.async_create_background_task(
-            self.hass, coro, "Hue Rotary Fast worker", eager_start=False
+            self.hass, coro, "Hue Fluid Dimmer worker", eager_start=False
         )
 
     def credentials(self) -> tuple[str, str]:
@@ -142,7 +142,7 @@ class Runtime:
                     self.active_until = time.monotonic() + self.entry.options.get(
                         CONF_WINDOW, DEFAULT_WINDOW
                     )
-                    self.hass.bus.async_fire(EVENT_FAST, report.event_data())
+                    self.hass.bus.async_fire(EVENT_ROTATION, report.event_data())
                     for listener in tuple(self.listeners.get(report.resource_id, ())):
                         listener(report)
                     binding = self.entry.options.get(CONF_BINDINGS, {}).get(report.resource_id, {})

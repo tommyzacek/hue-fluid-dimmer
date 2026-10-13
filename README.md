@@ -1,4 +1,6 @@
-# Hue Rotary Fast
+# Hue Fluid Dimmer
+
+*Smooth dimming. Low latency.*
 
 An **experimental Home Assistant companion integration** for Hue Tap Dial controllers. It uses the configured official Hue integration and reads the bridge's latest rotary reports to reduce the delay of continuous rotary gestures.
 
@@ -10,13 +12,13 @@ Configure every controller's lights and optional button actions in the integrati
 
 Requires Home Assistant **2026.10.1 or newer** and a working official **Philips Hue v2** integration.
 
-1. In HACS, open **Custom repositories**, add `https://github.com/tommyzacek/hue-rotary-fast`, and choose **Integration**.
-2. Download Hue Rotary Fast and restart Home Assistant.
-3. Open **Settings → Devices & services → Add integration → Hue Rotary Fast**.
+1. In HACS, open **Custom repositories**, add `https://github.com/tommyzacek/hue-fluid-dimmer`, and choose **Integration**.
+2. Download Hue Fluid Dimmer and restart Home Assistant.
+3. Open **Settings → Devices & services → Add integration → Hue Fluid Dimmer**.
 4. Select an already configured Hue bridge.
 5. Open **Configure → Controller**, select a controller, select its lights and enable its control. Repeat for other controllers.
 
-Alternatively copy `custom_components/hue_rotary_fast` into your HA configuration's `custom_components` directory and restart.
+Alternatively copy `custom_components/hue_fluid_dimmer` into your HA configuration's `custom_components` directory and restart.
 
 **Before enabling a controller**, disable any blueprint or other automation that already dims the same lights from its dial, and remove any direct Hue dial assignment for those lights. Otherwise multiple controllers of the same gesture will conflict. Buttons without an assignment in this integration keep working with existing HA automations.
 
@@ -45,7 +47,7 @@ Transitions depend on the selected light integration. The first release needs ph
 
 ## Advanced use
 
-Each dial exposes an event entity with `start` and `repeat` events. The companion also emits `hue_rotary_fast_event` with:
+Each dial exposes an event entity with `start` and `repeat` events. The companion also emits `hue_fluid_dimmer_event` with:
 
 ```yaml
 resource_id: "rotary-resource-id"

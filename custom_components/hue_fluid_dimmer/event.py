@@ -5,13 +5,13 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from . import HueRotaryEntry
+from . import HueFluidDimmerEntry
 from .const import DOMAIN
 from .models import Rotation
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, entry: HueRotaryEntry, async_add_entities: AddEntitiesCallback
+    hass: HomeAssistant, entry: HueFluidDimmerEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     async_add_entities(
         [
@@ -28,7 +28,7 @@ class RotaryEvent(EventEntity):
     _attr_should_poll = False
     _attr_event_types = ["start", "repeat"]
 
-    def __init__(self, entry: HueRotaryEntry, resource: dict) -> None:
+    def __init__(self, entry: HueFluidDimmerEntry, resource: dict) -> None:
         self.runtime = entry.runtime_data
         self.resource_id = resource["id"]
         self._attr_unique_id = resource["id"]

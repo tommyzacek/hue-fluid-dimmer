@@ -1,4 +1,4 @@
-from custom_components.hue_rotary_fast.models import ReportTracker, parse_rotation
+from custom_components.hue_fluid_dimmer.models import ReportTracker, parse_rotation
 
 
 def test_baseline_duplicates_out_of_order_and_two_controllers(resource):

@@ -1,5 +1,5 @@
 {
-  "title": "Hue Rotary Fast",
+  "title": "Hue Fluid Dimmer",
   "config": {
     "step": {
       "user": {
@@ -18,7 +18,7 @@
   "options": {
     "step": {
       "init": {
-        "title": "Nastavení Hue Rotary Fast",
+        "title": "Nastavení Hue Fluid Dimmer",
         "menu_options": {
           "polling": "Čtení Bridge",
           "controller": "Ovladač"
