@@ -19,7 +19,7 @@
     "step": {
       "init": {
         "title": "Bridge polling",
-        "description": "Active mode waits for the first official Hue event. Continuous mode uses bridge traffic while idle. The interval is in seconds.",
+        "description": "Shared mode and interval for dials and buttons. Active mode starts temporary reads after the first event. Continuous mode also reads while idle. Dials and buttons use two bridge-wide batch requests.",
         "data": {
           "polling_mode": "Polling mode",
           "poll_interval": "Read interval (seconds)",
@@ -74,7 +74,7 @@
                 "triple_targets": "Lights or action"
               },
               "data_description": {},
-              "description": "Short press has no recognition delay unless double or triple press is enabled. Multi-press interval: up to 350 ms; Bridge batching can add up to 1.35 s of waiting. Long press runs once. Target: lights/groups, or one scene or script."
+              "description": "Short press has no recognition delay unless double/triple press is enabled. Multi-press: up to 400 ms from release to the next press. REST can shorten waiting; SSE preserves the press count. If REST is unavailable, the conservative 1.4 s wait remains. Long press runs once."
             },
             "button_2": {
               "name": "Button 2",
@@ -89,7 +89,7 @@
                 "triple_targets": "Lights or action"
               },
               "data_description": {},
-              "description": "Short press has no recognition delay unless double or triple press is enabled. Multi-press interval: up to 350 ms; Bridge batching can add up to 1.35 s of waiting. Long press runs once. Target: lights/groups, or one scene or script."
+              "description": "Short press has no recognition delay unless double/triple press is enabled. Multi-press: up to 400 ms from release to the next press. REST can shorten waiting; SSE preserves the press count. If REST is unavailable, the conservative 1.4 s wait remains. Long press runs once."
             },
             "button_3": {
               "name": "Button 3",
@@ -104,7 +104,7 @@
                 "triple_targets": "Lights or action"
               },
               "data_description": {},
-              "description": "Short press has no recognition delay unless double or triple press is enabled. Multi-press interval: up to 350 ms; Bridge batching can add up to 1.35 s of waiting. Long press runs once. Target: lights/groups, or one scene or script."
+              "description": "Short press has no recognition delay unless double/triple press is enabled. Multi-press: up to 400 ms from release to the next press. REST can shorten waiting; SSE preserves the press count. If REST is unavailable, the conservative 1.4 s wait remains. Long press runs once."
             },
             "button_4": {
               "name": "Button 4",
@@ -119,7 +119,7 @@
                 "triple_targets": "Lights or action"
               },
               "data_description": {},
-              "description": "Short press has no recognition delay unless double or triple press is enabled. Multi-press interval: up to 350 ms; Bridge batching can add up to 1.35 s of waiting. Long press runs once. Target: lights/groups, or one scene or script."
+              "description": "Short press has no recognition delay unless double/triple press is enabled. Multi-press: up to 400 ms from release to the next press. REST can shorten waiting; SSE preserves the press count. If REST is unavailable, the conservative 1.4 s wait remains. Long press runs once."
             }
           }
         },
@@ -155,7 +155,7 @@
                 "triple_targets": "Lights or action"
               },
               "data_description": {},
-              "description": "Short press has no recognition delay unless double or triple press is enabled. Multi-press interval: up to 350 ms; Bridge batching can add up to 1.35 s of waiting. Long press runs once. Target: lights/groups, or one scene or script."
+              "description": "Short press has no recognition delay unless double/triple press is enabled. Multi-press: up to 400 ms from release to the next press. REST can shorten waiting; SSE preserves the press count. If REST is unavailable, the conservative 1.4 s wait remains. Long press runs once."
             },
             "button_2": {
               "name": "Button 2",
@@ -170,7 +170,7 @@
                 "triple_targets": "Lights or action"
               },
               "data_description": {},
-              "description": "Short press has no recognition delay unless double or triple press is enabled. Multi-press interval: up to 350 ms; Bridge batching can add up to 1.35 s of waiting. Long press runs once. Target: lights/groups, or one scene or script."
+              "description": "Short press has no recognition delay unless double/triple press is enabled. Multi-press: up to 400 ms from release to the next press. REST can shorten waiting; SSE preserves the press count. If REST is unavailable, the conservative 1.4 s wait remains. Long press runs once."
             },
             "button_3": {
               "name": "Button 3",
@@ -185,7 +185,7 @@
                 "triple_targets": "Lights or action"
               },
               "data_description": {},
-              "description": "Short press has no recognition delay unless double or triple press is enabled. Multi-press interval: up to 350 ms; Bridge batching can add up to 1.35 s of waiting. Long press runs once. Target: lights/groups, or one scene or script."
+              "description": "Short press has no recognition delay unless double/triple press is enabled. Multi-press: up to 400 ms from release to the next press. REST can shorten waiting; SSE preserves the press count. If REST is unavailable, the conservative 1.4 s wait remains. Long press runs once."
             },
             "button_4": {
               "name": "Button 4",
@@ -200,7 +200,7 @@
                 "triple_targets": "Lights or action"
               },
               "data_description": {},
-              "description": "Short press has no recognition delay unless double or triple press is enabled. Multi-press interval: up to 350 ms; Bridge batching can add up to 1.35 s of waiting. Long press runs once. Target: lights/groups, or one scene or script."
+              "description": "Short press has no recognition delay unless double/triple press is enabled. Multi-press: up to 400 ms from release to the next press. REST can shorten waiting; SSE preserves the press count. If REST is unavailable, the conservative 1.4 s wait remains. Long press runs once."
             }
           }
         }

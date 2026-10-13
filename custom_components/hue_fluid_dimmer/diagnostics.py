@@ -16,6 +16,8 @@ async def async_get_config_entry_diagnostics(
         "controllers": len(runtime.resources),
         "requests": runtime.poll_count,
         "errors": runtime.error_count,
+        "button_requests": runtime.button_poll_count,
+        "button_errors": runtime.button_error_count,
         "fresh_reports": runtime.report_count,
         "settings": async_redact_data(dict(entry.options), {CONF_BINDINGS}),
         "source": "configured official Hue entry" if entry.data.get(CONF_HUE_ENTRY) else "missing",

@@ -19,7 +19,7 @@
     "step": {
       "init": {
         "title": "Čtení Bridge",
-        "description": "Režim při otáčení čeká na první oficiální událost Hue. Trvalý režim čte Bridge i v klidu. Interval se zadává v sekundách.",
+        "description": "Společný režim a interval pro kolečko i tlačítka. Aktivní režim spustí dočasné čtení po první události. Trvalý režim čte i v klidu. Kolečko a tlačítka používají dva hromadné požadavky na Bridge.",
         "data": {
           "polling_mode": "Režim čtení",
           "poll_interval": "Interval čtení (sekundy)",
@@ -74,7 +74,7 @@
                 "triple_targets": "Světla nebo akce"
               },
               "data_description": {},
-              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: odstup nejvýše 350 ms; doručování Bridge může přidat čekání až 1,35 s. Dlouhý stisk spustí akci jednou. Cíl: světla/skupiny, nebo jedna scéna či skript."
+              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: nejvýše 400 ms mezi uvolněním a dalším stiskem. REST může zkrátit čekání, stream zachovává počet stisků. Při nedostupném REST zůstává rezervní čekání 1,4 s. Dlouhý stisk spustí akci jednou."
             },
             "button_2": {
               "name": "Tlačítko 2",
@@ -89,7 +89,7 @@
                 "triple_targets": "Světla nebo akce"
               },
               "data_description": {},
-              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: odstup nejvýše 350 ms; doručování Bridge může přidat čekání až 1,35 s. Dlouhý stisk spustí akci jednou. Cíl: světla/skupiny, nebo jedna scéna či skript."
+              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: nejvýše 400 ms mezi uvolněním a dalším stiskem. REST může zkrátit čekání, stream zachovává počet stisků. Při nedostupném REST zůstává rezervní čekání 1,4 s. Dlouhý stisk spustí akci jednou."
             },
             "button_3": {
               "name": "Tlačítko 3",
@@ -104,7 +104,7 @@
                 "triple_targets": "Světla nebo akce"
               },
               "data_description": {},
-              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: odstup nejvýše 350 ms; doručování Bridge může přidat čekání až 1,35 s. Dlouhý stisk spustí akci jednou. Cíl: světla/skupiny, nebo jedna scéna či skript."
+              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: nejvýše 400 ms mezi uvolněním a dalším stiskem. REST může zkrátit čekání, stream zachovává počet stisků. Při nedostupném REST zůstává rezervní čekání 1,4 s. Dlouhý stisk spustí akci jednou."
             },
             "button_4": {
               "name": "Tlačítko 4",
@@ -119,7 +119,7 @@
                 "triple_targets": "Světla nebo akce"
               },
               "data_description": {},
-              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: odstup nejvýše 350 ms; doručování Bridge může přidat čekání až 1,35 s. Dlouhý stisk spustí akci jednou. Cíl: světla/skupiny, nebo jedna scéna či skript."
+              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: nejvýše 400 ms mezi uvolněním a dalším stiskem. REST může zkrátit čekání, stream zachovává počet stisků. Při nedostupném REST zůstává rezervní čekání 1,4 s. Dlouhý stisk spustí akci jednou."
             }
           }
         },
@@ -155,7 +155,7 @@
                 "triple_targets": "Světla nebo akce"
               },
               "data_description": {},
-              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: odstup nejvýše 350 ms; doručování Bridge může přidat čekání až 1,35 s. Dlouhý stisk spustí akci jednou. Cíl: světla/skupiny, nebo jedna scéna či skript."
+              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: nejvýše 400 ms mezi uvolněním a dalším stiskem. REST může zkrátit čekání, stream zachovává počet stisků. Při nedostupném REST zůstává rezervní čekání 1,4 s. Dlouhý stisk spustí akci jednou."
             },
             "button_2": {
               "name": "Tlačítko 2",
@@ -170,7 +170,7 @@
                 "triple_targets": "Světla nebo akce"
               },
               "data_description": {},
-              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: odstup nejvýše 350 ms; doručování Bridge může přidat čekání až 1,35 s. Dlouhý stisk spustí akci jednou. Cíl: světla/skupiny, nebo jedna scéna či skript."
+              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: nejvýše 400 ms mezi uvolněním a dalším stiskem. REST může zkrátit čekání, stream zachovává počet stisků. Při nedostupném REST zůstává rezervní čekání 1,4 s. Dlouhý stisk spustí akci jednou."
             },
             "button_3": {
               "name": "Tlačítko 3",
@@ -185,7 +185,7 @@
                 "triple_targets": "Světla nebo akce"
               },
               "data_description": {},
-              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: odstup nejvýše 350 ms; doručování Bridge může přidat čekání až 1,35 s. Dlouhý stisk spustí akci jednou. Cíl: světla/skupiny, nebo jedna scéna či skript."
+              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: nejvýše 400 ms mezi uvolněním a dalším stiskem. REST může zkrátit čekání, stream zachovává počet stisků. Při nedostupném REST zůstává rezervní čekání 1,4 s. Dlouhý stisk spustí akci jednou."
             },
             "button_4": {
               "name": "Tlačítko 4",
@@ -200,7 +200,7 @@
                 "triple_targets": "Světla nebo akce"
               },
               "data_description": {},
-              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: odstup nejvýše 350 ms; doručování Bridge může přidat čekání až 1,35 s. Dlouhý stisk spustí akci jednou. Cíl: světla/skupiny, nebo jedna scéna či skript."
+              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: nejvýše 400 ms mezi uvolněním a dalším stiskem. REST může zkrátit čekání, stream zachovává počet stisků. Při nedostupném REST zůstává rezervní čekání 1,4 s. Dlouhý stisk spustí akci jednou."
             }
           }
         }

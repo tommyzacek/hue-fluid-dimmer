@@ -27,10 +27,10 @@ Alternatively copy `custom_components/hue_fluid_dimmer` into your HA configurati
 
 | Mode | Behavior | Limitation |
 | --- | --- | --- |
-| Only during rotation (default) | A public `hue_event` wakes one polling loop for the entire bridge. Fresh movement extends the active window. | The first action still waits for the official Hue event. |
-| Continuous | The same loop runs while the integration is loaded. | More bridge traffic even while idle. |
+| Only during activity (default) | Rotary or button events wake temporary reads for that resource type across the entire bridge. | The first wake-up still waits for an event. |
+| Continuous | Both resource types are read while the integration is loaded. | More bridge traffic even while idle; button actions still use SSE history. |
 
-The default interval is **100 ms**, configurable up to 2 seconds; the active window defaults to 3 seconds. There is one batch request to `/clip/v2/resource/relative_rotary` per cycle per bridge, regardless of the number of configured controllers. Requests never overlap. HTTP/network errors trigger exponential backoff, up to 30 seconds. After an outage, the first successful read establishes a baseline instead of replaying old movement.
+The default interval is **100 ms**, configurable up to 2 seconds; the active window defaults to 3 seconds. Dials use one batch request to `/clip/v2/resource/relative_rotary`; buttons use one batch request to `/clip/v2/resource/button`, regardless of controller count. Mode and interval are shared; each resource type has its own activity window. Continuous mode at 100 ms therefore sends approximately 20 REST requests per second per bridge, plus its SSE stream. Active button reads continue until recognition is complete and then stop after the activity window. Requests never overlap. HTTP/network errors trigger exponential backoff, up to 30 seconds. After an outage, the first successful read establishes a baseline instead of replaying old movement.
 
 100 ms is an experimental tuning choice, **not a verified vendor recommendation or a claim of negligible bridge load**. A bridge returns only its latest report, not a queue of every physical detent. Faster movement can overwrite intermediate reports between reads. Native Zigbee/Hue control may therefore remain smoother. Continuous polling cannot recover information the bridge never exposes.
 
@@ -55,7 +55,11 @@ Each button has independent **Short press**, **Long press**, **Double press** an
 
 Short press executes on release with **no recognition delay** when double/triple press is disabled for that button. Long press executes once on `long_press`; repeats and release do not execute it again. Double press executes on the second release unless triple press is enabled; triple press executes on the third release. A sequence never also executes its constituent short actions. If a recognized gesture has no assignment, it does nothing rather than falling back to another action.
 
-Multi-press recognition compares the next press with the preceding release using **Bridge timestamps**, with a 350 ms interval. This Tap Dial's tested SSE events preserve separate presses but may deliver them in approximately one-second batches. Pending single/double actions therefore wait up to **1.35 seconds after receipt** when a higher click count is enabled. This conservative delivery grace prevents premature single actions across batches; it is experimental, not a guaranteed upper bound on network latency. It applies only to buttons configured for multi-press. The companion cannot eliminate the Bridge's delivery latency.
+Multi-press recognition compares the next press with the preceding release using **Bridge timestamps**, with a **400 ms interval**. A later press starts a new sequence. Tap Dial SSE may deliver events in approximately one-second batches; this latency cannot be removed just by shortening a timer.
+
+REST polling confirms quiet time while SSE remains the authoritative ordered press history. A repeated REST report at least 400 ms after its first observed receipt can finish a matching pending SSE sequence immediately, rather than add a fixed 1.4-second delivery grace. Confirmation requires a fresh query and the exact same release timestamp. A newer REST report holds expiry until its missing SSE transitions arrive. Polling snapshots never count as an extra press or guess missing initial/release pairs. The entire SSE frame is processed before quiet confirmation; out-of-order snapshots are ignored. This prevents polling gaps from turning a double press into a short press in the tested sequences.
+
+When REST is unavailable, recognition retains its conservative **1.4-second grace after receipt**. This is a fallback, not a guaranteed network-delay bound. In continuous mode REST observes state earlier, but this conservative version still requires SSE history before executing button actions. Short-only bindings remain immediate on SSE release. The new timing requires physical validation after installation.
 
 A single additional read-only **SSE connection per configured bridge** handles all Tap Dial buttons. Its timestamped reports are the sole source of button actions; public `hue_event` button reports do not execute a second copy. Disconnect/unload cancels pending gestures, and reconnect requires a new initial press instead of executing an orphan release. Disable other automations or direct Hue assignments for the gestures you enable here to avoid independent actions.
 
@@ -83,11 +87,11 @@ The companion creates **no device or entity registry records**. Official Hue dev
 
 ## How it connects to Hue
 
-The public HA event bus is the wake-up mechanism. Rotary resources use HA's shared HTTP session; one additional SSE subscription per bridge supplies timestamped button reports. No extra pairing flow is needed. The adapter obtains the selected Hue config entry's current `host` and `api_key` in memory and uses HA's shared HTTP session. It does not copy the application key into its own config entry, diagnostics, repository, or logs.
+The public HA event bus and button SSE events wake polling. Rotary resources use HA's shared HTTP session; one additional SSE subscription per bridge supplies timestamped button reports. No extra pairing flow is needed. The adapter obtains the selected Hue config entry's current `host` and `api_key` in memory and uses HA's shared HTTP session. It does not copy the application key into its own config entry, diagnostics, repository, or logs.
 
 Reading the public event bus is a documented HA integration mechanism. The Hue credential field names are an implementation dependency, not a separately versioned public credential-sharing API. That dependency is isolated in `Runtime.credentials` and may need updating after a Hue integration change. The bridge must remain configured and loaded in the official integration. Local bridge HTTPS certificate verification follows the current official Hue integration's approach and is disabled for these requests.
 
-Options changes reload the companion and establish fresh report baselines. Unloading cancels polling, the button stream, pending gesture timers/actions, light workers and the native event subscription. No automations, helpers, Hue files or official integration options are edited.
+Options changes reload the companion and establish fresh report baselines. Unloading cancels polling, the button stream, button polling, pending gesture timers/actions, light workers and the native event subscription. No automations, helpers, Hue files or official integration options are edited.
 
 Diagnostics expose only counters and polling settings; controller bindings are redacted.
 
@@ -111,9 +115,9 @@ Relevant official documentation: [HA event listeners](https://developers.home-as
 
 ## Česky
 
-Experimentální doplněk k oficiální Hue integraci. Vybereš Bridge; ovladače se zobrazí jako konfigurační položky. Ozubené kolečko u ovladače otevře přímo jeho nastavení. Nevznikají další zařízení, entity, automatizace ani pomocníci. Každému tlačítku můžeš samostatně zapnout krátký, dlouhý, dvojitý a trojitý stisk a přiřadit jim scénu, skript nebo přepnutí světla. Krátký stisk bez vícekliků nemá přidané čekání. Vícekliky používají časy z Bridge; kvůli dávkovému doručování čeká nedokončená sekvence až 1,35 s po přijetí. Vypnutí volby odstraní její vazbu.
+Experimentální doplněk k oficiální Hue integraci. Vybereš Bridge; ovladače se zobrazí jako konfigurační položky. Ozubené kolečko u ovladače otevře přímo jeho nastavení. Nevznikají další zařízení, entity, automatizace ani pomocníci. Každému tlačítku můžeš samostatně zapnout krátký, dlouhý, dvojitý a trojitý stisk a přiřadit jim scénu, skript nebo přepnutí světla. Krátký stisk bez vícekliků nemá přidané čekání. Vícekliky mají hranici 400 ms mezi uvolněním a dalším stiskem. REST potvrzuje klid a zkracuje čekání, stream zachovává úplnou sekvenci. Bez REST zůstává rezervní čekání 1,4 s po přijetí. Zpoždění doručování streamu zůstává. Vypnutí volby odstraní její vazbu.
 
-Výchozí režim čte Bridge jen při otáčení a čeká na první událost z oficiální integrace. Trvalé čtení reaguje bez tohoto čekání, ale posílá požadavky i v klidu. Jeden požadavek čte všechny ovladače na daném Bridge. Bridge poskytuje poslední report, nikoli všechny jednotlivé kroky kolečka.
+Výchozí režim čte kolečka a tlačítka dočasně po první události; trvalý režim čte oba typy i v klidu. Režim a interval jsou společné. Trvalé čtení reaguje bez tohoto čekání, ale posílá požadavky i v klidu. Kolečka a tlačítka používají dva hromadné požadavky na Bridge. Bridge poskytuje poslední report, nikoli všechny jednotlivé kroky kolečka.
 
 Před zapnutím ovládání vypni původní blueprint pro stejný ovladač. Celou integraci je ještě potřeba otestovat se skutečnými světly; první vydání proto není zárukou chování stejného jako v Hue aplikaci.
 

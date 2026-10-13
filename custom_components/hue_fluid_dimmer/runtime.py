@@ -29,7 +29,7 @@ from .const import (
     MODE_CONTINUOUS,
 )
 from .control import Dimmer
-from .gestures import Gestures
+from .gestures import CLICK_WINDOW, Gestures
 from .models import ReportTracker
 
 _LOGGER = logging.getLogger(__name__)
@@ -56,7 +56,13 @@ class Runtime:
         self.button_task: asyncio.Task | None = None
         self.action_tasks: set[asyncio.Task] = set()
         self.button_map: dict[str, tuple[str, int]] = {}
-        self.gestures = Gestures(self.actions, self.emit_button)
+        self.button_poll_task: asyncio.Task | None = None
+        self.button_wake = asyncio.Event()
+        self.button_active_until = 0.0
+        self.button_poll_count = self.button_error_count = 0
+        # REST snapshots confirm quiet time, never guess missing press transitions.
+        self.button_snapshots: dict[tuple[str, int], tuple[float, str, float, float]] = {}
+        self.gestures = Gestures(self.actions, self.emit_button, self.button_ready)
 
     def create_task(self, coro) -> asyncio.Task:
         return self.entry.async_create_background_task(
@@ -82,6 +88,7 @@ class Runtime:
         self.unsubscribe = self.hass.bus.async_listen("hue_event", self.on_hue_event)
         self.task = self.create_task(self.poll())
         self.button_task = self.create_task(self.listen_buttons())
+        self.button_poll_task = self.create_task(self.poll_buttons())
 
     def device(self, owner_id: str):
         return dr.async_get(self.hass).async_get_device_by_identifier(
@@ -109,7 +116,10 @@ class Runtime:
             )
             self.wake.set()
             return
-        # Button actions come exclusively from timestamped SSE, not hue_event.
+        # Timestamp-free public button events can wake polling, never execute actions.
+        mapped = self.button_map.get(data.get("unique_id"))
+        if mapped and self.actions(*mapped):
+            self.wake_buttons()
 
     def actions(self, resource_id: str, index: int) -> dict:
         binding = controller_binding(self.entry, resource_id)
@@ -123,6 +133,107 @@ class Runtime:
         self.action_tasks.add(task)
         task.add_done_callback(self.action_tasks.discard)
 
+    def wake_buttons(self) -> None:
+        self.button_active_until = time.monotonic() + self.entry.options.get(
+            CONF_WINDOW, DEFAULT_WINDOW
+        )
+        self.button_wake.set()
+
+    def map_buttons(self, buttons: list[dict]) -> None:
+        owners = {item.get("owner", {}).get("rid"): item["id"] for item in self.resources}
+        self.button_map = {
+            item["id"]: (owners[item["owner"]["rid"]], item["metadata"]["control_id"])
+            for item in buttons
+            if isinstance(item, dict)
+            and item.get("owner", {}).get("rid") in owners
+            and item.get("metadata", {}).get("control_id") in (1, 2, 3, 4)
+            and isinstance(item.get("id"), str)
+        }
+
+    @staticmethod
+    def button_report(item: dict):
+        feature = item.get("button")
+        report = feature.get("button_report") if isinstance(feature, dict) else None
+        if not isinstance(report, dict) or not isinstance(report.get("event"), str):
+            return None
+        try:
+            updated = datetime.fromisoformat(report["updated"])
+            if updated.tzinfo is not None:
+                return updated.timestamp(), report["event"]
+        except KeyError, TypeError, ValueError:
+            pass
+        return None
+
+    def button_ready(self, key, state) -> bool:
+        """Hold expiry if REST proves a newer transition is still awaiting SSE."""
+        snapshot = self.button_snapshots.get(key)
+        return snapshot is None or snapshot[0] <= self.gestures.latest.get(key, float("-inf"))
+
+    def confirm_buttons(self) -> None:
+        for key, state in list(self.gestures.pending.items()):
+            snapshot = self.button_snapshots.get(key)
+            if snapshot is None or state.pressed or not state.count:
+                continue
+            updated, event, first_seen, checked = snapshot
+            if (
+                event == "short_release"
+                and updated == state.released
+                and checked - first_seen >= CLICK_WINDOW
+                and time.monotonic() - checked <= 0.5
+            ):
+                self.gestures.finish(key)
+
+    def consume_button_snapshots(self, buttons: list[dict], baseline: bool = False) -> None:
+        now = time.monotonic()
+        self.map_buttons(buttons)
+        for item in buttons:
+            key = self.button_map.get(item.get("id"))
+            report = self.button_report(item)
+            if key is None or report is None or not self.actions(*key):
+                continue
+            updated, event = report
+            previous = self.button_snapshots.get(key)
+            if previous and updated < previous[0]:
+                continue
+            first_seen = previous[2] if previous and previous[:2] == report else now
+            self.button_snapshots[key] = (updated, event, first_seen, now)
+            if not baseline and (previous is None or updated > previous[0]):
+                self.wake_buttons()
+        if not baseline:
+            self.confirm_buttons()
+
+    async def poll_buttons(self) -> None:
+        interval = self.entry.options.get(CONF_INTERVAL, DEFAULT_INTERVAL)
+        continuous = self.entry.options.get(CONF_MODE, MODE_ACTIVE) == MODE_CONTINUOUS
+        failures = 0
+        baseline = True
+        while not self.closed:
+            if (
+                not continuous
+                and time.monotonic() >= self.button_active_until
+                and not self.gestures.pending
+            ):
+                self.button_wake.clear()
+                await self.button_wake.wait()
+                if self.closed:
+                    return
+            started = time.monotonic()
+            try:
+                buttons = await self.client.button_resources()
+                self.button_poll_count += 1
+                self.consume_button_snapshots(buttons, baseline=baseline or bool(failures))
+                failures = 0
+                baseline = False
+                delay = max(0, interval - (time.monotonic() - started))
+            except BridgeError as err:
+                self.button_error_count += 1
+                failures += 1
+                self.button_snapshots.clear()
+                if failures == 1:
+                    _LOGGER.warning("Hue button polling unavailable; backing off")
+                delay = max(err.retry_after, min(30, 2 ** min(failures - 1, 5)))
+            await asyncio.sleep(delay)
+
     def consume_buttons(self, envelopes: list[dict]) -> None:
         reports = []
         for envelope in envelopes:
@@ -135,38 +246,23 @@ class Runtime:
                 if not isinstance(item, dict) or item.get("type") != "button":
                     continue
                 mapped = self.button_map.get(item.get("id"))
-                feature = item.get("button")
-                if not isinstance(feature, dict):
-                    continue
-                report = feature.get("button_report")
-                if not isinstance(report, dict):
-                    continue
-                if mapped and report.get("event") and report.get("updated"):
-                    try:
-                        updated = datetime.fromisoformat(report["updated"])
-                        if updated.tzinfo is None:
-                            continue
-                        reports.append((updated.timestamp(), mapped, report["event"]))
-                    except TypeError, ValueError:
-                        continue
+                report = self.button_report(item)
+                if mapped and report:
+                    updated, event = report
+                    reports.append((updated, mapped, event))
         # Process the entire frame before any expiry callback can run.
         for updated, (resource_id, index), event in sorted(reports):
+            if self.actions(resource_id, index):
+                self.wake_buttons()
             self.gestures.feed(resource_id, index, event, updated)
+        self.confirm_buttons()
 
     async def listen_buttons(self) -> None:
         failures = 0
         while not self.closed:
             try:
-                owners = {item.get("owner", {}).get("rid"): item["id"] for item in self.resources}
                 buttons = await self.client.button_resources()
-                self.button_map = {
-                    item["id"]: (owners[item["owner"]["rid"]], item["metadata"]["control_id"])
-                    for item in buttons
-                    if isinstance(item, dict)
-                    and item.get("owner", {}).get("rid") in owners
-                    and item.get("metadata", {}).get("control_id") in (1, 2, 3, 4)
-                    and isinstance(item.get("id"), str)
-                }
+                self.map_buttons(buttons)
                 async for envelopes in self.client.button_events():
                     failures = 0
                     self.consume_buttons(envelopes)
@@ -277,6 +373,8 @@ class Runtime:
         tasks = list(self.action_tasks)
         if self.button_task:
             tasks.append(self.button_task)
+        if self.button_poll_task:
+            tasks.append(self.button_poll_task)
         for task in tasks:
             task.cancel()
         if tasks:

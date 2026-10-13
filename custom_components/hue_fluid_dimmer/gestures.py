@@ -5,7 +5,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 
 # Gesture interval uses Bridge timestamps. Receipt grace handles its ~1 s SSE batches.
-CLICK_WINDOW = 0.35
+CLICK_WINDOW = 0.4
 BATCH_GRACE = 1.0
 
 
@@ -19,8 +19,9 @@ class Pending:
 
 
 class Gestures:
-    def __init__(self, actions: Callable, emit: Callable) -> None:
+    def __init__(self, actions: Callable, emit: Callable, ready: Callable | None = None) -> None:
         self.actions, self.emit = actions, emit
+        self.ready = ready or (lambda key, state: True)
         self.pending: dict[tuple[str, int], Pending] = {}
         self.latest: dict[tuple[str, int], float] = {}
 
@@ -30,12 +31,16 @@ class Gestures:
                 state.timer.cancel()
         self.pending.clear()
 
-    def finish(self, key: tuple[str, int]) -> None:
-        state = self.pending.pop(key, None)
+    def finish(self, key: tuple[str, int], force: bool = False) -> None:
+        state = self.pending.get(key)
         if state is None:
             return
         if state.timer:
             state.timer.cancel()
+        if not force and not self.ready(key, state):
+            state.timer = asyncio.get_running_loop().call_later(BATCH_GRACE, self.finish, key)
+            return
+        self.pending.pop(key, None)
         action = {1: "short", 2: "double", 3: "triple"}.get(state.count)
         if action and self.actions(*key).get(action):
             self.emit(*key, action)
@@ -51,18 +56,20 @@ class Gestures:
             if state and state.timer:
                 state.timer.cancel()
             return
+        if key not in self.pending and event != "initial_press":
+            return
         state = self.pending.setdefault(key, Pending())
         if event == "initial_press":
             if state.timer:
                 state.timer.cancel()
                 state.timer = None
             if state.released is not None and updated - state.released > CLICK_WINDOW:
-                self.finish(key)
+                self.finish(key, force=True)
                 state = self.pending.setdefault(key, Pending())
             state.pressed, state.held = True, False
         elif event == "long_press" and state.pressed and not state.held:
             # A long second press completes the previous short sequence separately.
-            self.finish(key)
+            self.finish(key, force=True)
             state = self.pending.setdefault(key, Pending(pressed=True))
             state.held = True
             if actions.get("long"):
@@ -73,11 +80,11 @@ class Gestures:
             state.released = updated
             maximum = 3 if actions.get("triple") else 2 if actions.get("double") else 1
             if state.count >= maximum:
-                self.finish(key)
+                self.finish(key, force=True)
             else:
                 state.timer = asyncio.get_running_loop().call_later(
                     CLICK_WINDOW + BATCH_GRACE, self.finish, key
                 )
         elif event == "long_release":
             # Never turn a held press into an additional short action.
-            self.finish(key)
+            self.finish(key, force=True)
