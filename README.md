@@ -35,7 +35,7 @@ The default interval is **100 ms**, configurable up to 2 seconds; the active win
 
 ## Controller settings
 
-- **Enable control:** off by default; event entities remain available without controlling lights.
+- **Enable control:** off by default; controllers remain listed without controlling lights.
 - **Lights:** any HA lights supporting brightness and transitions. Multiple lights are treated as one selection.
 - **Sensitivity:** percentage points per 15 reported steps, default 1.5. Larger reported rotations produce proportionally larger changes.
 - **Transition:** seconds for each light's native brightness ramp, default 1 second. The integration sends absolute brightness with a transition rather than implementing a queue of small increments.
@@ -47,7 +47,7 @@ Transitions depend on the selected light integration. The first release needs ph
 
 ## Advanced use
 
-Each dial exposes an event entity with `start` and `repeat` events. The companion also emits `hue_fluid_dimmer_event` with:
+The companion creates **no controller entities or brightness helpers**. Each discovered dial remains in the integration's device list, and controller settings are available through **Configure → Controller**. It emits the bus event `hue_fluid_dimmer_event` for advanced automations, with:
 
 ```yaml
 resource_id: "rotary-resource-id"
@@ -59,9 +59,9 @@ steps: 15
 duration: 100
 ```
 
-The timestamp comes from the bridge; it is not a measurement of the physical rotation time. The same or older report timestamp is ignored. Official rotary events only wake polling and are never applied as additional dimming steps. Historic reports at startup are ignored. New controllers require an integration reload to add their event entities; their old report is baselined when discovered.
+The timestamp comes from the bridge; it is not a measurement of the physical rotation time. The same or older report timestamp is ignored. Official rotary events only wake polling and are never applied as additional dimming steps. Historic reports at startup are ignored. New controllers require an integration reload to add their device records; their old report is baselined when discovered.
 
-Event entities appear on companion controller devices, separate from the official Hue devices. This avoids changing the official integration's device registry ownership.
+Controller device records belong to this companion, separate from the official Hue devices. They provide the controller list without extra entities. The official Hue devices and their entities remain untouched. Upgrading from 0.1.1 removes this companion's `event.*_fast_rotation` entities while preserving its controller device records and settings. Any automation that referenced those removed entities must use the bus event instead.
 
 ## How it connects to Hue
 

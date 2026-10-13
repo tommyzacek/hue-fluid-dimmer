@@ -27,7 +27,7 @@ from .const import (
     MODE_CONTINUOUS,
 )
 from .control import Dimmer
-from .models import ReportTracker, Rotation
+from .models import ReportTracker
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -37,7 +37,6 @@ class Runtime:
         self.hass, self.entry = hass, entry
         self.resources: list[dict[str, Any]] = []
         self.tracker = ReportTracker()
-        self.listeners: dict[str, set[Callable[[Rotation], None]]] = {}
         self.available = True
         self.poll_count = self.error_count = self.report_count = 0
         self.wake = asyncio.Event()
@@ -143,8 +142,6 @@ class Runtime:
                         CONF_WINDOW, DEFAULT_WINDOW
                     )
                     self.hass.bus.async_fire(EVENT_ROTATION, report.event_data())
-                    for listener in tuple(self.listeners.get(report.resource_id, ())):
-                        listener(report)
                     binding = self.entry.options.get(CONF_BINDINGS, {}).get(report.resource_id, {})
                     self.dimmer.rotate(binding, report.signed_steps)
                 delay = max(0, interval - (time.monotonic() - started))
@@ -191,14 +188,6 @@ class Runtime:
             await self.hass.services.async_call(
                 domain, service, {"entity_id": entity_id}, blocking=True
             )
-
-    @callback
-    def subscribe(
-        self, resource_id: str, listener: Callable[[Rotation], None]
-    ) -> Callable[[], None]:
-        listeners = self.listeners.setdefault(resource_id, set())
-        listeners.add(listener)
-        return lambda: listeners.discard(listener)
 
     async def close(self) -> None:
         self.closed = True
