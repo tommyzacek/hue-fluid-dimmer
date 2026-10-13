@@ -57,10 +57,10 @@ async def test_confirmed_quiet_time_removes_delivery_grace(runtime_clock):
     runtime.consume_button_snapshots([button("short_release", 1.08)])
     clock[0] = 0.5
     runtime.consume_button_snapshots([button("short_release", 1.08)])
-    assert not emitted  # REST never guesses actions before complete SSE history.
+    assert emitted == [("dial-a", 1, "short", 0.5)]
     clock[0] = 1
     sse(runtime, "short_release", 1.08)
-    assert emitted == [("dial-a", 1, "short", 1)]
+    assert emitted == [("dial-a", 1, "short", 0.5)]
     assert not runtime.gestures.pending
 
 
@@ -77,6 +77,40 @@ async def test_newer_rest_report_holds_expiry_until_sse_catches_up(runtime_clock
     sse(runtime, "short_release", 1.3)
     runtime.consume_button_snapshots([button("short_release", 1.3)])
     assert [row[2] for row in emitted] == ["double"]
+
+
+async def test_rest_gap_blocks_later_release_until_sse_fills_it(runtime_clock):
+    runtime, clock, emitted = runtime_clock
+    sse(runtime, "initial_press", 1)
+    clock[0] = 0.1
+    runtime.consume_button_snapshots([button("initial_press", 1.2)])  # Missed release 1.
+    clock[0] = 0.2
+    runtime.consume_button_snapshots([button("short_release", 1.3)])
+    clock[0] = 0.7
+    runtime.consume_button_snapshots([button("short_release", 1.3)])
+    assert not emitted
+    assert runtime.button_gaps == {("dial-a", 1): 1.3}
+    sse(runtime, "short_release", 1.1)
+    sse(runtime, "initial_press", 1.2)
+    sse(runtime, "short_release", 1.3)
+    assert not runtime.button_gaps
+    assert [row[2] for row in emitted] == ["double"]
+
+
+async def test_rest_can_complete_full_triple_before_sse_batch(runtime_clock):
+    runtime, clock, emitted = runtime_clock
+    for event, updated, observed in [
+        ("initial_press", 1, 0.0),
+        ("short_release", 1.08, 0.1),
+        ("initial_press", 1.2, 0.2),
+        ("short_release", 1.28, 0.3),
+        ("initial_press", 1.4, 0.4),
+        ("short_release", 1.48, 0.5),
+    ]:
+        clock[0] = observed
+        runtime.consume_button_snapshots([button(event, updated)])
+    assert [row[2] for row in emitted] == ["triple"]
+    assert emitted[0][3] == 0.5
 
 
 async def test_repeated_snapshot_is_not_a_second_click(runtime_clock):

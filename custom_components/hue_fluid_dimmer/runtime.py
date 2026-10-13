@@ -60,8 +60,9 @@ class Runtime:
         self.button_wake = asyncio.Event()
         self.button_active_until = 0.0
         self.button_poll_count = self.button_error_count = 0
-        # REST snapshots confirm quiet time, never guess missing press transitions.
+        # REST can advance complete adjacent transitions. A gap blocks it until SSE catches up.
         self.button_snapshots: dict[tuple[str, int], tuple[float, str, float, float]] = {}
+        self.button_gaps: dict[tuple[str, int], float] = {}
         self.gestures = Gestures(self.actions, self.emit_button, self.button_ready)
 
     def create_task(self, coro) -> asyncio.Task:
@@ -202,6 +203,13 @@ class Runtime:
             self.button_snapshots[key] = (updated, event, first_seen, checked)
             if not baseline and (previous is None or updated > previous[0]):
                 self.wake_buttons()
+                if key in self.button_gaps:
+                    self.button_gaps[key] = max(self.button_gaps[key], updated)
+                else:
+                    if event not in ("initial_press", "short_release") or not self.gestures.feed(
+                        *key, event, updated
+                    ):
+                        self.button_gaps[key] = updated
         if not baseline:
             self.confirm_buttons()
 
@@ -234,6 +242,7 @@ class Runtime:
                 self.button_error_count += 1
                 failures += 1
                 self.button_snapshots.clear()
+                self.button_gaps.clear()
                 if failures == 1:
                     _LOGGER.warning("Hue button polling unavailable; backing off")
                 delay = max(err.retry_after, min(30, 2 ** min(failures - 1, 5)))
@@ -260,6 +269,12 @@ class Runtime:
             if self.actions(resource_id, index):
                 self.wake_buttons()
             self.gestures.feed(resource_id, index, event, updated)
+            gap = self.button_gaps.get((resource_id, index))
+            if (
+                gap is not None
+                and self.gestures.latest.get((resource_id, index), float("-inf")) >= gap
+            ):
+                self.button_gaps.pop((resource_id, index), None)
         self.confirm_buttons()
 
     async def listen_buttons(self) -> None:

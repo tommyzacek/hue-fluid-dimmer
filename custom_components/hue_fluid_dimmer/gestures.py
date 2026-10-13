@@ -45,19 +45,31 @@ class Gestures:
         if action and self.actions(*key).get(action):
             self.emit(*key, action)
 
-    def feed(self, resource: str, index: int, event: str, updated: float) -> None:
+    def feed(self, resource: str, index: int, event: str, updated: float) -> bool:
         key = resource, index
         if updated <= self.latest.get(key, float("-inf")):
-            return
-        self.latest[key] = updated
+            return False
         actions = self.actions(*key)
         if not actions:
             state = self.pending.pop(key, None)
             if state and state.timer:
                 state.timer.cancel()
-            return
-        if key not in self.pending and event != "initial_press":
-            return
+            return False
+        state = self.pending.get(key)
+        if state is None and event != "initial_press":
+            return False
+        if state is not None:
+            if event == "initial_press" and state.pressed:
+                return False
+            if event == "short_release" and (not state.pressed or state.held):
+                return False
+            if event == "long_press" and (not state.pressed or state.held):
+                return False
+            if event == "long_release" and (not state.pressed or not state.held):
+                return False
+            if event == "repeat":
+                return False
+        self.latest[key] = updated
         state = self.pending.setdefault(key, Pending())
         if event == "initial_press":
             if state.timer:
@@ -88,3 +100,6 @@ class Gestures:
         elif event == "long_release":
             # Never turn a held press into an additional short action.
             self.finish(key, force=True)
+        else:
+            return False
+        return True
