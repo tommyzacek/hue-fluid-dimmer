@@ -16,7 +16,7 @@ from homeassistant.core import callback
 from homeassistant.data_entry_flow import section
 from homeassistant.helpers import selector
 
-from .bindings import form_values, parse_form
+from .bindings import GESTURES, form_values, parse_form
 from .const import (
     CONF_HUE_ENTRY,
     CONF_INTERVAL,
@@ -53,8 +53,20 @@ class VisibleLights(selector.EntitySelector):
         return {**super().serialize(), "visible": {"field": "source", "value": "custom"}}
 
 
-def binding_schema(old: dict) -> p.Schema:
-    data = form_values(old)
+class VisibleActionTargets(selector.EntitySelector):
+    def __init__(self, action: str):
+        super().__init__({"domain": ["light", "scene", "script"], "multiple": True})
+        self.action = action
+
+    def serialize(self):
+        return {
+            **super().serialize(),
+            "visible": {"field": f"{self.action}_enabled", "value": True},
+        }
+
+
+def binding_schema(old: dict, submitted: dict | None = None) -> p.Schema:
+    data = submitted if submitted is not None else form_values(old)
     dial = data["dial"]
     schema = {
         p.Required("enabled", default=data["enabled"]): bool,
@@ -90,15 +102,14 @@ def binding_schema(old: dict) -> p.Schema:
     }
     for index in range(1, 5):
         field = f"button_{index}"
+        fields = {}
+        for action in GESTURES:
+            fields[p.Required(f"{action}_enabled", default=data[field][f"{action}_enabled"])] = bool
+            fields[p.Optional(f"{action}_targets", default=data[field][f"{action}_targets"])] = (
+                VisibleActionTargets(action)
+            )
         schema[p.Optional(field, default=data[field])] = section(
-            p.Schema(
-                {
-                    p.Optional("targets", default=data[field]["targets"]): selector.EntitySelector(
-                        {"domain": ["light", "scene", "script"], "multiple": True}
-                    ),
-                }
-            ),
-            {"collapsed": True},
+            p.Schema(fields), {"collapsed": True}
         )
     return p.Schema(schema)
 
@@ -216,7 +227,9 @@ class TapDialSubentryFlow(ConfigSubentryFlow):
                     data={CONF_RESOURCE: self.resource_id, **binding},
                 )
         return self.async_show_form(
-            step_id="binding", data_schema=binding_schema(old), errors=errors
+            step_id="binding",
+            data_schema=binding_schema(old, user_input if errors else None),
+            errors=errors,
         )
 
     async def async_step_reconfigure(
@@ -241,7 +254,7 @@ class TapDialSubentryFlow(ConfigSubentryFlow):
                 )
         return self.async_show_form(
             step_id="reconfigure",
-            data_schema=binding_schema(old),
+            data_schema=binding_schema(old, user_input if errors else None),
             errors=errors,
             description_placeholders={"controller": subentry.title},
         )

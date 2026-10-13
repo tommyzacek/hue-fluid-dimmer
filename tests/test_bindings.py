@@ -24,7 +24,7 @@ def test_shared_scene_and_script_are_rejected_without_guessing_lights(target):
     values["dial"]["source"] = "custom"
     values["dial"]["lights"] = ["light.group"]
     binding, error = parse_form(values)
-    assert error is None and binding["button_1"] == [target]
+    assert error is None and binding["button_1"] == {"short": [target]}
 
 
 def test_profile_switch_preserves_custom_values_and_legacy_settings():
@@ -54,6 +54,33 @@ def test_ui_serialization_contains_conditional_fields_and_collapsed_buttons():
 def test_buttons_reject_mixed_targets_and_preserve_empty_optional_fields():
     values = form_values({"button_1": ["light.a", "scene.b"]})
     assert parse_form(values)[1] == "button_targets_invalid"
-    values["button_1"]["targets"] = []
+    values["button_1"]["short_enabled"] = False
     binding, error = parse_form(values)
     assert error is None and "button_1" not in binding
+
+
+def test_disabled_gestures_remove_hidden_targets_and_shared_dial_uses_short():
+    values = form_values(
+        {
+            "enabled": True,
+            "dial_source": "button_2",
+            "button_2": {"short": ["light.group"], "double": ["scene.evening"]},
+        }
+    )
+    values["button_2"]["double_enabled"] = False
+    binding, error = parse_form(values)
+    assert error is None
+    assert binding["button_2"] == {"short": ["light.group"]}
+    assert resolve_binding(binding)["lights"] == ["light.group"]
+    values["button_2"]["short_enabled"] = False
+    assert parse_form(values)[1] == "button_lights_only"
+
+
+def test_enabled_action_requires_target_and_ui_hides_only_its_field():
+    values = form_values({})
+    values["button_1"]["double_enabled"] = True
+    assert parse_form(values)[1] == "button_target_required"
+    fields = p.to_field_list(binding_schema({}), custom_serializer=cv.custom_serializer)
+    button = next(f for f in fields if f["name"] == "button_1")
+    children = {f["name"]: f for f in button["schema"]}
+    assert children["double_targets"]["visible"] == {"field": "double_enabled", "value": True}

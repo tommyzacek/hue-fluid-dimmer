@@ -47,11 +47,17 @@ The controller dialog has one **Dial** section and four collapsible **Button** s
 
 Only **Custom** exposes the sensitivity and transition fields. Custom values are remembered when changing profiles. Presets are initial experimental tuning choices; they do not change event arrival latency or the bridge polling interval. Existing settings and light selections are preserved when upgrading.
 
-For **Controlled lights**, choose **Same as button 1–4** or **Custom lights**. The custom entity picker appears only for Custom lights. Shared selections resolve the button's current targets on each rotary report, including an individual light, a HA light group or a list of lights. Changing that button's light targets updates the dial's selection automatically.
+For **Controlled lights**, choose **Same as button 1–4** or **Custom lights**. The custom entity picker appears only for Custom lights. Shared selections resolve the button's current **short-press** targets on each rotary report, including an individual light, a HA light group or a list of lights. Changing that button's light targets updates the dial's selection automatically.
 
 Quick selections support only lights/groups/lists of lights. For a button that activates a scene or script, choose **Custom lights** for the dial. No script parsing or guessing of scene targets is performed.
 
-Each button accepts one or more light/group entities, or one scene or script. Short release toggles the selected lights or activates the scene/script. Mixed light/scene/script selections are rejected. Clearing a button removes its assignment. Long presses remain available to existing HA automations.
+Each button has independent **Short press**, **Long press**, **Double press** and **Triple press** checkboxes. Enabling one reveals its target picker: one or more light/group entities, or one scene or script. Lights toggle; scenes/scripts activate. Mixed light/scene/script selections are rejected. Disabling a gesture removes its stored targets, and saving reloads the integration and cancels pending recognition/actions. Existing short-release assignments migrate automatically.
+
+Short press executes on release with **no recognition delay** when double/triple press is disabled for that button. Long press executes once on `long_press`; repeats and release do not execute it again. Double press executes on the second release unless triple press is enabled; triple press executes on the third release. A sequence never also executes its constituent short actions. If a recognized gesture has no assignment, it does nothing rather than falling back to another action.
+
+Multi-press recognition compares the next press with the preceding release using **Bridge timestamps**, with a 350 ms interval. This Tap Dial's tested SSE events preserve separate presses but may deliver them in approximately one-second batches. Pending single/double actions therefore wait up to **1.35 seconds after receipt** when a higher click count is enabled. This conservative delivery grace prevents premature single actions across batches; it is experimental, not a guaranteed upper bound on network latency. It applies only to buttons configured for multi-press. The companion cannot eliminate the Bridge's delivery latency.
+
+A single additional read-only **SSE connection per configured bridge** handles all Tap Dial buttons. Its timestamped reports are the sole source of button actions; public `hue_event` button reports do not execute a second copy. Disconnect/unload cancels pending gestures, and reconnect requires a new initial press instead of executing an orphan release. Disable other automations or direct Hue assignments for the gestures you enable here to avoid independent actions.
 
 The dimmer holds its target in memory during a gesture, so delayed light state reports do not move its reference value. After 3 idle seconds it resynchronizes from available selected lights. Identical light selections share a target. Partially overlapping selections remain independent; avoid operating them simultaneously. Grouping lights in HA may generate several underlying Hue commands. Commands are serial and coalesced per selection, at most four service calls per second; that is **not** a bridge-wide limit on underlying light commands.
 
@@ -77,11 +83,11 @@ The companion creates **no device or entity registry records**. Official Hue dev
 
 ## How it connects to Hue
 
-The public HA event bus is the wake-up mechanism. One additional persistent HTTP session reads rotary resources; there is no second SSE subscription and no extra pairing flow. The adapter obtains the selected Hue config entry's current `host` and `api_key` in memory and uses HA's shared HTTP session. It does not copy the application key into its own config entry, diagnostics, repository, or logs.
+The public HA event bus is the wake-up mechanism. Rotary resources use HA's shared HTTP session; one additional SSE subscription per bridge supplies timestamped button reports. No extra pairing flow is needed. The adapter obtains the selected Hue config entry's current `host` and `api_key` in memory and uses HA's shared HTTP session. It does not copy the application key into its own config entry, diagnostics, repository, or logs.
 
 Reading the public event bus is a documented HA integration mechanism. The Hue credential field names are an implementation dependency, not a separately versioned public credential-sharing API. That dependency is isolated in `Runtime.credentials` and may need updating after a Hue integration change. The bridge must remain configured and loaded in the official integration. Local bridge HTTPS certificate verification follows the current official Hue integration's approach and is disabled for these requests.
 
-Options changes reload the companion and establish fresh report baselines. Unloading cancels polling, light workers and the native event subscription. No automations, helpers, Hue files or official integration options are edited.
+Options changes reload the companion and establish fresh report baselines. Unloading cancels polling, the button stream, pending gesture timers/actions, light workers and the native event subscription. No automations, helpers, Hue files or official integration options are edited.
 
 Diagnostics expose only counters and polling settings; controller bindings are redacted.
 
@@ -95,6 +101,8 @@ python3.14 -m venv .venv
 .venv/bin/pytest -q
 ```
 
+Physical Tap Dial button sequences were captured directly from the Bridge and replayed in automated tests. The new button UI and actions still need installation and physical validation. Button and Dimmer models remain unsupported in this release pending model-specific validation.
+
 Tests use synthetic reports and cover duplicate/out-of-order suppression, startup baselines, unavailable lights, in-memory brightness targets, direction reversals, command coalescing, polling wake/sleep, failed-request backoff, button routing and GUI schemas against real HA classes, including controller reconfiguration and registry-to-subentry migration. A synthetic 100-resource test checks batch behavior; it does not demonstrate support for 100 physical controllers on one Hue bridge.
 
 This public repository can be added to HACS without inclusion in its default catalog. Default catalog submission and Home Assistant Core inclusion are separate review processes. CI includes Ruff, pytest, hassfest and HACS validation; brand validation is intentionally skipped because no catalog/brand submission has been made.
@@ -103,7 +111,7 @@ Relevant official documentation: [HA event listeners](https://developers.home-as
 
 ## Česky
 
-Experimentální doplněk k oficiální Hue integraci. Vybereš Bridge; ovladače se zobrazí jako konfigurační položky. Ozubené kolečko u ovladače otevře přímo jeho nastavení. Nevznikají další zařízení, entity, automatizace ani pomocníci. Tlačítkům můžeš přiřadit scénu, skript nebo přepnutí světla.
+Experimentální doplněk k oficiální Hue integraci. Vybereš Bridge; ovladače se zobrazí jako konfigurační položky. Ozubené kolečko u ovladače otevře přímo jeho nastavení. Nevznikají další zařízení, entity, automatizace ani pomocníci. Každému tlačítku můžeš samostatně zapnout krátký, dlouhý, dvojitý a trojitý stisk a přiřadit jim scénu, skript nebo přepnutí světla. Krátký stisk bez vícekliků nemá přidané čekání. Vícekliky používají časy z Bridge; kvůli dávkovému doručování čeká nedokončená sekvence až 1,35 s po přijetí. Vypnutí volby odstraní její vazbu.
 
 Výchozí režim čte Bridge jen při otáčení a čeká na první událost z oficiální integrace. Trvalé čtení reaguje bez tohoto čekání, ale posílá požadavky i v klidu. Jeden požadavek čte všechny ovladače na daném Bridge. Bridge poskytuje poslední report, nikoli všechny jednotlivé kroky kolečka.
 

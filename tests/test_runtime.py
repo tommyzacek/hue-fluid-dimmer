@@ -98,7 +98,7 @@ async def test_failed_read_backs_off_and_recovery_baselines(monkeypatch, resourc
     await runtime.close()
 
 
-async def test_button_only_short_release_and_matching_device(monkeypatch, resource):
+async def test_button_bus_does_not_duplicate_sse_actions(monkeypatch, resource):
     binding = {"enabled": True, "lights": ["light.test"], "button_1": "scene.test"}
     runtime, _ = make_runtime(monkeypatch, {"controllers": {"dial-a": binding}})
     runtime.resources = [resource()]
@@ -120,7 +120,7 @@ async def test_button_only_short_release_and_matching_device(monkeypatch, resour
             )
         )
     await asyncio.sleep(0)
-    assert len(calls) == 1
+    assert len(calls) == 0
     await runtime.close()
 
 
@@ -133,4 +133,90 @@ async def test_light_list_button_sends_one_service_call(monkeypatch):
     call.assert_awaited_once_with(
         "light", "toggle", {"entity_id": ["light.group", "light.single"]}, blocking=True
     )
+    await runtime.close()
+
+
+async def test_timestamped_sse_routes_matching_buttons_only(monkeypatch, resource):
+    binding = {"enabled": True, "button_2": {"short": ["light.group"]}}
+    runtime, _ = make_runtime(monkeypatch, {"controllers": {"dial-a": binding}})
+    runtime.resources = [resource()]
+    runtime.button_map = {"button-a": ("dial-a", 2)}
+    calls = []
+
+    async def button(*args):
+        calls.append(args)
+
+    runtime.button = button
+    runtime.consume_buttons(
+        [
+            {
+                "type": "update",
+                "data": [
+                    {
+                        "id": "other",
+                        "type": "button",
+                        "button": {
+                            "button_report": {
+                                "event": "initial_press",
+                                "updated": "2026-10-13T21:50:35.454Z",
+                            }
+                        },
+                    },
+                    {
+                        "id": "button-a",
+                        "type": "button",
+                        "button": {
+                            "button_report": {
+                                "event": "initial_press",
+                                "updated": "2026-10-13T21:50:35.454Z",
+                            }
+                        },
+                    },
+                    {
+                        "id": "button-a",
+                        "type": "button",
+                        "button": {
+                            "button_report": {
+                                "event": "short_release",
+                                "updated": "2026-10-13T21:50:35.532Z",
+                            }
+                        },
+                    },
+                ],
+            }
+        ]
+    )
+    await asyncio.sleep(0)
+    assert len(calls) == 1 and calls[0][2:] == (2, "short")
+    await runtime.close()
+
+
+async def test_sse_reconnect_cancels_gesture_and_backoffs(monkeypatch, resource):
+    binding = {"enabled": True, "button_2": {"short": ["light.a"], "double": ["light.b"]}}
+    runtime, _ = make_runtime(monkeypatch, {"controllers": {"dial-a": binding}})
+    runtime.resources = [resource()]
+    runtime.client.button_resources = AsyncMock(
+        return_value=[
+            {"id": "button-a", "owner": {"rid": "owner-a"}, "metadata": {"control_id": 2}}
+        ]
+    )
+    runtime.gestures.feed("dial-a", 2, "initial_press", 1)
+    runtime.gestures.feed("dial-a", 2, "short_release", 1.08)
+
+    async def broken_stream():
+        if False:
+            yield []
+        raise BridgeError("test disconnect", retry_after=60)
+
+    runtime.client.button_events = broken_stream
+    sleeps = []
+
+    async def sleep(delay):
+        sleeps.append(delay)
+        runtime.closed = True
+
+    monkeypatch.setattr("custom_components.hue_fluid_dimmer.runtime.asyncio.sleep", sleep)
+    await runtime.listen_buttons()
+    assert sleeps == [60] and not runtime.gestures.pending
+    assert runtime.button_map == {"button-a": ("dial-a", 2)}
     await runtime.close()

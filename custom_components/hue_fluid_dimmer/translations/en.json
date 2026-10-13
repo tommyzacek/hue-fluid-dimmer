@@ -58,44 +58,68 @@
                 "transition": "Transition (seconds)"
               },
               "data_description": {
-                "source": "* Quick selections support individual lights, light groups and lists of lights. For scenes and scripts, choose Custom lights."
+                "source": "* Quick selection uses the button’s short-press lights: individual lights, groups and lists. For scenes and scripts, choose Custom lights."
               }
             },
             "button_1": {
               "name": "Button 1",
               "data": {
-                "targets": "Lights or action"
+                "short_enabled": "Short press",
+                "short_targets": "Lights or action",
+                "long_enabled": "Long press",
+                "long_targets": "Lights or action",
+                "double_enabled": "Double press",
+                "double_targets": "Lights or action",
+                "triple_enabled": "Triple press",
+                "triple_targets": "Lights or action"
               },
-              "data_description": {
-                "targets": "One or more lights/groups, or one scene/script. Short release toggles lights or activates the action."
-              }
+              "data_description": {},
+              "description": "Short press has no recognition delay unless double or triple press is enabled. Multi-press interval: up to 350 ms; Bridge batching can add up to 1.35 s of waiting. Long press runs once. Target: lights/groups, or one scene or script."
             },
             "button_2": {
               "name": "Button 2",
               "data": {
-                "targets": "Lights or action"
+                "short_enabled": "Short press",
+                "short_targets": "Lights or action",
+                "long_enabled": "Long press",
+                "long_targets": "Lights or action",
+                "double_enabled": "Double press",
+                "double_targets": "Lights or action",
+                "triple_enabled": "Triple press",
+                "triple_targets": "Lights or action"
               },
-              "data_description": {
-                "targets": "One or more lights/groups, or one scene/script. Short release toggles lights or activates the action."
-              }
+              "data_description": {},
+              "description": "Short press has no recognition delay unless double or triple press is enabled. Multi-press interval: up to 350 ms; Bridge batching can add up to 1.35 s of waiting. Long press runs once. Target: lights/groups, or one scene or script."
             },
             "button_3": {
               "name": "Button 3",
               "data": {
-                "targets": "Lights or action"
+                "short_enabled": "Short press",
+                "short_targets": "Lights or action",
+                "long_enabled": "Long press",
+                "long_targets": "Lights or action",
+                "double_enabled": "Double press",
+                "double_targets": "Lights or action",
+                "triple_enabled": "Triple press",
+                "triple_targets": "Lights or action"
               },
-              "data_description": {
-                "targets": "One or more lights/groups, or one scene/script. Short release toggles lights or activates the action."
-              }
+              "data_description": {},
+              "description": "Short press has no recognition delay unless double or triple press is enabled. Multi-press interval: up to 350 ms; Bridge batching can add up to 1.35 s of waiting. Long press runs once. Target: lights/groups, or one scene or script."
             },
             "button_4": {
               "name": "Button 4",
               "data": {
-                "targets": "Lights or action"
+                "short_enabled": "Short press",
+                "short_targets": "Lights or action",
+                "long_enabled": "Long press",
+                "long_targets": "Lights or action",
+                "double_enabled": "Double press",
+                "double_targets": "Lights or action",
+                "triple_enabled": "Triple press",
+                "triple_targets": "Lights or action"
               },
-              "data_description": {
-                "targets": "One or more lights/groups, or one scene/script. Short release toggles lights or activates the action."
-              }
+              "data_description": {},
+              "description": "Short press has no recognition delay unless double or triple press is enabled. Multi-press interval: up to 350 ms; Bridge batching can add up to 1.35 s of waiting. Long press runs once. Target: lights/groups, or one scene or script."
             }
           }
         },
@@ -115,44 +139,68 @@
                 "transition": "Transition (seconds)"
               },
               "data_description": {
-                "source": "* Quick selections support individual lights, light groups and lists of lights. For scenes and scripts, choose Custom lights."
+                "source": "* Quick selection uses the button’s short-press lights: individual lights, groups and lists. For scenes and scripts, choose Custom lights."
               }
             },
             "button_1": {
               "name": "Button 1",
               "data": {
-                "targets": "Lights or action"
+                "short_enabled": "Short press",
+                "short_targets": "Lights or action",
+                "long_enabled": "Long press",
+                "long_targets": "Lights or action",
+                "double_enabled": "Double press",
+                "double_targets": "Lights or action",
+                "triple_enabled": "Triple press",
+                "triple_targets": "Lights or action"
               },
-              "data_description": {
-                "targets": "One or more lights/groups, or one scene/script. Short release toggles lights or activates the action."
-              }
+              "data_description": {},
+              "description": "Short press has no recognition delay unless double or triple press is enabled. Multi-press interval: up to 350 ms; Bridge batching can add up to 1.35 s of waiting. Long press runs once. Target: lights/groups, or one scene or script."
             },
             "button_2": {
               "name": "Button 2",
               "data": {
-                "targets": "Lights or action"
+                "short_enabled": "Short press",
+                "short_targets": "Lights or action",
+                "long_enabled": "Long press",
+                "long_targets": "Lights or action",
+                "double_enabled": "Double press",
+                "double_targets": "Lights or action",
+                "triple_enabled": "Triple press",
+                "triple_targets": "Lights or action"
               },
-              "data_description": {
-                "targets": "One or more lights/groups, or one scene/script. Short release toggles lights or activates the action."
-              }
+              "data_description": {},
+              "description": "Short press has no recognition delay unless double or triple press is enabled. Multi-press interval: up to 350 ms; Bridge batching can add up to 1.35 s of waiting. Long press runs once. Target: lights/groups, or one scene or script."
             },
             "button_3": {
               "name": "Button 3",
               "data": {
-                "targets": "Lights or action"
+                "short_enabled": "Short press",
+                "short_targets": "Lights or action",
+                "long_enabled": "Long press",
+                "long_targets": "Lights or action",
+                "double_enabled": "Double press",
+                "double_targets": "Lights or action",
+                "triple_enabled": "Triple press",
+                "triple_targets": "Lights or action"
               },
-              "data_description": {
-                "targets": "One or more lights/groups, or one scene/script. Short release toggles lights or activates the action."
-              }
+              "data_description": {},
+              "description": "Short press has no recognition delay unless double or triple press is enabled. Multi-press interval: up to 350 ms; Bridge batching can add up to 1.35 s of waiting. Long press runs once. Target: lights/groups, or one scene or script."
             },
             "button_4": {
               "name": "Button 4",
               "data": {
-                "targets": "Lights or action"
+                "short_enabled": "Short press",
+                "short_targets": "Lights or action",
+                "long_enabled": "Long press",
+                "long_targets": "Lights or action",
+                "double_enabled": "Double press",
+                "double_targets": "Lights or action",
+                "triple_enabled": "Triple press",
+                "triple_targets": "Lights or action"
               },
-              "data_description": {
-                "targets": "One or more lights/groups, or one scene/script. Short release toggles lights or activates the action."
-              }
+              "data_description": {},
+              "description": "Short press has no recognition delay unless double or triple press is enabled. Multi-press interval: up to 350 ms; Bridge batching can add up to 1.35 s of waiting. Long press runs once. Target: lights/groups, or one scene or script."
             }
           }
         }
@@ -160,7 +208,8 @@
       "error": {
         "lights_required": "Select dial lights before enabling control.",
         "button_lights_only": "The selected button must target lights/groups. Choose Custom lights for scenes or scripts.",
-        "button_targets_invalid": "A button supports a list of lights/groups, or one scene or script."
+        "button_targets_invalid": "A button supports a list of lights/groups, or one scene or script.",
+        "button_target_required": "Select a target for each enabled press type."
       },
       "abort": {
         "no_unconfigured_controllers": "All discovered controllers are already listed. Reload the integration before adding a new controller."
@@ -178,10 +227,10 @@
     },
     "dial_source": {
       "options": {
-        "button_1": "Same as button 1",
-        "button_2": "Same as button 2",
-        "button_3": "Same as button 3",
-        "button_4": "Same as button 4",
+        "button_1": "Same as button 1 short press",
+        "button_2": "Same as button 2 short press",
+        "button_3": "Same as button 3 short press",
+        "button_4": "Same as button 4 short press",
         "custom": "Custom lights"
       }
     }

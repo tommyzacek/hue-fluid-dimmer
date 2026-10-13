@@ -1,5 +1,16 @@
 """Dial profiles and shared light selections."""
 
+GESTURES = ("short", "long", "double", "triple")
+
+
+def button_actions(binding: dict, index: int) -> dict:
+    """Read new actions, including legacy short-release targets."""
+    value = binding.get(f"button_{index}", {})
+    if isinstance(value, dict):
+        return {key: targets(value.get(key)) for key in GESTURES if value.get(key)}
+    return {"short": targets(value)} if value else {}
+
+
 PROFILES = {"gentle": (0.75, 1.0), "balanced": (1.5, 1.0), "swift": (3.0, 0.5)}
 
 
@@ -18,7 +29,7 @@ def resolve_binding(binding: dict) -> dict:
     result = dict(binding)
     source = result.get("dial_source", "custom")
     if source != "custom":
-        result["lights"] = light_targets(result.get(source))
+        result["lights"] = light_targets(button_actions(result, int(source[-1])).get("short"))
     return result
 
 
@@ -36,7 +47,18 @@ def form_values(binding: dict) -> dict:
             "sensitivity": binding.get("custom_sensitivity", binding.get("sensitivity", 1.5)),
             "transition": binding.get("custom_transition", binding.get("transition", 1.0)),
         },
-        **{f"button_{i}": {"targets": targets(binding.get(f"button_{i}"))} for i in range(1, 5)},
+        **{
+            f"button_{i}": {
+                **{
+                    f"{action}_enabled": action in button_actions(binding, i) for action in GESTURES
+                },
+                **{
+                    f"{action}_targets": button_actions(binding, i).get(action, [])
+                    for action in GESTURES
+                },
+            }
+            for i in range(1, 5)
+        },
     }
 
 
@@ -58,16 +80,24 @@ def parse_form(values: dict) -> tuple[dict, str | None]:
     }
     for index in range(1, 5):
         field = f"button_{index}"
-        selected = targets(values.get(field, {}).get("targets"))
-        if selected:
+        actions = {}
+        section = values.get(field, {})
+        for action in GESTURES:
+            if not section.get(f"{action}_enabled", False):
+                continue
+            selected = targets(section.get(f"{action}_targets"))
+            if not selected:
+                return result, "button_target_required"
             if not light_targets(selected) and not (
                 len(selected) == 1 and selected[0].split(".", 1)[0] in ("scene", "script")
             ):
                 return result, "button_targets_invalid"
-            result[field] = selected
+            actions[action] = selected
+        if actions:
+            result[field] = actions
     if result["enabled"]:
         if result["dial_source"] != "custom" and not light_targets(
-            result.get(result["dial_source"])
+            button_actions(result, int(result["dial_source"][-1])).get("short")
         ):
             return result, "button_lights_only"
         if not resolve_binding(result).get("lights"):

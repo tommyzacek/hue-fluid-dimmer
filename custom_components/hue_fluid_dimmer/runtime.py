@@ -4,6 +4,7 @@ import asyncio
 import logging
 import time
 from collections.abc import Callable
+from datetime import datetime
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry, ConfigEntryState
@@ -13,7 +14,7 @@ from homeassistant.helpers import aiohttp_client
 from homeassistant.helpers import device_registry as dr
 
 from .api import BridgeClient, BridgeError
-from .bindings import targets
+from .bindings import button_actions, targets
 from .configuration import controller_binding
 from .const import (
     CONF_HUE_ENTRY,
@@ -28,6 +29,7 @@ from .const import (
     MODE_CONTINUOUS,
 )
 from .control import Dimmer
+from .gestures import Gestures
 from .models import ReportTracker
 
 _LOGGER = logging.getLogger(__name__)
@@ -51,6 +53,10 @@ class Runtime:
         )
         self.dimmer = Dimmer(self.read_brightness, self.send_brightness, self.create_task)
         self.button_locks: dict[str, asyncio.Lock] = {}
+        self.button_task: asyncio.Task | None = None
+        self.action_tasks: set[asyncio.Task] = set()
+        self.button_map: dict[str, tuple[str, int]] = {}
+        self.gestures = Gestures(self.actions, self.emit_button)
 
     def create_task(self, coro) -> asyncio.Task:
         return self.entry.async_create_background_task(
@@ -75,6 +81,7 @@ class Runtime:
     def start(self) -> None:
         self.unsubscribe = self.hass.bus.async_listen("hue_event", self.on_hue_event)
         self.task = self.create_task(self.poll())
+        self.button_task = self.create_task(self.listen_buttons())
 
     def device(self, owner_id: str):
         return dr.async_get(self.hass).async_get_device_by_identifier(
@@ -102,15 +109,73 @@ class Runtime:
             )
             self.wake.set()
             return
-        if data.get("type") != "short_release":
+        # Button actions come exclusively from timestamped SSE, not hue_event.
+
+    def actions(self, resource_id: str, index: int) -> dict:
+        binding = controller_binding(self.entry, resource_id)
+        return button_actions(binding, index) if binding.get("enabled") else {}
+
+    def emit_button(self, resource_id: str, index: int, action: str) -> None:
+        binding = controller_binding(self.entry, resource_id)
+        if not binding.get("enabled") or not button_actions(binding, index).get(action):
             return
-        for item in self.resources:
-            device = self.device(item.get("owner", {}).get("rid", ""))
-            if device and device.id == data.get("device_id"):
-                binding = controller_binding(self.entry, item["id"])
-                if binding.get("enabled") and binding.get(f"button_{data.get('subtype')}"):
-                    self.create_task(self.button(item["id"], binding, data["subtype"]))
-                return
+        task = self.create_task(self.button(resource_id, binding, index, action))
+        self.action_tasks.add(task)
+        task.add_done_callback(self.action_tasks.discard)
+
+    def consume_buttons(self, envelopes: list[dict]) -> None:
+        reports = []
+        for envelope in envelopes:
+            if not isinstance(envelope, dict) or envelope.get("type") != "update":
+                continue
+            items = envelope.get("data", [])
+            if not isinstance(items, list):
+                continue
+            for item in items:
+                if not isinstance(item, dict) or item.get("type") != "button":
+                    continue
+                mapped = self.button_map.get(item.get("id"))
+                feature = item.get("button")
+                if not isinstance(feature, dict):
+                    continue
+                report = feature.get("button_report")
+                if not isinstance(report, dict):
+                    continue
+                if mapped and report.get("event") and report.get("updated"):
+                    try:
+                        updated = datetime.fromisoformat(report["updated"])
+                        if updated.tzinfo is None:
+                            continue
+                        reports.append((updated.timestamp(), mapped, report["event"]))
+                    except TypeError, ValueError:
+                        continue
+        # Process the entire frame before any expiry callback can run.
+        for updated, (resource_id, index), event in sorted(reports):
+            self.gestures.feed(resource_id, index, event, updated)
+
+    async def listen_buttons(self) -> None:
+        failures = 0
+        while not self.closed:
+            try:
+                owners = {item.get("owner", {}).get("rid"): item["id"] for item in self.resources}
+                buttons = await self.client.button_resources()
+                self.button_map = {
+                    item["id"]: (owners[item["owner"]["rid"]], item["metadata"]["control_id"])
+                    for item in buttons
+                    if isinstance(item, dict)
+                    and item.get("owner", {}).get("rid") in owners
+                    and item.get("metadata", {}).get("control_id") in (1, 2, 3, 4)
+                    and isinstance(item.get("id"), str)
+                }
+                async for envelopes in self.client.button_events():
+                    failures = 0
+                    self.consume_buttons(envelopes)
+            except BridgeError as err:
+                failures += 1
+                self.gestures.cancel()
+                if failures == 1:
+                    _LOGGER.warning("Hue button stream unavailable; reconnecting")
+                await asyncio.sleep(max(err.retry_after, min(30, 2 ** min(failures - 1, 5))))
 
     async def poll(self) -> None:
         interval = self.entry.options.get(CONF_INTERVAL, DEFAULT_INTERVAL)
@@ -177,9 +242,11 @@ class Runtime:
             "light", "turn_on" if brightness > 0 else "turn_off", data, blocking=True
         )
 
-    async def button(self, resource_id: str, binding: dict, index: int) -> None:
+    async def button(
+        self, resource_id: str, binding: dict, index: int, action: str = "short"
+    ) -> None:
         async with self.button_locks.setdefault(resource_id, asyncio.Lock()):
-            selected = targets(binding[f"button_{index}"])
+            selected = targets(button_actions(binding, index).get(action))
             if not selected:
                 return
             domain = selected[0].split(".", 1)[0]
@@ -206,4 +273,12 @@ class Runtime:
         if self.task:
             self.task.cancel()
             await asyncio.gather(self.task, return_exceptions=True)
+        self.gestures.cancel()
+        tasks = list(self.action_tasks)
+        if self.button_task:
+            tasks.append(self.button_task)
+        for task in tasks:
+            task.cancel()
+        if tasks:
+            await asyncio.gather(*tasks, return_exceptions=True)
         await self.dimmer.close()

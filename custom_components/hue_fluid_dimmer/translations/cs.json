@@ -58,44 +58,68 @@
                 "transition": "Plynulý přechod (sekundy)"
               },
               "data_description": {
-                "source": "* Rychlá volba podporuje jednotlivá světla, skupiny a seznamy světel. Pro scény a skripty zvolte Vlastní světla."
+                "source": "* Rychlá volba přebírá světla krátkého stisku tlačítka: jednotlivá světla, skupiny a seznamy. Pro scény a skripty zvolte Vlastní světla."
               }
             },
             "button_1": {
               "name": "Tlačítko 1",
               "data": {
-                "targets": "Světla nebo akce"
+                "short_enabled": "Krátký stisk",
+                "short_targets": "Světla nebo akce",
+                "long_enabled": "Dlouhý stisk",
+                "long_targets": "Světla nebo akce",
+                "double_enabled": "Dvojklik",
+                "double_targets": "Světla nebo akce",
+                "triple_enabled": "Trojklik",
+                "triple_targets": "Světla nebo akce"
               },
-              "data_description": {
-                "targets": "Jedno či více světel nebo skupin; případně jedna scéna nebo skript. Krátký stisk přepne světla nebo spustí akci."
-              }
+              "data_description": {},
+              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: odstup nejvýše 350 ms; doručování Bridge může přidat čekání až 1,35 s. Dlouhý stisk spustí akci jednou. Cíl: světla/skupiny, nebo jedna scéna či skript."
             },
             "button_2": {
               "name": "Tlačítko 2",
               "data": {
-                "targets": "Světla nebo akce"
+                "short_enabled": "Krátký stisk",
+                "short_targets": "Světla nebo akce",
+                "long_enabled": "Dlouhý stisk",
+                "long_targets": "Světla nebo akce",
+                "double_enabled": "Dvojklik",
+                "double_targets": "Světla nebo akce",
+                "triple_enabled": "Trojklik",
+                "triple_targets": "Světla nebo akce"
               },
-              "data_description": {
-                "targets": "Jedno či více světel nebo skupin; případně jedna scéna nebo skript. Krátký stisk přepne světla nebo spustí akci."
-              }
+              "data_description": {},
+              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: odstup nejvýše 350 ms; doručování Bridge může přidat čekání až 1,35 s. Dlouhý stisk spustí akci jednou. Cíl: světla/skupiny, nebo jedna scéna či skript."
             },
             "button_3": {
               "name": "Tlačítko 3",
               "data": {
-                "targets": "Světla nebo akce"
+                "short_enabled": "Krátký stisk",
+                "short_targets": "Světla nebo akce",
+                "long_enabled": "Dlouhý stisk",
+                "long_targets": "Světla nebo akce",
+                "double_enabled": "Dvojklik",
+                "double_targets": "Světla nebo akce",
+                "triple_enabled": "Trojklik",
+                "triple_targets": "Světla nebo akce"
               },
-              "data_description": {
-                "targets": "Jedno či více světel nebo skupin; případně jedna scéna nebo skript. Krátký stisk přepne světla nebo spustí akci."
-              }
+              "data_description": {},
+              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: odstup nejvýše 350 ms; doručování Bridge může přidat čekání až 1,35 s. Dlouhý stisk spustí akci jednou. Cíl: světla/skupiny, nebo jedna scéna či skript."
             },
             "button_4": {
               "name": "Tlačítko 4",
               "data": {
-                "targets": "Světla nebo akce"
+                "short_enabled": "Krátký stisk",
+                "short_targets": "Světla nebo akce",
+                "long_enabled": "Dlouhý stisk",
+                "long_targets": "Světla nebo akce",
+                "double_enabled": "Dvojklik",
+                "double_targets": "Světla nebo akce",
+                "triple_enabled": "Trojklik",
+                "triple_targets": "Světla nebo akce"
               },
-              "data_description": {
-                "targets": "Jedno či více světel nebo skupin; případně jedna scéna nebo skript. Krátký stisk přepne světla nebo spustí akci."
-              }
+              "data_description": {},
+              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: odstup nejvýše 350 ms; doručování Bridge může přidat čekání až 1,35 s. Dlouhý stisk spustí akci jednou. Cíl: světla/skupiny, nebo jedna scéna či skript."
             }
           }
         },
@@ -115,44 +139,68 @@
                 "transition": "Plynulý přechod (sekundy)"
               },
               "data_description": {
-                "source": "* Rychlá volba podporuje jednotlivá světla, skupiny a seznamy světel. Pro scény a skripty zvolte Vlastní světla."
+                "source": "* Rychlá volba přebírá světla krátkého stisku tlačítka: jednotlivá světla, skupiny a seznamy. Pro scény a skripty zvolte Vlastní světla."
               }
             },
             "button_1": {
               "name": "Tlačítko 1",
               "data": {
-                "targets": "Světla nebo akce"
+                "short_enabled": "Krátký stisk",
+                "short_targets": "Světla nebo akce",
+                "long_enabled": "Dlouhý stisk",
+                "long_targets": "Světla nebo akce",
+                "double_enabled": "Dvojklik",
+                "double_targets": "Světla nebo akce",
+                "triple_enabled": "Trojklik",
+                "triple_targets": "Světla nebo akce"
               },
-              "data_description": {
-                "targets": "Jedno či více světel nebo skupin; případně jedna scéna nebo skript. Krátký stisk přepne světla nebo spustí akci."
-              }
+              "data_description": {},
+              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: odstup nejvýše 350 ms; doručování Bridge může přidat čekání až 1,35 s. Dlouhý stisk spustí akci jednou. Cíl: světla/skupiny, nebo jedna scéna či skript."
             },
             "button_2": {
               "name": "Tlačítko 2",
               "data": {
-                "targets": "Světla nebo akce"
+                "short_enabled": "Krátký stisk",
+                "short_targets": "Světla nebo akce",
+                "long_enabled": "Dlouhý stisk",
+                "long_targets": "Světla nebo akce",
+                "double_enabled": "Dvojklik",
+                "double_targets": "Světla nebo akce",
+                "triple_enabled": "Trojklik",
+                "triple_targets": "Světla nebo akce"
               },
-              "data_description": {
-                "targets": "Jedno či více světel nebo skupin; případně jedna scéna nebo skript. Krátký stisk přepne světla nebo spustí akci."
-              }
+              "data_description": {},
+              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: odstup nejvýše 350 ms; doručování Bridge může přidat čekání až 1,35 s. Dlouhý stisk spustí akci jednou. Cíl: světla/skupiny, nebo jedna scéna či skript."
             },
             "button_3": {
               "name": "Tlačítko 3",
               "data": {
-                "targets": "Světla nebo akce"
+                "short_enabled": "Krátký stisk",
+                "short_targets": "Světla nebo akce",
+                "long_enabled": "Dlouhý stisk",
+                "long_targets": "Světla nebo akce",
+                "double_enabled": "Dvojklik",
+                "double_targets": "Světla nebo akce",
+                "triple_enabled": "Trojklik",
+                "triple_targets": "Světla nebo akce"
               },
-              "data_description": {
-                "targets": "Jedno či více světel nebo skupin; případně jedna scéna nebo skript. Krátký stisk přepne světla nebo spustí akci."
-              }
+              "data_description": {},
+              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: odstup nejvýše 350 ms; doručování Bridge může přidat čekání až 1,35 s. Dlouhý stisk spustí akci jednou. Cíl: světla/skupiny, nebo jedna scéna či skript."
             },
             "button_4": {
               "name": "Tlačítko 4",
               "data": {
-                "targets": "Světla nebo akce"
+                "short_enabled": "Krátký stisk",
+                "short_targets": "Světla nebo akce",
+                "long_enabled": "Dlouhý stisk",
+                "long_targets": "Světla nebo akce",
+                "double_enabled": "Dvojklik",
+                "double_targets": "Světla nebo akce",
+                "triple_enabled": "Trojklik",
+                "triple_targets": "Světla nebo akce"
               },
-              "data_description": {
-                "targets": "Jedno či více světel nebo skupin; případně jedna scéna nebo skript. Krátký stisk přepne světla nebo spustí akci."
-              }
+              "data_description": {},
+              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: odstup nejvýše 350 ms; doručování Bridge může přidat čekání až 1,35 s. Dlouhý stisk spustí akci jednou. Cíl: světla/skupiny, nebo jedna scéna či skript."
             }
           }
         }
@@ -160,7 +208,8 @@
       "error": {
         "lights_required": "Před zapnutím ovládání vyber světla kolečka.",
         "button_lights_only": "Zvolené tlačítko musí mít přiřazená světla, skupinu nebo seznam světel. Pro scénu či skript zvol Vlastní světla.",
-        "button_targets_invalid": "Tlačítko může ovládat seznam světel či skupin, nebo jednu scénu či skript."
+        "button_targets_invalid": "Tlačítko může ovládat seznam světel či skupin, nebo jednu scénu či skript.",
+        "button_target_required": "Vyberte cíl každého zapnutého stisku."
       },
       "abort": {
         "no_unconfigured_controllers": "Všechny nalezené ovladače už jsou v seznamu. Pro nový ovladač nejprve znovu načti integraci."
@@ -178,10 +227,10 @@
     },
     "dial_source": {
       "options": {
-        "button_1": "Stejná jako tlačítko 1",
-        "button_2": "Stejná jako tlačítko 2",
-        "button_3": "Stejná jako tlačítko 3",
-        "button_4": "Stejná jako tlačítko 4",
+        "button_1": "Stejná jako krátký stisk tlačítka 1",
+        "button_2": "Stejná jako krátký stisk tlačítka 2",
+        "button_3": "Stejná jako krátký stisk tlačítka 3",
+        "button_4": "Stejná jako krátký stisk tlačítka 4",
         "custom": "Vlastní světla"
       }
     }
