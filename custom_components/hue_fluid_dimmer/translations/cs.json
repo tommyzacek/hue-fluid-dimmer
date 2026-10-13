@@ -18,13 +18,6 @@
   "options": {
     "step": {
       "init": {
-        "title": "Nastavení Hue Fluid Dimmer",
-        "menu_options": {
-          "polling": "Čtení Bridge",
-          "controller": "Ovladač"
-        }
-      },
-      "polling": {
         "title": "Čtení Bridge",
         "description": "Režim při otáčení čeká na první oficiální událost Hue. Trvalý režim čte Bridge i v klidu. Interval se zadává v sekundách.",
         "data": {
@@ -32,33 +25,58 @@
           "poll_interval": "Interval čtení (sekundy)",
           "active_window": "Doba čtení po pohybu (sekundy)"
         }
-      },
-      "controller": {
-        "title": "Vyber ovladač",
-        "data": {
-          "controller": "Ovladač"
-        }
-      },
-      "binding": {
-        "title": "Nastavení ovladače",
-        "description": "Před zapnutím vypni původní automatizaci stmívání. Citlivost určuje procentní body jasu na 15 hlášených kroků; přechod určuje délku rampy světla. Krátké uvolnění tlačítka spustí scénu či skript nebo přepne světlo.",
-        "data": {
-          "enabled": "Zapnout ovládání světel a tlačítek",
-          "lights": "Světla ovládaná kolečkem",
-          "sensitivity": "Citlivost",
-          "transition": "Plynulý přechod (sekundy)",
-          "button_1": "Tlačítko 1 (volitelné)",
-          "button_2": "Tlačítko 2 (volitelné)",
-          "button_3": "Tlačítko 3 (volitelné)",
-          "button_4": "Tlačítko 4 (volitelné)"
-        }
       }
-    },
-    "error": {
-      "lights_required": "Před zapnutím ovládání vyber alespoň jedno světlo."
-    },
-    "abort": {
-      "no_controllers": "Nenalezen žádný otočný ovladač. Spáruj ovladač s Hue a načti tuto integraci znovu."
+    }
+  },
+  "config_subentries": {
+    "tap_dial": {
+      "entry_type": "Hue Tap Dial",
+      "initiate_flow": {
+        "user": "Přidat ovladač",
+        "reconfigure": "Nastavit"
+      },
+      "step": {
+        "user": {
+          "title": "Vyber ovladač",
+          "data": {
+            "controller": "Ovladač"
+          }
+        },
+        "binding": {
+          "title": "Nastavení ovladače",
+          "description": "Před zapnutím vypni původní automatizaci stmívání. Citlivost určuje procentní body jasu na 15 hlášených kroků; přechod určuje délku rampy světla. Krátké uvolnění tlačítka spustí scénu či skript nebo přepne světlo.",
+          "data": {
+            "enabled": "Zapnout ovládání světel a tlačítek",
+            "lights": "Světla ovládaná kolečkem",
+            "sensitivity": "Citlivost",
+            "transition": "Plynulý přechod (sekundy)",
+            "button_1": "Tlačítko 1 (volitelné)",
+            "button_2": "Tlačítko 2 (volitelné)",
+            "button_3": "Tlačítko 3 (volitelné)",
+            "button_4": "Tlačítko 4 (volitelné)"
+          }
+        },
+        "reconfigure": {
+          "title": "Nastavení – {controller}",
+          "description": "Před zapnutím vypni původní automatizaci stmívání. Citlivost určuje procentní body jasu na 15 hlášených kroků; přechod určuje délku rampy světla. Krátké uvolnění tlačítka spustí scénu či skript nebo přepne světlo.",
+          "data": {
+            "enabled": "Zapnout ovládání světel a tlačítek",
+            "lights": "Světla ovládaná kolečkem",
+            "sensitivity": "Citlivost",
+            "transition": "Plynulý přechod (sekundy)",
+            "button_1": "Tlačítko 1 (volitelné)",
+            "button_2": "Tlačítko 2 (volitelné)",
+            "button_3": "Tlačítko 3 (volitelné)",
+            "button_4": "Tlačítko 4 (volitelné)"
+          }
+        }
+      },
+      "error": {
+        "lights_required": "Před zapnutím ovládání vyber alespoň jedno světlo."
+      },
+      "abort": {
+        "no_unconfigured_controllers": "Všechny nalezené ovladače už jsou v seznamu. Pro nový ovladač nejprve znovu načti integraci."
+      }
     }
   }
 }

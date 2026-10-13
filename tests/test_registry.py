@@ -2,16 +2,19 @@
 
 from types import MappingProxyType, SimpleNamespace
 
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import ConfigEntries, ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 
-from custom_components.hue_fluid_dimmer import register_controllers
+from custom_components.hue_fluid_dimmer.configuration import (
+    controller_binding,
+    initialize_controllers,
+)
 from custom_components.hue_fluid_dimmer.const import DOMAIN
 
 
-async def test_upgrade_keeps_devices_and_options_but_removes_only_own_events(
+async def test_upgrade_moves_bindings_into_rows_and_removes_only_companion_registry_records(
     tmp_path, monkeypatch, resource
 ):
     hass = HomeAssistant(str(tmp_path))
@@ -31,7 +34,9 @@ async def test_upgrade_keeps_devices_and_options_but_removes_only_own_events(
             subentries_data=None,
         )
     by_id = {entry.entry_id: entry for entry in entries.values()}
-    hass.config_entries = SimpleNamespace(async_get_entry=by_id.get)
+    hass.config_entries = ConfigEntries(hass, {})
+    for config_entry in by_id.values():
+        hass.config_entries._entries[config_entry.entry_id] = config_entry
     devices = dr.DeviceRegistry(hass)
     entities = er.EntityRegistry(hass)
     monkeypatch.setattr(dr, "async_get", lambda h: devices)
@@ -59,16 +64,23 @@ async def test_upgrade_keeps_devices_and_options_but_removes_only_own_events(
         "sensor", "hue", "battery-a", config_entry=entries["hue"], device_id=hue.id
     )
 
-    register_controllers(hass, entry)
-    register_controllers(hass, entry)  # Reload must not duplicate the device list.
+    initialize_controllers(hass, entry)
+    initialize_controllers(hass, entry)  # Reload must not duplicate the device list.
 
     assert entities.async_get(obsolete.entity_id) is None
     assert entities.async_get(battery.entity_id) is battery
     assert devices.async_get(hue.id) is hue
-    kept = devices.async_get(original.id)
-    assert kept.name_by_user == "My dial"
-    assert kept.configuration_url.endswith(f"#config_entry={entry.entry_id}")
-    assert len(dr.async_entries_for_config_entry(devices, entry.entry_id)) == 2
+    assert devices.async_get(original.id) is None
+    assert not dr.async_entries_for_config_entry(devices, entry.entry_id)
+    assert len(entry.subentries) == 2
+    migrated = next(s for s in entry.subentries.values() if s.unique_id == "dial-a")
+    assert migrated.title == "My dial"
+    assert controller_binding(entry, "dial-a")["enabled"] is True
+    assert controller_binding(entry, "dial-a")["lights"] == ["light.test"]
     assert not er.async_entries_for_config_entry(entities, entry.entry_id)
-    assert entry.options == options
+    assert "controllers" not in entry.options
+    hass.config_entries.async_remove_subentry(entry, migrated.subentry_id)
+    initialize_controllers(hass, entry)
+    assert len(entry.subentries) == 1
+    assert controller_binding(entry, "dial-a") == {}
     await hass.async_stop()

@@ -18,13 +18,6 @@
   "options": {
     "step": {
       "init": {
-        "title": "Hue Fluid Dimmer settings",
-        "menu_options": {
-          "polling": "Polling",
-          "controller": "Controller"
-        }
-      },
-      "polling": {
         "title": "Bridge polling",
         "description": "Active mode waits for the first official Hue event. Continuous mode uses bridge traffic while idle. The interval is in seconds.",
         "data": {
@@ -32,33 +25,58 @@
           "poll_interval": "Read interval (seconds)",
           "active_window": "Active window after movement (seconds)"
         }
-      },
-      "controller": {
-        "title": "Select controller",
-        "data": {
-          "controller": "Controller"
-        }
-      },
-      "binding": {
-        "title": "Controller settings",
-        "description": "Disable its existing dimming automation before enabling control. Sensitivity is brightness percentage points per 15 reported steps; transition is the native light ramp. Buttons activate scenes/scripts or toggle lights on short release.",
-        "data": {
-          "enabled": "Enable light and button control",
-          "lights": "Lights controlled by the dial",
-          "sensitivity": "Sensitivity",
-          "transition": "Transition (seconds)",
-          "button_1": "Button 1 (optional)",
-          "button_2": "Button 2 (optional)",
-          "button_3": "Button 3 (optional)",
-          "button_4": "Button 4 (optional)"
-        }
       }
-    },
-    "error": {
-      "lights_required": "Select at least one light before enabling control."
-    },
-    "abort": {
-      "no_controllers": "No rotary controllers found. Pair a controller with Hue and reload this integration."
+    }
+  },
+  "config_subentries": {
+    "tap_dial": {
+      "entry_type": "Hue Tap Dial",
+      "initiate_flow": {
+        "user": "Add controller",
+        "reconfigure": "Configure"
+      },
+      "step": {
+        "user": {
+          "title": "Select controller",
+          "data": {
+            "controller": "Controller"
+          }
+        },
+        "binding": {
+          "title": "Controller settings",
+          "description": "Disable its existing dimming automation before enabling control. Sensitivity is brightness percentage points per 15 reported steps; transition is the native light ramp. Buttons activate scenes/scripts or toggle lights on short release.",
+          "data": {
+            "enabled": "Enable light and button control",
+            "lights": "Lights controlled by the dial",
+            "sensitivity": "Sensitivity",
+            "transition": "Transition (seconds)",
+            "button_1": "Button 1 (optional)",
+            "button_2": "Button 2 (optional)",
+            "button_3": "Button 3 (optional)",
+            "button_4": "Button 4 (optional)"
+          }
+        },
+        "reconfigure": {
+          "title": "Configure – {controller}",
+          "description": "Disable its existing dimming automation before enabling control. Sensitivity is brightness percentage points per 15 reported steps; transition is the native light ramp. Buttons activate scenes/scripts or toggle lights on short release.",
+          "data": {
+            "enabled": "Enable light and button control",
+            "lights": "Lights controlled by the dial",
+            "sensitivity": "Sensitivity",
+            "transition": "Transition (seconds)",
+            "button_1": "Button 1 (optional)",
+            "button_2": "Button 2 (optional)",
+            "button_3": "Button 3 (optional)",
+            "button_4": "Button 4 (optional)"
+          }
+        }
+      },
+      "error": {
+        "lights_required": "Select at least one light before enabling control."
+      },
+      "abort": {
+        "no_unconfigured_controllers": "All discovered controllers are already listed. Reload the integration before adding a new controller."
+      }
     }
   }
 }

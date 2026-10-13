@@ -13,8 +13,8 @@ from homeassistant.helpers import aiohttp_client
 from homeassistant.helpers import device_registry as dr
 
 from .api import BridgeClient, BridgeError
+from .configuration import controller_binding
 from .const import (
-    CONF_BINDINGS,
     CONF_HUE_ENTRY,
     CONF_INTERVAL,
     CONF_MODE,
@@ -106,7 +106,7 @@ class Runtime:
         for item in self.resources:
             device = self.device(item.get("owner", {}).get("rid", ""))
             if device and device.id == data.get("device_id"):
-                binding = self.entry.options.get(CONF_BINDINGS, {}).get(item["id"], {})
+                binding = controller_binding(self.entry, item["id"])
                 if binding.get("enabled") and binding.get(f"button_{data.get('subtype')}"):
                     self.create_task(self.button(item["id"], binding, data["subtype"]))
                 return
@@ -142,7 +142,7 @@ class Runtime:
                         CONF_WINDOW, DEFAULT_WINDOW
                     )
                     self.hass.bus.async_fire(EVENT_ROTATION, report.event_data())
-                    binding = self.entry.options.get(CONF_BINDINGS, {}).get(report.resource_id, {})
+                    binding = controller_binding(self.entry, report.resource_id)
                     self.dimmer.rotate(binding, report.signed_steps)
                 delay = max(0, interval - (time.monotonic() - started))
             except BridgeError as err:

@@ -8,16 +8,18 @@ from homeassistant.config_entries import (
     ConfigEntryState,
     ConfigFlow,
     ConfigFlowResult,
+    ConfigSubentryFlow,
     OptionsFlow,
+    SubentryFlowResult,
 )
 from homeassistant.core import callback
 from homeassistant.helpers import selector
 
 from .const import (
-    CONF_BINDINGS,
     CONF_HUE_ENTRY,
     CONF_INTERVAL,
     CONF_MODE,
+    CONF_RESOURCE,
     CONF_WINDOW,
     DEFAULT_INTERVAL,
     DEFAULT_WINDOW,
@@ -25,6 +27,7 @@ from .const import (
     HUE_DOMAIN,
     MODE_ACTIVE,
     MODE_CONTINUOUS,
+    SUBENTRY_TAP_DIAL,
 )
 
 
@@ -38,8 +41,31 @@ def number(minimum: float, maximum: float, step: float) -> selector.NumberSelect
     return selector.NumberSelector({"min": minimum, "max": maximum, "step": step, "mode": "box"})
 
 
+def binding_schema(old: dict) -> p.Schema:
+    schema = {
+        p.Required("enabled", default=old.get("enabled", False)): bool,
+        p.Optional("lights", default=old.get("lights", [])): selector.EntitySelector(
+            {"domain": "light", "multiple": True}
+        ),
+        p.Required("sensitivity", default=old.get("sensitivity", 1.5)): number(0.1, 10, 0.1),
+        p.Required("transition", default=old.get("transition", 1)): number(0.1, 3, 0.1),
+    }
+    for index in range(1, 5):
+        field = f"button_{index}"
+        key = p.Optional(field, default=old[field]) if old.get(field) else p.Optional(field)
+        schema[key] = selector.EntitySelector({"domain": ["scene", "script", "light"]})
+    return p.Schema(schema)
+
+
 class HueFluidDimmerFlow(ConfigFlow, domain=DOMAIN):
     VERSION = 1
+
+    @classmethod
+    @callback
+    def async_get_supported_subentry_types(
+        cls, config_entry: ConfigEntry
+    ) -> dict[str, type[ConfigSubentryFlow]]:
+        return {SUBENTRY_TAP_DIAL: TapDialSubentryFlow}
 
     @staticmethod
     @callback
@@ -69,10 +95,8 @@ class HueFluidDimmerFlow(ConfigFlow, domain=DOMAIN):
 
 
 class HueFluidDimmerOptionsFlow(OptionsFlow):
-    resource_id: str | None = None
-
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        return self.async_show_menu(step_id="init", menu_options=["polling", "controller"])
+        return await self.async_step_polling(user_input)
 
     async def async_step_polling(
         self, user_input: dict[str, Any] | None = None
@@ -83,7 +107,7 @@ class HueFluidDimmerOptionsFlow(OptionsFlow):
             )
         options = self.config_entry.options
         return self.async_show_form(
-            step_id="polling",
+            step_id="init",
             data_schema=p.Schema(
                 {
                     p.Required(CONF_MODE, default=options.get(CONF_MODE, MODE_ACTIVE)): select(
@@ -102,49 +126,74 @@ class HueFluidDimmerOptionsFlow(OptionsFlow):
             ),
         )
 
-    async def async_step_controller(
-        self, user_input: dict[str, Any] | None = None
-    ) -> ConfigFlowResult:
-        controllers = self.config_entry.runtime_data.controllers()
+
+class TapDialSubentryFlow(ConfigSubentryFlow):
+    """Open a specific controller directly from its configuration row."""
+
+    resource_id: str | None = None
+
+    async def async_step_user(self, user_input: dict[str, Any] | None = None) -> SubentryFlowResult:
+        entry = self._get_entry()
+        configured = {sub.unique_id for sub in entry.subentries.values()}
+        controllers = {
+            key: name
+            for key, name in entry.runtime_data.controllers().items()
+            if key not in configured
+        }
         if not controllers:
-            return self.async_abort(reason="no_controllers")
+            return self.async_abort(reason="no_unconfigured_controllers")
         if user_input is not None:
             self.resource_id = user_input["controller"]
             if self.resource_id not in controllers:
-                return self.async_abort(reason="no_controllers")
+                return self.async_abort(reason="no_unconfigured_controllers")
             return await self.async_step_binding()
         return self.async_show_form(
-            step_id="controller",
-            data_schema=p.Schema({p.Required("controller"): select(controllers)}),
+            step_id="user", data_schema=p.Schema({p.Required("controller"): select(controllers)})
         )
 
     async def async_step_binding(
         self, user_input: dict[str, Any] | None = None
-    ) -> ConfigFlowResult:
+    ) -> SubentryFlowResult:
         assert self.resource_id is not None
-        bindings = dict(self.config_entry.options.get(CONF_BINDINGS, {}))
-        old = bindings.get(self.resource_id, {})
+        entry = self._get_entry()
+        errors = {}
+        old = {}
+        if user_input is not None:
+            if user_input.get("enabled") and not user_input.get("lights"):
+                errors["lights"] = "lights_required"
+                old = user_input
+            else:
+                return self.async_create_entry(
+                    title=entry.runtime_data.controllers().get(self.resource_id, self.resource_id),
+                    unique_id=self.resource_id,
+                    data={CONF_RESOURCE: self.resource_id, **user_input},
+                )
+        return self.async_show_form(
+            step_id="binding", data_schema=binding_schema(old), errors=errors
+        )
+
+    async def async_step_reconfigure(
+        self, user_input: dict[str, Any] | None = None
+    ) -> SubentryFlowResult:
+        entry = self._get_entry()
+        subentry = self._get_reconfigure_subentry()
+        old = dict(subentry.data)
         errors = {}
         if user_input is not None:
             if user_input.get("enabled") and not user_input.get("lights"):
                 errors["lights"] = "lights_required"
                 old = user_input
             else:
-                # Absent optional button fields remove an earlier assignment.
-                bindings[self.resource_id] = user_input
-                return self.async_create_entry(
-                    title="", data={**self.config_entry.options, CONF_BINDINGS: bindings}
+                # Replace the binding so cleared optional buttons stay cleared.
+                # Updating the subentry invokes the parent's existing reload listener.
+                return self.async_update_and_abort(
+                    entry,
+                    subentry,
+                    data={CONF_RESOURCE: subentry.data[CONF_RESOURCE], **user_input},
                 )
-        schema = {
-            p.Required("enabled", default=old.get("enabled", False)): bool,
-            p.Optional("lights", default=old.get("lights", [])): selector.EntitySelector(
-                {"domain": "light", "multiple": True}
-            ),
-            p.Required("sensitivity", default=old.get("sensitivity", 1.5)): number(0.1, 10, 0.1),
-            p.Required("transition", default=old.get("transition", 1)): number(0.1, 3, 0.1),
-        }
-        for index in range(1, 5):
-            field = f"button_{index}"
-            key = p.Optional(field, default=old[field]) if old.get(field) else p.Optional(field)
-            schema[key] = selector.EntitySelector({"domain": ["scene", "script", "light"]})
-        return self.async_show_form(step_id="binding", data_schema=p.Schema(schema), errors=errors)
+        return self.async_show_form(
+            step_id="reconfigure",
+            data_schema=binding_schema(old),
+            errors=errors,
+            description_placeholders={"controller": subentry.title},
+        )

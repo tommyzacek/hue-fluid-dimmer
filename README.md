@@ -16,7 +16,8 @@ Requires Home Assistant **2026.10.1 or newer** and a working official **Philips 
 2. Download Hue Fluid Dimmer and restart Home Assistant.
 3. Open **Settings → Devices & services → Add integration → Hue Fluid Dimmer**.
 4. Select an already configured Hue bridge.
-5. Open **Configure → Controller**, select a controller, select its lights and enable its control. Repeat for other controllers.
+5. Each discovered Tap Dial appears as a **controller configuration row** under the bridge. Click its **Configure gear** to open that controller’s light and button settings directly. Select its lights and enable its control.
+6. The bridge’s own **Configure** button opens polling settings. New controllers can be added with **Add controller** after reloading the integration.
 
 Alternatively copy `custom_components/hue_fluid_dimmer` into your HA configuration's `custom_components` directory and restart.
 
@@ -35,7 +36,7 @@ The default interval is **100 ms**, configurable up to 2 seconds; the active win
 
 ## Controller settings
 
-- **Enable control:** off by default; controllers remain listed without controlling lights.
+- **Enable control:** off by default; controller configuration rows remain listed without controlling lights.
 - **Lights:** any HA lights supporting brightness and transitions. Multiple lights are treated as one selection.
 - **Sensitivity:** percentage points per 15 reported steps, default 1.5. Larger reported rotations produce proportionally larger changes.
 - **Transition:** seconds for each light's native brightness ramp, default 1 second. The integration sends absolute brightness with a transition rather than implementing a queue of small increments.
@@ -47,7 +48,7 @@ Transitions depend on the selected light integration. The first release needs ph
 
 ## Advanced use
 
-The companion creates **no controller entities or brightness helpers**. Each discovered dial remains in the integration's device list, and controller settings are available through **Configure → Controller**. It emits the bus event `hue_fluid_dimmer_event` for advanced automations, with:
+The companion creates **no controller entities or brightness helpers**. Each initially discovered dial gets a native **configuration subentry** in the integration’s controller list. Its gear opens the settings modal directly; the row has no link to an empty device/entity page. It emits the bus event `hue_fluid_dimmer_event` for advanced automations, with:
 
 ```yaml
 resource_id: "rotary-resource-id"
@@ -59,9 +60,9 @@ steps: 15
 duration: 100
 ```
 
-The timestamp comes from the bridge; it is not a measurement of the physical rotation time. The same or older report timestamp is ignored. Official rotary events only wake polling and are never applied as additional dimming steps. Historic reports at startup are ignored. New controllers require an integration reload to add their device records; their old report is baselined when discovered.
+The timestamp comes from the bridge; it is not a measurement of the physical rotation time. The same or older report timestamp is ignored. Official rotary events only wake polling and are never applied as additional dimming steps. Historic reports at startup are ignored. For newly paired controllers, reload the integration and choose **Add controller**. Their old report is baselined when discovered. Removing a configuration row disables its control and does not recreate it on reload; **Add controller** can restore it.
 
-Controller device records belong to this companion, separate from the official Hue devices. They provide the controller list without extra entities. The official Hue devices and their entities remain untouched. Upgrading from 0.1.1 removes this companion's `event.*_fast_rotation` entities while preserving its controller device records and settings. Any automation that referenced those removed entities must use the bus event instead.
+The companion creates **no device or entity registry records**. Official Hue devices and entities remain untouched. Upgrading from 0.1.1/0.1.2 converts existing controller bindings to configuration subentries, retaining their enabled state, lights, sensitivity, transitions and button assignments. Companion device names set by the user become the row titles. Its former device records and `event.*_fast_rotation` entities are removed; any automation referencing those old companion records must be adjusted. Bus events remain available.
 
 ## How it connects to Hue
 
@@ -83,7 +84,7 @@ python3.14 -m venv .venv
 .venv/bin/pytest -q
 ```
 
-Tests use synthetic reports and cover duplicate/out-of-order suppression, startup baselines, unavailable lights, in-memory brightness targets, direction reversals, command coalescing, polling wake/sleep, failed-request backoff, button routing and GUI schemas against real HA classes. A synthetic 100-resource test checks batch behavior; it does not demonstrate support for 100 physical controllers on one Hue bridge.
+Tests use synthetic reports and cover duplicate/out-of-order suppression, startup baselines, unavailable lights, in-memory brightness targets, direction reversals, command coalescing, polling wake/sleep, failed-request backoff, button routing and GUI schemas against real HA classes, including controller reconfiguration and registry-to-subentry migration. A synthetic 100-resource test checks batch behavior; it does not demonstrate support for 100 physical controllers on one Hue bridge.
 
 This public repository can be added to HACS without inclusion in its default catalog. Default catalog submission and Home Assistant Core inclusion are separate review processes. CI includes Ruff, pytest, hassfest and HACS validation; brand validation is intentionally skipped because no catalog/brand submission has been made.
 
@@ -91,7 +92,7 @@ Relevant official documentation: [HA event listeners](https://developers.home-as
 
 ## Česky
 
-Experimentální doplněk k oficiální Hue integraci. V nastavení vybereš Bridge, ovladač a světla; pro každý ovladač nemusíš vytvářet automatizaci ani pomocníka. Tlačítkům můžeš přiřadit scénu, skript nebo přepnutí světla.
+Experimentální doplněk k oficiální Hue integraci. Vybereš Bridge; ovladače se zobrazí jako konfigurační položky. Ozubené kolečko u ovladače otevře přímo jeho nastavení. Nevznikají další zařízení, entity, automatizace ani pomocníci. Tlačítkům můžeš přiřadit scénu, skript nebo přepnutí světla.
 
 Výchozí režim čte Bridge jen při otáčení a čeká na první událost z oficiální integrace. Trvalé čtení reaguje bez tohoto čekání, ale posílá požadavky i v klidu. Jeden požadavek čte všechny ovladače na daném Bridge. Bridge poskytuje poslední report, nikoli všechny jednotlivé kroky kolečka.
 

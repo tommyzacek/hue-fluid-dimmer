@@ -23,6 +23,10 @@ def make_runtime(monkeypatch, options):
     entry = SimpleNamespace(
         options=options,
         data={},
+        subentries={
+            rid: SimpleNamespace(subentry_type="tap_dial", unique_id=rid, data=binding)
+            for rid, binding in options.get("controllers", {}).items()
+        },
         async_create_background_task=lambda h, coro, name, **kw: asyncio.create_task(coro),
     )
     runtime = Runtime(hass, entry)
