@@ -197,7 +197,17 @@ async def test_sse_reconnect_cancels_gesture_and_backoffs(monkeypatch, resource)
     runtime.resources = [resource()]
     runtime.client.button_resources = AsyncMock(
         return_value=[
-            {"id": "button-a", "owner": {"rid": "owner-a"}, "metadata": {"control_id": 2}}
+            {
+                "id": "button-a",
+                "owner": {"rid": "owner-a"},
+                "metadata": {"control_id": 2},
+                "button": {
+                    "button_report": {
+                        "event": "short_release",
+                        "updated": "2026-10-13T21:50:35.532Z",
+                    }
+                },
+            }
         ]
     )
     runtime.gestures.feed("dial-a", 2, "initial_press", 1)
@@ -219,4 +229,6 @@ async def test_sse_reconnect_cancels_gesture_and_backoffs(monkeypatch, resource)
     await runtime.listen_buttons()
     assert sleeps == [60] and not runtime.gestures.pending
     assert runtime.button_map == {"button-a": ("dial-a", 2)}
+    assert runtime.button_baselined
+    assert runtime.button_snapshots[("dial-a", 2)][1] == "short_release"
     await runtime.close()

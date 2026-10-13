@@ -33,6 +33,7 @@ from .gestures import CLICK_WINDOW, Gestures
 from .models import ReportTracker
 
 _LOGGER = logging.getLogger(__name__)
+QUIET_EPSILON = 0.001
 
 
 class Runtime:
@@ -60,6 +61,7 @@ class Runtime:
         self.button_wake = asyncio.Event()
         self.button_active_until = 0.0
         self.button_poll_count = self.button_error_count = 0
+        self.button_baselined = False
         # REST can advance complete adjacent transitions. A gap blocks it until SSE catches up.
         self.button_snapshots: dict[tuple[str, int], tuple[float, str, float, float]] = {}
         self.button_gaps: dict[tuple[str, int], float] = {}
@@ -184,6 +186,25 @@ class Runtime:
             ):
                 self.gestures.finish(key)
 
+    def button_poll_delay(self, interval: float, started: float) -> float:
+        """Align a fresh query with the earliest pending quiet-time deadline."""
+        now = time.monotonic()
+        delay = max(0, interval - (now - started))
+        deadlines = []
+        for key, state in self.gestures.pending.items():
+            snapshot = self.button_snapshots.get(key)
+            if (
+                snapshot is not None
+                and not state.pressed
+                and state.count
+                and snapshot[0] == state.released
+                and snapshot[1] == "short_release"
+            ):
+                deadlines.append(snapshot[2] + CLICK_WINDOW + QUIET_EPSILON)
+        if deadlines:
+            delay = min(delay, max(0, min(deadlines) - now))
+        return delay
+
     def consume_button_snapshots(
         self, buttons: list[dict], baseline: bool = False, checked_at: float | None = None
     ) -> None:
@@ -217,7 +238,6 @@ class Runtime:
         interval = self.entry.options.get(CONF_INTERVAL, DEFAULT_INTERVAL)
         continuous = self.entry.options.get(CONF_MODE, MODE_ACTIVE) == MODE_CONTINUOUS
         failures = 0
-        baseline = True
         while not self.closed:
             if (
                 not continuous
@@ -232,17 +252,17 @@ class Runtime:
             try:
                 buttons = await self.client.button_resources()
                 self.button_poll_count += 1
-                self.consume_button_snapshots(
-                    buttons, baseline=baseline or bool(failures), checked_at=started
-                )
+                baseline = not self.button_baselined or bool(failures)
+                self.consume_button_snapshots(buttons, baseline=baseline, checked_at=started)
                 failures = 0
-                baseline = False
-                delay = max(0, interval - (time.monotonic() - started))
+                self.button_baselined = True
+                delay = self.button_poll_delay(interval, started)
             except BridgeError as err:
                 self.button_error_count += 1
                 failures += 1
                 self.button_snapshots.clear()
                 self.button_gaps.clear()
+                self.button_baselined = False
                 if failures == 1:
                     _LOGGER.warning("Hue button polling unavailable; backing off")
                 delay = max(err.retry_after, min(30, 2 ** min(failures - 1, 5)))
@@ -282,7 +302,11 @@ class Runtime:
         while not self.closed:
             try:
                 buttons = await self.client.button_resources()
-                self.map_buttons(buttons)
+                if self.button_baselined:
+                    self.map_buttons(buttons)
+                else:
+                    self.consume_button_snapshots(buttons, baseline=True)
+                    self.button_baselined = True
                 async for envelopes in self.client.button_events():
                     failures = 0
                     self.consume_buttons(envelopes)

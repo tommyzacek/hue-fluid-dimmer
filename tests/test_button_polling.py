@@ -244,3 +244,13 @@ async def test_slow_query_cannot_prove_quiet_time_after_its_start(runtime_clock)
     clock[0] = 0.9
     runtime.consume_button_snapshots([button("short_release", 1.08)], checked_at=0.85)
     assert [row[2] for row in emitted] == ["short"]
+
+
+async def test_next_query_starts_at_quiet_time_deadline(runtime_clock):
+    runtime, clock, _ = runtime_clock
+    sse(runtime, "initial_press", 1)
+    clock[0] = 0.1
+    runtime.consume_button_snapshots([button("short_release", 1.08)])
+    clock[0] = 0.49
+    delay = runtime.button_poll_delay(0.1, started=0.45)
+    assert delay == pytest.approx(0.011)
