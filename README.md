@@ -36,11 +36,22 @@ The default interval is **100 ms**, configurable up to 2 seconds; the active win
 
 ## Controller settings
 
-- **Enable control:** off by default; controller configuration rows remain listed without controlling lights.
-- **Lights:** any HA lights supporting brightness and transitions. Multiple lights are treated as one selection.
-- **Sensitivity:** percentage points per 15 reported steps, default 1.5. Larger reported rotations produce proportionally larger changes.
-- **Transition:** seconds for each light's native brightness ramp, default 1 second. The integration sends absolute brightness with a transition rather than implementing a queue of small increments.
-- **Buttons 1–4:** optional scene, script or light. A short release activates the scene/script or toggles the light. Long presses are left to existing HA automations.
+The controller dialog has one **Dial** section and four collapsible **Button** sections. Control is off by default.
+
+| Dial profile | Sensitivity (percentage points / 15 steps) | Transition |
+| --- | --- | --- |
+| Gentle | 0.75 | 1 second |
+| Balanced | 1.5 | 1 second |
+| Swift | 3 | 0.5 seconds |
+| Custom | User choice | User choice |
+
+Only **Custom** exposes the sensitivity and transition fields. Custom values are remembered when changing profiles. Presets are initial experimental tuning choices; they do not change event arrival latency or the bridge polling interval. Existing settings and light selections are preserved when upgrading.
+
+For **Controlled lights**, choose **Same as button 1–4** or **Custom lights**. The custom entity picker appears only for Custom lights. Shared selections resolve the button's current targets on each rotary report, including an individual light, a HA light group or a list of lights. Changing that button's light targets updates the dial's selection automatically.
+
+Quick selections support only lights/groups/lists of lights. For a button that activates a scene or script, choose **Custom lights** for the dial. No script parsing or guessing of scene targets is performed.
+
+Each button accepts one or more light/group entities, or one scene or script. Short release toggles the selected lights or activates the scene/script. Mixed light/scene/script selections are rejected. Clearing a button removes its assignment. Long presses remain available to existing HA automations.
 
 The dimmer holds its target in memory during a gesture, so delayed light state reports do not move its reference value. After 3 idle seconds it resynchronizes from available selected lights. Identical light selections share a target. Partially overlapping selections remain independent; avoid operating them simultaneously. Grouping lights in HA may generate several underlying Hue commands. Commands are serial and coalesced per selection, at most four service calls per second; that is **not** a bridge-wide limit on underlying light commands.
 

@@ -2,7 +2,7 @@
 
 import asyncio
 from types import SimpleNamespace
-from unittest.mock import Mock
+from unittest.mock import AsyncMock, Mock
 
 from homeassistant.core import Event
 
@@ -121,4 +121,16 @@ async def test_button_only_short_release_and_matching_device(monkeypatch, resour
         )
     await asyncio.sleep(0)
     assert len(calls) == 1
+    await runtime.close()
+
+
+async def test_light_list_button_sends_one_service_call(monkeypatch):
+    runtime, _ = make_runtime(monkeypatch, {})
+    call = AsyncMock()
+    runtime.hass.services = SimpleNamespace(async_call=call)
+    binding = {"lights": ["light.group"], "button_1": ["light.group", "light.single"]}
+    await runtime.button("dial-a", binding, 1)
+    call.assert_awaited_once_with(
+        "light", "toggle", {"entity_id": ["light.group", "light.single"]}, blocking=True
+    )
     await runtime.close()

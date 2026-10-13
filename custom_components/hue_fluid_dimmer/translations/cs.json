@@ -44,38 +44,145 @@
         },
         "binding": {
           "title": "Nastavení ovladače",
-          "description": "Před zapnutím vypni původní automatizaci stmívání. Citlivost určuje procentní body jasu na 15 hlášených kroků; přechod určuje délku rampy světla. Krátké uvolnění tlačítka spustí scénu či skript nebo přepne světlo.",
           "data": {
-            "enabled": "Zapnout ovládání světel a tlačítek",
-            "lights": "Světla ovládaná kolečkem",
-            "sensitivity": "Citlivost",
-            "transition": "Plynulý přechod (sekundy)",
-            "button_1": "Tlačítko 1 (volitelné)",
-            "button_2": "Tlačítko 2 (volitelné)",
-            "button_3": "Tlačítko 3 (volitelné)",
-            "button_4": "Tlačítko 4 (volitelné)"
+            "enabled": "Zapnout ovládání"
+          },
+          "sections": {
+            "dial": {
+              "name": "Dial",
+              "data": {
+                "profile": "Chování kolečka",
+                "source": "Ovládaná světla",
+                "lights": "Vlastní světla",
+                "sensitivity": "Citlivost",
+                "transition": "Plynulý přechod (sekundy)"
+              },
+              "data_description": {
+                "source": "* Rychlá volba podporuje jednotlivá světla, skupiny a seznamy světel. Pro scény a skripty zvolte Vlastní světla."
+              }
+            },
+            "button_1": {
+              "name": "Tlačítko 1",
+              "data": {
+                "targets": "Světla nebo akce"
+              },
+              "data_description": {
+                "targets": "Jedno či více světel nebo skupin; případně jedna scéna nebo skript. Krátký stisk přepne světla nebo spustí akci."
+              }
+            },
+            "button_2": {
+              "name": "Tlačítko 2",
+              "data": {
+                "targets": "Světla nebo akce"
+              },
+              "data_description": {
+                "targets": "Jedno či více světel nebo skupin; případně jedna scéna nebo skript. Krátký stisk přepne světla nebo spustí akci."
+              }
+            },
+            "button_3": {
+              "name": "Tlačítko 3",
+              "data": {
+                "targets": "Světla nebo akce"
+              },
+              "data_description": {
+                "targets": "Jedno či více světel nebo skupin; případně jedna scéna nebo skript. Krátký stisk přepne světla nebo spustí akci."
+              }
+            },
+            "button_4": {
+              "name": "Tlačítko 4",
+              "data": {
+                "targets": "Světla nebo akce"
+              },
+              "data_description": {
+                "targets": "Jedno či více světel nebo skupin; případně jedna scéna nebo skript. Krátký stisk přepne světla nebo spustí akci."
+              }
+            }
           }
         },
         "reconfigure": {
           "title": "Nastavení – {controller}",
-          "description": "Před zapnutím vypni původní automatizaci stmívání. Citlivost určuje procentní body jasu na 15 hlášených kroků; přechod určuje délku rampy světla. Krátké uvolnění tlačítka spustí scénu či skript nebo přepne světlo.",
           "data": {
-            "enabled": "Zapnout ovládání světel a tlačítek",
-            "lights": "Světla ovládaná kolečkem",
-            "sensitivity": "Citlivost",
-            "transition": "Plynulý přechod (sekundy)",
-            "button_1": "Tlačítko 1 (volitelné)",
-            "button_2": "Tlačítko 2 (volitelné)",
-            "button_3": "Tlačítko 3 (volitelné)",
-            "button_4": "Tlačítko 4 (volitelné)"
+            "enabled": "Zapnout ovládání"
+          },
+          "sections": {
+            "dial": {
+              "name": "Dial",
+              "data": {
+                "profile": "Chování kolečka",
+                "source": "Ovládaná světla",
+                "lights": "Vlastní světla",
+                "sensitivity": "Citlivost",
+                "transition": "Plynulý přechod (sekundy)"
+              },
+              "data_description": {
+                "source": "* Rychlá volba podporuje jednotlivá světla, skupiny a seznamy světel. Pro scény a skripty zvolte Vlastní světla."
+              }
+            },
+            "button_1": {
+              "name": "Tlačítko 1",
+              "data": {
+                "targets": "Světla nebo akce"
+              },
+              "data_description": {
+                "targets": "Jedno či více světel nebo skupin; případně jedna scéna nebo skript. Krátký stisk přepne světla nebo spustí akci."
+              }
+            },
+            "button_2": {
+              "name": "Tlačítko 2",
+              "data": {
+                "targets": "Světla nebo akce"
+              },
+              "data_description": {
+                "targets": "Jedno či více světel nebo skupin; případně jedna scéna nebo skript. Krátký stisk přepne světla nebo spustí akci."
+              }
+            },
+            "button_3": {
+              "name": "Tlačítko 3",
+              "data": {
+                "targets": "Světla nebo akce"
+              },
+              "data_description": {
+                "targets": "Jedno či více světel nebo skupin; případně jedna scéna nebo skript. Krátký stisk přepne světla nebo spustí akci."
+              }
+            },
+            "button_4": {
+              "name": "Tlačítko 4",
+              "data": {
+                "targets": "Světla nebo akce"
+              },
+              "data_description": {
+                "targets": "Jedno či více světel nebo skupin; případně jedna scéna nebo skript. Krátký stisk přepne světla nebo spustí akci."
+              }
+            }
           }
         }
       },
       "error": {
-        "lights_required": "Před zapnutím ovládání vyber alespoň jedno světlo."
+        "lights_required": "Před zapnutím ovládání vyber světla kolečka.",
+        "button_lights_only": "Zvolené tlačítko musí mít přiřazená světla, skupinu nebo seznam světel. Pro scénu či skript zvol Vlastní světla.",
+        "button_targets_invalid": "Tlačítko může ovládat seznam světel či skupin, nebo jednu scénu či skript."
       },
       "abort": {
         "no_unconfigured_controllers": "Všechny nalezené ovladače už jsou v seznamu. Pro nový ovladač nejprve znovu načti integraci."
+      }
+    }
+  },
+  "selector": {
+    "dial_profile": {
+      "options": {
+        "gentle": "Jemné",
+        "balanced": "Vyvážené",
+        "swift": "Svižné",
+        "custom": "Vlastní"
+      }
+    },
+    "dial_source": {
+      "options": {
+        "button_1": "Stejná jako tlačítko 1",
+        "button_2": "Stejná jako tlačítko 2",
+        "button_3": "Stejná jako tlačítko 3",
+        "button_4": "Stejná jako tlačítko 4",
+        "custom": "Vlastní světla"
       }
     }
   }

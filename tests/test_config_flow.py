@@ -10,6 +10,7 @@ from homeassistant.config_entries import (
 )
 from homeassistant.core import HomeAssistant
 
+from custom_components.hue_fluid_dimmer.bindings import form_values
 from custom_components.hue_fluid_dimmer.config_flow import (
     HueFluidDimmerFlow,
     HueFluidDimmerOptionsFlow,
@@ -86,7 +87,9 @@ async def test_reconfigure_keeps_other_controllers_and_clears_button(tmp_path):
 
     config_entry.add_update_listener(listener)
     result = await flow.async_step_reconfigure(
-        {"enabled": True, "lights": ["light.test"], "sensitivity": 1.5, "transition": 1}
+        form_values(
+            {"enabled": True, "lights": ["light.test"], "sensitivity": 1.5, "transition": 1}
+        )
     )
     bindings = {sub.unique_id: sub.data for sub in config_entry.subentries.values()}
     assert result["type"] == "abort" and result["reason"] == "reconfigure_successful"
@@ -106,14 +109,14 @@ async def test_reconfigure_opens_specific_controller_without_device_lookup(tmp_p
     assert result["step_id"] == "reconfigure"
     assert result["description_placeholders"] == {"controller": "dial-a"}
     defaults = result["data_schema"]({})
-    assert defaults["enabled"] is True and defaults["lights"] == ["light.test"]
+    assert defaults["enabled"] is True and defaults["dial"]["lights"] == ["light.test"]
     await flow.hass.async_stop()
 
 
 async def test_enabled_requires_lights(tmp_path):
     flow, _ = subentry_flow(tmp_path, {"dial-a": {}})
-    result = await flow.async_step_reconfigure({"enabled": True})
-    assert result["errors"] == {"lights": "lights_required"}
+    result = await flow.async_step_reconfigure(form_values({"enabled": True}))
+    assert result["errors"] == {"base": "lights_required"}
     await flow.hass.async_stop()
 
 
@@ -129,7 +132,9 @@ async def test_add_controller_excludes_existing_rows_and_creates_binding(tmp_pat
     result = await flow.async_step_user({"controller": "dial-b"})
     assert result["step_id"] == "binding"
     result = await flow.async_step_binding(
-        {"enabled": True, "lights": ["light.bedroom"], "sensitivity": 1.5, "transition": 1}
+        form_values(
+            {"enabled": True, "lights": ["light.bedroom"], "sensitivity": 1.5, "transition": 1}
+        )
     )
     assert result["type"] == "create_entry" and result["title"] == "Bedroom"
     assert result["unique_id"] == "dial-b"

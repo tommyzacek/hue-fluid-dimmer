@@ -44,38 +44,145 @@
         },
         "binding": {
           "title": "Controller settings",
-          "description": "Disable its existing dimming automation before enabling control. Sensitivity is brightness percentage points per 15 reported steps; transition is the native light ramp. Buttons activate scenes/scripts or toggle lights on short release.",
           "data": {
-            "enabled": "Enable light and button control",
-            "lights": "Lights controlled by the dial",
-            "sensitivity": "Sensitivity",
-            "transition": "Transition (seconds)",
-            "button_1": "Button 1 (optional)",
-            "button_2": "Button 2 (optional)",
-            "button_3": "Button 3 (optional)",
-            "button_4": "Button 4 (optional)"
+            "enabled": "Enable control"
+          },
+          "sections": {
+            "dial": {
+              "name": "Dial",
+              "data": {
+                "profile": "Dial behavior",
+                "source": "Controlled lights",
+                "lights": "Custom lights",
+                "sensitivity": "Sensitivity",
+                "transition": "Transition (seconds)"
+              },
+              "data_description": {
+                "source": "* Quick selections support individual lights, light groups and lists of lights. For scenes and scripts, choose Custom lights."
+              }
+            },
+            "button_1": {
+              "name": "Button 1",
+              "data": {
+                "targets": "Lights or action"
+              },
+              "data_description": {
+                "targets": "One or more lights/groups, or one scene/script. Short release toggles lights or activates the action."
+              }
+            },
+            "button_2": {
+              "name": "Button 2",
+              "data": {
+                "targets": "Lights or action"
+              },
+              "data_description": {
+                "targets": "One or more lights/groups, or one scene/script. Short release toggles lights or activates the action."
+              }
+            },
+            "button_3": {
+              "name": "Button 3",
+              "data": {
+                "targets": "Lights or action"
+              },
+              "data_description": {
+                "targets": "One or more lights/groups, or one scene/script. Short release toggles lights or activates the action."
+              }
+            },
+            "button_4": {
+              "name": "Button 4",
+              "data": {
+                "targets": "Lights or action"
+              },
+              "data_description": {
+                "targets": "One or more lights/groups, or one scene/script. Short release toggles lights or activates the action."
+              }
+            }
           }
         },
         "reconfigure": {
           "title": "Configure – {controller}",
-          "description": "Disable its existing dimming automation before enabling control. Sensitivity is brightness percentage points per 15 reported steps; transition is the native light ramp. Buttons activate scenes/scripts or toggle lights on short release.",
           "data": {
-            "enabled": "Enable light and button control",
-            "lights": "Lights controlled by the dial",
-            "sensitivity": "Sensitivity",
-            "transition": "Transition (seconds)",
-            "button_1": "Button 1 (optional)",
-            "button_2": "Button 2 (optional)",
-            "button_3": "Button 3 (optional)",
-            "button_4": "Button 4 (optional)"
+            "enabled": "Enable control"
+          },
+          "sections": {
+            "dial": {
+              "name": "Dial",
+              "data": {
+                "profile": "Dial behavior",
+                "source": "Controlled lights",
+                "lights": "Custom lights",
+                "sensitivity": "Sensitivity",
+                "transition": "Transition (seconds)"
+              },
+              "data_description": {
+                "source": "* Quick selections support individual lights, light groups and lists of lights. For scenes and scripts, choose Custom lights."
+              }
+            },
+            "button_1": {
+              "name": "Button 1",
+              "data": {
+                "targets": "Lights or action"
+              },
+              "data_description": {
+                "targets": "One or more lights/groups, or one scene/script. Short release toggles lights or activates the action."
+              }
+            },
+            "button_2": {
+              "name": "Button 2",
+              "data": {
+                "targets": "Lights or action"
+              },
+              "data_description": {
+                "targets": "One or more lights/groups, or one scene/script. Short release toggles lights or activates the action."
+              }
+            },
+            "button_3": {
+              "name": "Button 3",
+              "data": {
+                "targets": "Lights or action"
+              },
+              "data_description": {
+                "targets": "One or more lights/groups, or one scene/script. Short release toggles lights or activates the action."
+              }
+            },
+            "button_4": {
+              "name": "Button 4",
+              "data": {
+                "targets": "Lights or action"
+              },
+              "data_description": {
+                "targets": "One or more lights/groups, or one scene/script. Short release toggles lights or activates the action."
+              }
+            }
           }
         }
       },
       "error": {
-        "lights_required": "Select at least one light before enabling control."
+        "lights_required": "Select dial lights before enabling control.",
+        "button_lights_only": "The selected button must target lights/groups. Choose Custom lights for scenes or scripts.",
+        "button_targets_invalid": "A button supports a list of lights/groups, or one scene or script."
       },
       "abort": {
         "no_unconfigured_controllers": "All discovered controllers are already listed. Reload the integration before adding a new controller."
+      }
+    }
+  },
+  "selector": {
+    "dial_profile": {
+      "options": {
+        "gentle": "Gentle",
+        "balanced": "Balanced",
+        "swift": "Swift",
+        "custom": "Custom"
+      }
+    },
+    "dial_source": {
+      "options": {
+        "button_1": "Same as button 1",
+        "button_2": "Same as button 2",
+        "button_3": "Same as button 3",
+        "button_4": "Same as button 4",
+        "custom": "Custom lights"
       }
     }
   }

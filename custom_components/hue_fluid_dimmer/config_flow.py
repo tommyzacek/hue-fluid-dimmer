@@ -13,8 +13,10 @@ from homeassistant.config_entries import (
     SubentryFlowResult,
 )
 from homeassistant.core import callback
+from homeassistant.data_entry_flow import section
 from homeassistant.helpers import selector
 
+from .bindings import form_values, parse_form
 from .const import (
     CONF_HUE_ENTRY,
     CONF_INTERVAL,
@@ -41,19 +43,63 @@ def number(minimum: float, maximum: float, step: float) -> selector.NumberSelect
     return selector.NumberSelector({"min": minimum, "max": maximum, "step": step, "mode": "box"})
 
 
+class VisibleNumber(selector.NumberSelector):
+    def serialize(self):
+        return {**super().serialize(), "visible": {"field": "profile", "value": "custom"}}
+
+
+class VisibleLights(selector.EntitySelector):
+    def serialize(self):
+        return {**super().serialize(), "visible": {"field": "source", "value": "custom"}}
+
+
 def binding_schema(old: dict) -> p.Schema:
+    data = form_values(old)
+    dial = data["dial"]
     schema = {
-        p.Required("enabled", default=old.get("enabled", False)): bool,
-        p.Optional("lights", default=old.get("lights", [])): selector.EntitySelector(
-            {"domain": "light", "multiple": True}
+        p.Required("enabled", default=data["enabled"]): bool,
+        p.Required("dial", default=data["dial"]): section(
+            p.Schema(
+                {
+                    p.Required("profile", default=dial["profile"]): selector.SelectSelector(
+                        {
+                            "options": ["gentle", "balanced", "swift", "custom"],
+                            "translation_key": "dial_profile",
+                            "mode": "list",
+                        }
+                    ),
+                    p.Required("source", default=dial["source"]): selector.SelectSelector(
+                        {
+                            "options": ["button_1", "button_2", "button_3", "button_4", "custom"],
+                            "translation_key": "dial_source",
+                            "mode": "dropdown",
+                        }
+                    ),
+                    p.Optional("lights", default=dial["lights"]): VisibleLights(
+                        {"domain": "light", "multiple": True}
+                    ),
+                    p.Required("sensitivity", default=dial["sensitivity"]): VisibleNumber(
+                        {"min": 0.1, "max": 10, "step": 0.05, "mode": "box"}
+                    ),
+                    p.Required("transition", default=dial["transition"]): VisibleNumber(
+                        {"min": 0.1, "max": 3, "step": 0.1, "mode": "box"}
+                    ),
+                }
+            )
         ),
-        p.Required("sensitivity", default=old.get("sensitivity", 1.5)): number(0.1, 10, 0.1),
-        p.Required("transition", default=old.get("transition", 1)): number(0.1, 3, 0.1),
     }
     for index in range(1, 5):
         field = f"button_{index}"
-        key = p.Optional(field, default=old[field]) if old.get(field) else p.Optional(field)
-        schema[key] = selector.EntitySelector({"domain": ["scene", "script", "light"]})
+        schema[p.Optional(field, default=data[field])] = section(
+            p.Schema(
+                {
+                    p.Optional("targets", default=data[field]["targets"]): selector.EntitySelector(
+                        {"domain": ["light", "scene", "script"], "multiple": True}
+                    ),
+                }
+            ),
+            {"collapsed": True},
+        )
     return p.Schema(schema)
 
 
@@ -159,14 +205,15 @@ class TapDialSubentryFlow(ConfigSubentryFlow):
         errors = {}
         old = {}
         if user_input is not None:
-            if user_input.get("enabled") and not user_input.get("lights"):
-                errors["lights"] = "lights_required"
-                old = user_input
+            binding, error = parse_form(user_input)
+            if error:
+                errors["base"] = error
+                old = binding
             else:
                 return self.async_create_entry(
                     title=entry.runtime_data.controllers().get(self.resource_id, self.resource_id),
                     unique_id=self.resource_id,
-                    data={CONF_RESOURCE: self.resource_id, **user_input},
+                    data={CONF_RESOURCE: self.resource_id, **binding},
                 )
         return self.async_show_form(
             step_id="binding", data_schema=binding_schema(old), errors=errors
@@ -180,16 +227,17 @@ class TapDialSubentryFlow(ConfigSubentryFlow):
         old = dict(subentry.data)
         errors = {}
         if user_input is not None:
-            if user_input.get("enabled") and not user_input.get("lights"):
-                errors["lights"] = "lights_required"
-                old = user_input
+            binding, error = parse_form(user_input)
+            if error:
+                errors["base"] = error
+                old = binding
             else:
                 # Replace the binding so cleared optional buttons stay cleared.
                 # Updating the subentry invokes the parent's existing reload listener.
                 return self.async_update_and_abort(
                     entry,
                     subentry,
-                    data={CONF_RESOURCE: subentry.data[CONF_RESOURCE], **user_input},
+                    data={CONF_RESOURCE: subentry.data[CONF_RESOURCE], **binding},
                 )
         return self.async_show_form(
             step_id="reconfigure",

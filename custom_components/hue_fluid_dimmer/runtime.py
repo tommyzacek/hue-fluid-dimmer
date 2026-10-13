@@ -13,6 +13,7 @@ from homeassistant.helpers import aiohttp_client
 from homeassistant.helpers import device_registry as dr
 
 from .api import BridgeClient, BridgeError
+from .bindings import targets
 from .configuration import controller_binding
 from .const import (
     CONF_HUE_ENTRY,
@@ -178,15 +179,24 @@ class Runtime:
 
     async def button(self, resource_id: str, binding: dict, index: int) -> None:
         async with self.button_locks.setdefault(resource_id, asyncio.Lock()):
-            entity_id = binding[f"button_{index}"]
-            domain = entity_id.split(".", 1)[0]
+            selected = targets(binding[f"button_{index}"])
+            if not selected:
+                return
+            domain = selected[0].split(".", 1)[0]
             service = "toggle" if domain == "light" else "turn_on"
             if domain not in ("light", "scene", "script"):
+                return
+            if any(item.split(".", 1)[0] != domain for item in selected):
+                return
+            if domain != "light" and len(selected) != 1:
                 return
             # Cancel the pending ramp before a button switches a light or scene.
             await self.dimmer.cancel_targets(tuple(binding.get("lights", [])))
             await self.hass.services.async_call(
-                domain, service, {"entity_id": entity_id}, blocking=True
+                domain,
+                service,
+                {"entity_id": selected if domain == "light" else selected[0]},
+                blocking=True,
             )
 
     async def close(self) -> None:
