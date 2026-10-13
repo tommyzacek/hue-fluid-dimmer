@@ -169,7 +169,7 @@ class HueFluidDimmerOptionsFlow(OptionsFlow):
                 {
                     p.Required(CONF_MODE, default=options.get(CONF_MODE, MODE_ACTIVE)): select(
                         {
-                            MODE_ACTIVE: "Only during rotation / Jen při otáčení",
+                            MODE_ACTIVE: "After first event / Po první události",
                             MODE_CONTINUOUS: "Continuous / Trvale",
                         }
                     ),
