@@ -5,7 +5,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 
 # Gesture interval uses Bridge timestamps. Receipt grace handles its ~1 s SSE batches.
-CLICK_WINDOW = 0.4
+CLICK_WINDOW = 0.35
 BATCH_GRACE = 1.0
 
 
@@ -19,9 +19,16 @@ class Pending:
 
 
 class Gestures:
-    def __init__(self, actions: Callable, emit: Callable, ready: Callable | None = None) -> None:
+    def __init__(
+        self,
+        actions: Callable,
+        emit: Callable,
+        ready: Callable | None = None,
+        hold_event: Callable | None = None,
+    ) -> None:
         self.actions, self.emit = actions, emit
         self.ready = ready or (lambda key, state: True)
+        self.hold_event = hold_event or (lambda *args: None)
         self.pending: dict[tuple[str, int], Pending] = {}
         self.latest: dict[tuple[str, int], float] = {}
 
@@ -67,7 +74,7 @@ class Gestures:
                 return False
             if event == "long_release" and (not state.pressed or not state.held):
                 return False
-            if event == "repeat":
+            if event == "repeat" and (not state.pressed or not state.held):
                 return False
         self.latest[key] = updated
         state = self.pending.setdefault(key, Pending())
@@ -84,7 +91,9 @@ class Gestures:
             self.finish(key, force=True)
             state = self.pending.setdefault(key, Pending(pressed=True))
             state.held = True
-            if actions.get("long"):
+            if actions.get("long_mode") == "dimming":
+                self.hold_event(*key, "start", updated)
+            elif actions.get("long"):
                 self.emit(*key, "long")
         elif event == "short_release" and state.pressed and not state.held:
             state.pressed = False
@@ -97,9 +106,13 @@ class Gestures:
                 state.timer = asyncio.get_running_loop().call_later(
                     CLICK_WINDOW + BATCH_GRACE, self.finish, key
                 )
+        elif event == "repeat" and state.pressed and state.held:
+            self.hold_event(*key, "repeat", updated)
         elif event == "long_release":
             # Never turn a held press into an additional short action.
             self.finish(key, force=True)
+            if actions.get("long_mode") == "dimming":
+                self.hold_event(*key, "release", updated)
         else:
             return False
         return True

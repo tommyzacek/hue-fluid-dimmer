@@ -1,5 +1,30 @@
 {
   "title": "Hue Fluid Dimmer",
+  "selector": {
+    "dial_profile": {
+      "options": {
+        "gentle": "Gentle",
+        "balanced": "Balanced",
+        "swift": "Swift",
+        "custom": "Custom"
+      }
+    },
+    "button_operation": {
+      "options": {
+        "toggle": "Off / on",
+        "previous": "Off / previous percentage",
+        "configured": "Off / configured percentage",
+        "dimming": "Smooth adjustment while held",
+        "dial": "Dial – temporarily take over the wheel"
+      }
+    },
+    "lights_heading": {
+      "value": "Lights"
+    },
+    "other_heading": {
+      "value": "Other entities"
+    }
+  },
   "config": {
     "step": {
       "user": {
@@ -52,74 +77,131 @@
               "name": "Dial",
               "data": {
                 "profile": "Dial behavior",
-                "source": "Controlled lights",
-                "lights": "Custom lights",
                 "sensitivity": "Sensitivity",
-                "transition": "Transition (seconds)"
+                "transition": "Transition (seconds)",
+                "nonlight_transition": "Ramp (seconds)",
+                "adaptive_transition": "Adaptive transition following rotation (experimental)",
+                "nonlight_sensitivity": "Sensitivity",
+                "lights_heading": "",
+                "other_heading": ""
               },
-              "data_description": {
-                "source": "* Quick selection uses the button’s short-press lights: individual lights, groups and lists. For scenes and scripts, choose Custom lights."
-              }
+              "data_description": {},
+              "description": "The wheel normally controls button 1’s short-press devices. Buttons 2–4 can temporarily take over: return after 5 s without rotation or 5 s after the last movement."
             },
             "button_1": {
               "name": "Button 1",
               "data": {
                 "short_enabled": "Short press",
-                "short_targets": "Lights or action",
+                "short_targets": "Devices or action",
                 "long_enabled": "Long press",
-                "long_targets": "Lights or action",
+                "long_targets": "Devices or action",
                 "double_enabled": "Double press",
-                "double_targets": "Lights or action",
+                "double_targets": "Devices or action",
                 "triple_enabled": "Triple press",
-                "triple_targets": "Lights or action"
+                "triple_targets": "Devices or action",
+                "short_operation": "Action",
+                "short_percentage": "Configured percentage",
+                "long_operation": "Action",
+                "long_percentage": "Configured percentage",
+                "double_operation": "Action",
+                "double_percentage": "Configured percentage",
+                "triple_operation": "Action",
+                "triple_percentage": "Configured percentage"
               },
-              "data_description": {},
-              "description": "Short press has no recognition delay unless double/triple press is enabled. Multi-press: up to 400 ms from release to the next press. REST can shorten waiting; SSE preserves the press count. If REST is unavailable, the conservative 1.4 s wait remains. Long press runs once."
+              "data_description": {
+                "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range."
+              },
+              "description": "Short press responds immediately unless double or triple press is enabled. Choose a power/level action for each press type. Long press also offers smooth adjustment while held."
             },
             "button_2": {
               "name": "Button 2",
               "data": {
                 "short_enabled": "Short press",
-                "short_targets": "Lights or action",
+                "short_targets": "Devices or action",
                 "long_enabled": "Long press",
-                "long_targets": "Lights or action",
+                "long_targets": "Devices or action",
                 "double_enabled": "Double press",
-                "double_targets": "Lights or action",
+                "double_targets": "Devices or action",
                 "triple_enabled": "Triple press",
-                "triple_targets": "Lights or action"
+                "triple_targets": "Devices or action",
+                "short_operation": "Action",
+                "short_percentage": "Configured percentage",
+                "long_operation": "Action",
+                "long_percentage": "Configured percentage",
+                "double_operation": "Action",
+                "double_percentage": "Configured percentage",
+                "triple_operation": "Action",
+                "triple_percentage": "Configured percentage"
               },
-              "data_description": {},
-              "description": "Short press has no recognition delay unless double/triple press is enabled. Multi-press: up to 400 ms from release to the next press. REST can shorten waiting; SSE preserves the press count. If REST is unavailable, the conservative 1.4 s wait remains. Long press runs once."
+              "data_description": {
+                "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_targets": "Dial automatically uses this button’s short-press target; this target selection is ignored."
+              },
+              "description": "Short press responds immediately unless double or triple press is enabled. Choose a power/level action for each press type. Long press also offers smooth adjustment while held."
             },
             "button_3": {
               "name": "Button 3",
               "data": {
                 "short_enabled": "Short press",
-                "short_targets": "Lights or action",
+                "short_targets": "Devices or action",
                 "long_enabled": "Long press",
-                "long_targets": "Lights or action",
+                "long_targets": "Devices or action",
                 "double_enabled": "Double press",
-                "double_targets": "Lights or action",
+                "double_targets": "Devices or action",
                 "triple_enabled": "Triple press",
-                "triple_targets": "Lights or action"
+                "triple_targets": "Devices or action",
+                "short_operation": "Action",
+                "short_percentage": "Configured percentage",
+                "long_operation": "Action",
+                "long_percentage": "Configured percentage",
+                "double_operation": "Action",
+                "double_percentage": "Configured percentage",
+                "triple_operation": "Action",
+                "triple_percentage": "Configured percentage"
               },
-              "data_description": {},
-              "description": "Short press has no recognition delay unless double/triple press is enabled. Multi-press: up to 400 ms from release to the next press. REST can shorten waiting; SSE preserves the press count. If REST is unavailable, the conservative 1.4 s wait remains. Long press runs once."
+              "data_description": {
+                "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_targets": "Dial automatically uses this button’s short-press target; this target selection is ignored."
+              },
+              "description": "Short press responds immediately unless double or triple press is enabled. Choose a power/level action for each press type. Long press also offers smooth adjustment while held."
             },
             "button_4": {
               "name": "Button 4",
               "data": {
                 "short_enabled": "Short press",
-                "short_targets": "Lights or action",
+                "short_targets": "Devices or action",
                 "long_enabled": "Long press",
-                "long_targets": "Lights or action",
+                "long_targets": "Devices or action",
                 "double_enabled": "Double press",
-                "double_targets": "Lights or action",
+                "double_targets": "Devices or action",
                 "triple_enabled": "Triple press",
-                "triple_targets": "Lights or action"
+                "triple_targets": "Devices or action",
+                "short_operation": "Action",
+                "short_percentage": "Configured percentage",
+                "long_operation": "Action",
+                "long_percentage": "Configured percentage",
+                "double_operation": "Action",
+                "double_percentage": "Configured percentage",
+                "triple_operation": "Action",
+                "triple_percentage": "Configured percentage"
               },
-              "data_description": {},
-              "description": "Short press has no recognition delay unless double/triple press is enabled. Multi-press: up to 400 ms from release to the next press. REST can shorten waiting; SSE preserves the press count. If REST is unavailable, the conservative 1.4 s wait remains. Long press runs once."
+              "data_description": {
+                "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_targets": "Dial automatically uses this button’s short-press target; this target selection is ignored."
+              },
+              "description": "Short press responds immediately unless double or triple press is enabled. Choose a power/level action for each press type. Long press also offers smooth adjustment while held."
             }
           }
         },
@@ -133,105 +215,146 @@
               "name": "Dial",
               "data": {
                 "profile": "Dial behavior",
-                "source": "Controlled lights",
-                "lights": "Custom lights",
                 "sensitivity": "Sensitivity",
-                "transition": "Transition (seconds)"
+                "transition": "Transition (seconds)",
+                "nonlight_transition": "Ramp (seconds)",
+                "adaptive_transition": "Adaptive transition following rotation (experimental)",
+                "nonlight_sensitivity": "Sensitivity",
+                "lights_heading": "",
+                "other_heading": ""
               },
-              "data_description": {
-                "source": "* Quick selection uses the button’s short-press lights: individual lights, groups and lists. For scenes and scripts, choose Custom lights."
-              }
+              "data_description": {},
+              "description": "The wheel normally controls button 1’s short-press devices. Buttons 2–4 can temporarily take over: return after 5 s without rotation or 5 s after the last movement."
             },
             "button_1": {
               "name": "Button 1",
               "data": {
                 "short_enabled": "Short press",
-                "short_targets": "Lights or action",
+                "short_targets": "Devices or action",
                 "long_enabled": "Long press",
-                "long_targets": "Lights or action",
+                "long_targets": "Devices or action",
                 "double_enabled": "Double press",
-                "double_targets": "Lights or action",
+                "double_targets": "Devices or action",
                 "triple_enabled": "Triple press",
-                "triple_targets": "Lights or action"
+                "triple_targets": "Devices or action",
+                "short_operation": "Action",
+                "short_percentage": "Configured percentage",
+                "long_operation": "Action",
+                "long_percentage": "Configured percentage",
+                "double_operation": "Action",
+                "double_percentage": "Configured percentage",
+                "triple_operation": "Action",
+                "triple_percentage": "Configured percentage"
               },
-              "data_description": {},
-              "description": "Short press has no recognition delay unless double/triple press is enabled. Multi-press: up to 400 ms from release to the next press. REST can shorten waiting; SSE preserves the press count. If REST is unavailable, the conservative 1.4 s wait remains. Long press runs once."
+              "data_description": {
+                "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range."
+              },
+              "description": "Short press responds immediately unless double or triple press is enabled. Choose a power/level action for each press type. Long press also offers smooth adjustment while held."
             },
             "button_2": {
               "name": "Button 2",
               "data": {
                 "short_enabled": "Short press",
-                "short_targets": "Lights or action",
+                "short_targets": "Devices or action",
                 "long_enabled": "Long press",
-                "long_targets": "Lights or action",
+                "long_targets": "Devices or action",
                 "double_enabled": "Double press",
-                "double_targets": "Lights or action",
+                "double_targets": "Devices or action",
                 "triple_enabled": "Triple press",
-                "triple_targets": "Lights or action"
+                "triple_targets": "Devices or action",
+                "short_operation": "Action",
+                "short_percentage": "Configured percentage",
+                "long_operation": "Action",
+                "long_percentage": "Configured percentage",
+                "double_operation": "Action",
+                "double_percentage": "Configured percentage",
+                "triple_operation": "Action",
+                "triple_percentage": "Configured percentage"
               },
-              "data_description": {},
-              "description": "Short press has no recognition delay unless double/triple press is enabled. Multi-press: up to 400 ms from release to the next press. REST can shorten waiting; SSE preserves the press count. If REST is unavailable, the conservative 1.4 s wait remains. Long press runs once."
+              "data_description": {
+                "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_targets": "Dial automatically uses this button’s short-press target; this target selection is ignored."
+              },
+              "description": "Short press responds immediately unless double or triple press is enabled. Choose a power/level action for each press type. Long press also offers smooth adjustment while held."
             },
             "button_3": {
               "name": "Button 3",
               "data": {
                 "short_enabled": "Short press",
-                "short_targets": "Lights or action",
+                "short_targets": "Devices or action",
                 "long_enabled": "Long press",
-                "long_targets": "Lights or action",
+                "long_targets": "Devices or action",
                 "double_enabled": "Double press",
-                "double_targets": "Lights or action",
+                "double_targets": "Devices or action",
                 "triple_enabled": "Triple press",
-                "triple_targets": "Lights or action"
+                "triple_targets": "Devices or action",
+                "short_operation": "Action",
+                "short_percentage": "Configured percentage",
+                "long_operation": "Action",
+                "long_percentage": "Configured percentage",
+                "double_operation": "Action",
+                "double_percentage": "Configured percentage",
+                "triple_operation": "Action",
+                "triple_percentage": "Configured percentage"
               },
-              "data_description": {},
-              "description": "Short press has no recognition delay unless double/triple press is enabled. Multi-press: up to 400 ms from release to the next press. REST can shorten waiting; SSE preserves the press count. If REST is unavailable, the conservative 1.4 s wait remains. Long press runs once."
+              "data_description": {
+                "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_targets": "Dial automatically uses this button’s short-press target; this target selection is ignored."
+              },
+              "description": "Short press responds immediately unless double or triple press is enabled. Choose a power/level action for each press type. Long press also offers smooth adjustment while held."
             },
             "button_4": {
               "name": "Button 4",
               "data": {
                 "short_enabled": "Short press",
-                "short_targets": "Lights or action",
+                "short_targets": "Devices or action",
                 "long_enabled": "Long press",
-                "long_targets": "Lights or action",
+                "long_targets": "Devices or action",
                 "double_enabled": "Double press",
-                "double_targets": "Lights or action",
+                "double_targets": "Devices or action",
                 "triple_enabled": "Triple press",
-                "triple_targets": "Lights or action"
+                "triple_targets": "Devices or action",
+                "short_operation": "Action",
+                "short_percentage": "Configured percentage",
+                "long_operation": "Action",
+                "long_percentage": "Configured percentage",
+                "double_operation": "Action",
+                "double_percentage": "Configured percentage",
+                "triple_operation": "Action",
+                "triple_percentage": "Configured percentage"
               },
-              "data_description": {},
-              "description": "Short press has no recognition delay unless double/triple press is enabled. Multi-press: up to 400 ms from release to the next press. REST can shorten waiting; SSE preserves the press count. If REST is unavailable, the conservative 1.4 s wait remains. Long press runs once."
+              "data_description": {
+                "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_targets": "Dial automatically uses this button’s short-press target; this target selection is ignored."
+              },
+              "description": "Short press responds immediately unless double or triple press is enabled. Choose a power/level action for each press type. Long press also offers smooth adjustment while held."
             }
           }
         }
       },
       "error": {
-        "lights_required": "Select dial lights before enabling control.",
+        "lights_required": "Select dial lights or at least one button action.",
         "button_lights_only": "The selected button must target lights/groups. Choose Custom lights for scenes or scripts.",
-        "button_targets_invalid": "A button supports a list of lights/groups, or one scene or script.",
-        "button_target_required": "Select a target for each enabled press type."
+        "button_targets_invalid": "Select devices of the same type (lights, fans or number controls), or a single scene or script.",
+        "button_target_required": "Select a target for each enabled press type.",
+        "button_percentage_only": "Select lights, or fans and number controls. Do not mix these two groups in one ramp.",
+        "button_percentage_invalid": "Select a valid action and a percentage from 1 to 100.",
+        "dial_target_required": "Dial requires direct short-press targets (lights, fans or number controls). Temporary takeover is available only on buttons 2–4."
       },
       "abort": {
         "no_unconfigured_controllers": "All discovered controllers are already listed. Reload the integration before adding a new controller."
-      }
-    }
-  },
-  "selector": {
-    "dial_profile": {
-      "options": {
-        "gentle": "Gentle",
-        "balanced": "Balanced",
-        "swift": "Swift",
-        "custom": "Custom"
-      }
-    },
-    "dial_source": {
-      "options": {
-        "button_1": "Same as button 1 short press",
-        "button_2": "Same as button 2 short press",
-        "button_3": "Same as button 3 short press",
-        "button_4": "Same as button 4 short press",
-        "custom": "Custom lights"
       }
     }
   }

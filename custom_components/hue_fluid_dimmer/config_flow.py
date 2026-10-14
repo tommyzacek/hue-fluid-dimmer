@@ -48,6 +48,18 @@ class VisibleNumber(selector.NumberSelector):
         return {**super().serialize(), "visible": {"field": "profile", "value": "custom"}}
 
 
+class VisibleCustomBoolean(selector.BooleanSelector):
+    def serialize(self):
+        return {**super().serialize(), "visible": {"field": "profile", "value": "custom"}}
+
+
+class CustomHeading(selector.ConstantSelector):
+    """Display a static heading only for the custom dial profile."""
+
+    def serialize(self):
+        return {**super().serialize(), "visible": {"field": "profile", "value": "custom"}}
+
+
 class VisibleLights(selector.EntitySelector):
     def serialize(self):
         return {**super().serialize(), "visible": {"field": "source", "value": "custom"}}
@@ -55,13 +67,45 @@ class VisibleLights(selector.EntitySelector):
 
 class VisibleActionTargets(selector.EntitySelector):
     def __init__(self, action: str):
-        super().__init__({"domain": ["light", "scene", "script"], "multiple": True})
+        domains = ["light", "scene", "script", "fan", "number"]
+        super().__init__({"domain": domains, "multiple": True})
         self.action = action
 
     def serialize(self):
         return {
             **super().serialize(),
             "visible": {"field": f"{self.action}_enabled", "value": True},
+        }
+
+
+class VisibleOperation(selector.SelectSelector):
+    def __init__(self, action, index=2):
+        options = ["toggle", "previous", "configured"]
+        if action == "long":
+            options.append("dimming")
+            if index > 1:
+                options.append("dial")
+        super().__init__(
+            {"options": options, "translation_key": "button_operation", "mode": "dropdown"}
+        )
+        self.action = action
+
+    def serialize(self):
+        return {
+            **super().serialize(),
+            "visible": {"field": f"{self.action}_enabled", "value": True},
+        }
+
+
+class VisiblePercentage(selector.NumberSelector):
+    def __init__(self, action):
+        super().__init__({"min": 1, "max": 100, "step": 1, "mode": "box"})
+        self.action = action
+
+    def serialize(self):
+        return {
+            **super().serialize(),
+            "visible": {"field": f"{self.action}_operation", "value": "configured"},
         }
 
 
@@ -80,15 +124,11 @@ def binding_schema(old: dict, submitted: dict | None = None) -> p.Schema:
                             "mode": "list",
                         }
                     ),
-                    p.Required("source", default=dial["source"]): selector.SelectSelector(
-                        {
-                            "options": ["button_1", "button_2", "button_3", "button_4", "custom"],
-                            "translation_key": "dial_source",
-                            "mode": "dropdown",
-                        }
-                    ),
-                    p.Optional("lights", default=dial["lights"]): VisibleLights(
-                        {"domain": "light", "multiple": True}
+                    p.Required(
+                        "adaptive_transition", default=dial["adaptive_transition"]
+                    ): VisibleCustomBoolean(),
+                    p.Optional("lights_heading", default="lights"): CustomHeading(
+                        {"value": "lights", "translation_key": "lights_heading"}
                     ),
                     p.Required("sensitivity", default=dial["sensitivity"]): VisibleNumber(
                         {"min": 0.1, "max": 10, "step": 0.05, "mode": "box"}
@@ -96,6 +136,15 @@ def binding_schema(old: dict, submitted: dict | None = None) -> p.Schema:
                     p.Required("transition", default=dial["transition"]): VisibleNumber(
                         {"min": 0.1, "max": 3, "step": 0.1, "mode": "box"}
                     ),
+                    p.Optional("other_heading", default="other"): CustomHeading(
+                        {"value": "other", "translation_key": "other_heading"}
+                    ),
+                    p.Required(
+                        "nonlight_sensitivity", default=dial["nonlight_sensitivity"]
+                    ): VisibleNumber({"min": 0.1, "max": 10, "step": 0.05, "mode": "box"}),
+                    p.Required(
+                        "nonlight_transition", default=dial["nonlight_transition"]
+                    ): VisibleNumber({"min": 0.1, "max": 3, "step": 0.05, "mode": "box"}),
                 }
             )
         ),
@@ -108,6 +157,12 @@ def binding_schema(old: dict, submitted: dict | None = None) -> p.Schema:
             fields[p.Optional(f"{action}_targets", default=data[field][f"{action}_targets"])] = (
                 VisibleActionTargets(action)
             )
+            fields[
+                p.Required(f"{action}_operation", default=data[field][f"{action}_operation"])
+            ] = VisibleOperation(action, index)
+            fields[
+                p.Required(f"{action}_percentage", default=data[field][f"{action}_percentage"])
+            ] = VisiblePercentage(action)
         schema[p.Optional(field, default=data[field])] = section(
             p.Schema(fields), {"collapsed": True}
         )

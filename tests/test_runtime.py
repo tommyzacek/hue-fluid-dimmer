@@ -4,6 +4,7 @@ import asyncio
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock
 
+import pytest
 from homeassistant.core import Event
 
 from custom_components.hue_fluid_dimmer.api import BridgeError
@@ -133,6 +134,52 @@ async def test_light_list_button_sends_one_service_call(monkeypatch):
     call.assert_awaited_once_with(
         "light", "toggle", {"entity_id": ["light.group", "light.single"]}, blocking=True
     )
+    await runtime.close()
+
+
+@pytest.mark.parametrize("action", ["short", "long", "double", "triple"])
+async def test_number_action_routes_every_press_type_through_ha(monkeypatch, action):
+    runtime, _ = make_runtime(monkeypatch, {})
+    call = AsyncMock()
+    runtime.hass.services = SimpleNamespace(async_call=call)
+    runtime.hass.states = SimpleNamespace(
+        get=lambda entity: SimpleNamespace(state="0", attributes={"min": 0, "max": 100, "step": 1})
+    )
+    binding = {
+        "button_1": {
+            action: ["number.pwm"],
+            f"{action}_operation": "configured",
+            f"{action}_percentage": 35,
+        }
+    }
+    await runtime.button("dial-a", binding, 1, action)
+    call.assert_awaited_once_with(
+        "number", "set_value", {"entity_id": "number.pwm", "value": 35}, blocking=True
+    )
+    await runtime.close()
+
+
+async def test_temporary_dial_target_returns_to_button_one_after_idle(monkeypatch):
+    runtime, _ = make_runtime(monkeypatch, {})
+    clock = [0.0]
+    monkeypatch.setattr(
+        "custom_components.hue_fluid_dimmer.runtime.time",
+        SimpleNamespace(monotonic=lambda: clock[0]),
+    )
+    binding = {
+        "enabled": True,
+        "lights": ["light.main"],
+        "button_2": {"short": ["number.pwm"], "long": ["number.pwm"], "long_operation": "dial"},
+    }
+    runtime.dimmer.rotate = Mock()
+    runtime.percentage.rotate = Mock()
+    await runtime.button("dial-a", binding, 2, "long")
+    clock[0] = 4
+    runtime.rotate_dial("dial-a", binding, 15)
+    runtime.percentage.rotate.assert_called_once_with(("dial-a", 0), ("number.pwm",), 1.5, 0.75)
+    clock[0] = 9
+    runtime.rotate_dial("dial-a", binding, 15)
+    assert runtime.dimmer.rotate.call_args.args[0]["lights"] == ["light.main"]
     await runtime.close()
 
 

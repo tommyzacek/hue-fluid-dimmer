@@ -53,6 +53,60 @@ async def test_button_resources_are_one_authenticated_discovery_read():
     assert kwargs["headers"]["hue-application-key"] == "test-only-key"
 
 
+async def test_native_brightness_transition_and_stop_use_hue_v2_resources():
+    api = client({"data": [], "errors": []})
+    response = MagicMock(status=200)
+    response.json = AsyncMock(return_value={"data": [], "errors": []})
+    api.session.put.return_value.__aenter__ = AsyncMock(return_value=response)
+    api.session.put.return_value.__aexit__ = AsyncMock(return_value=False)
+
+    await api.brightness_transition("grouped_light", "group-id", 100, 8000)
+    await api.stop_dimming("grouped_light", "group-id")
+
+    calls = api.session.put.call_args_list
+    assert calls[0].args[0].endswith("/resource/grouped_light/group-id")
+    assert calls[0].kwargs["json"] == {
+        "on": {"on": True},
+        "dimming": {"brightness": 100},
+        "dynamics": {"duration": 8000},
+    }
+    assert calls[1].kwargs["json"] == {"dimming_delta": {"action": "stop"}}
+    assert all(call.kwargs["headers"] == {"hue-application-key": "test-only-key"} for call in calls)
+
+
+async def test_bridge_current_brightness_comes_from_resource_readback():
+    api = client(
+        {
+            "data": [
+                {"on": {"on": True}, "dimming": {"brightness": 54.15}},
+            ],
+            "errors": [],
+        }
+    )
+    response = api.session.get.return_value.__aenter__.return_value
+    response.status = 200
+
+    assert await api.read_brightness("grouped_light", "group-id") == 54.15
+    args, kwargs = api.session.get.call_args
+    assert args[0].endswith("/resource/grouped_light/group-id")
+    assert kwargs["headers"] == {"hue-application-key": "test-only-key"}
+
+
+async def test_native_brightness_delta_requests_only_one_smooth_step():
+    api = client({"data": [], "errors": []})
+    response = MagicMock(status=200)
+    response.json = AsyncMock(return_value={"data": [], "errors": []})
+    api.session.put.return_value.__aenter__ = AsyncMock(return_value=response)
+    api.session.put.return_value.__aexit__ = AsyncMock(return_value=False)
+
+    await api.brightness_delta("grouped_light", "group-id", 5, 800)
+    assert api.session.put.call_args.kwargs["json"] == {
+        "dimming_delta": {"action": "up", "brightness_delta": 5},
+        "dynamics": {"duration": 800},
+        "on": {"on": True},
+    }
+
+
 @pytest.mark.parametrize("payload", [None, {"data": [None]}, {"data": [], "errors": [{}]}])
 async def test_invalid_button_discovery_is_recoverable(payload):
     with pytest.raises(BridgeError):

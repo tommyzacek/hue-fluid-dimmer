@@ -96,7 +96,7 @@ async def test_reconfigure_keeps_other_controllers_and_clears_button(tmp_path):
     assert bindings["dial-b"]["enabled"] is False
     assert bindings["dial-a"]["enabled"] is True
     assert bindings["dial-a"][CONF_RESOURCE] == "dial-a"
-    assert "button_1" not in bindings["dial-a"]
+    assert bindings["dial-a"]["button_1"] == {"short": ["light.test"]}
     assert config_entry.supported_subentry_types[SUBENTRY_TAP_DIAL]["supports_reconfigure"]
     await asyncio.sleep(0)
     assert updates == [config_entry.entry_id]
@@ -109,7 +109,7 @@ async def test_reconfigure_opens_specific_controller_without_device_lookup(tmp_p
     assert result["step_id"] == "reconfigure"
     assert result["description_placeholders"] == {"controller": "dial-a"}
     defaults = result["data_schema"]({})
-    assert defaults["enabled"] is True and defaults["dial"]["lights"] == ["light.test"]
+    assert defaults["enabled"] is True and defaults["button_1"]["short_targets"] == ["light.test"]
     await flow.hass.async_stop()
 
 

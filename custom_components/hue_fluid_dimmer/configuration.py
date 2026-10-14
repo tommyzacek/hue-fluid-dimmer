@@ -7,7 +7,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 
-from .bindings import resolve_binding
+from .bindings import link_main_binding, resolve_binding
 from .const import (
     CONF_BINDINGS,
     CONF_CONTROLLERS_INITIALIZED,
@@ -20,7 +20,7 @@ from .const import (
 def controller_binding(entry: ConfigEntry, resource_id: str) -> dict:
     for subentry in entry.subentries.values():
         if subentry.subentry_type == SUBENTRY_TAP_DIAL and subentry.unique_id == resource_id:
-            return resolve_binding(dict(subentry.data))
+            return resolve_binding(link_main_binding(dict(subentry.data)))
     return {}
 
 

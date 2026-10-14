@@ -1,5 +1,30 @@
 {
   "title": "Hue Fluid Dimmer",
+  "selector": {
+    "dial_profile": {
+      "options": {
+        "gentle": "Jemné",
+        "balanced": "Vyvážené",
+        "swift": "Svižné",
+        "custom": "Vlastní"
+      }
+    },
+    "button_operation": {
+      "options": {
+        "toggle": "Vypnuto / zapnuto",
+        "previous": "Vypnuto / předchozí procento",
+        "configured": "Vypnuto / nastavené procento",
+        "dimming": "Plynulá regulace při držení",
+        "dial": "Dial – dočasně převzít kolečko"
+      }
+    },
+    "lights_heading": {
+      "value": "Světla"
+    },
+    "other_heading": {
+      "value": "Ostatní entity"
+    }
+  },
   "config": {
     "step": {
       "user": {
@@ -52,74 +77,131 @@
               "name": "Dial",
               "data": {
                 "profile": "Chování kolečka",
-                "source": "Ovládaná světla",
-                "lights": "Vlastní světla",
                 "sensitivity": "Citlivost",
-                "transition": "Plynulý přechod (sekundy)"
+                "transition": "Přechod (sekundy)",
+                "nonlight_transition": "Rampa (sekundy)",
+                "adaptive_transition": "Adaptivní přechod podle otáčení (experimentální)",
+                "nonlight_sensitivity": "Citlivost",
+                "lights_heading": "",
+                "other_heading": ""
               },
-              "data_description": {
-                "source": "* Rychlá volba přebírá světla krátkého stisku tlačítka: jednotlivá světla, skupiny a seznamy. Pro scény a skripty zvolte Vlastní světla."
-              }
+              "data_description": {},
+              "description": "Hlavní cíl kolečka určuje krátký stisk tlačítka 1. Dlouhý stisk tlačítek 2–4 může kolečko dočasně přesměrovat: návrat po 5 s bez otočení nebo 5 s od posledního pohybu."
             },
             "button_1": {
               "name": "Tlačítko 1",
               "data": {
                 "short_enabled": "Krátký stisk",
-                "short_targets": "Světla nebo akce",
+                "short_targets": "Zařízení nebo akce",
                 "long_enabled": "Dlouhý stisk",
-                "long_targets": "Světla nebo akce",
+                "long_targets": "Zařízení nebo akce",
                 "double_enabled": "Dvojklik",
-                "double_targets": "Světla nebo akce",
+                "double_targets": "Zařízení nebo akce",
                 "triple_enabled": "Trojklik",
-                "triple_targets": "Světla nebo akce"
+                "triple_targets": "Zařízení nebo akce",
+                "short_operation": "Akce",
+                "short_percentage": "Nastavené procento",
+                "long_operation": "Akce",
+                "long_percentage": "Nastavené procento",
+                "double_operation": "Akce",
+                "double_percentage": "Nastavené procento",
+                "triple_operation": "Akce",
+                "triple_percentage": "Nastavené procento"
               },
-              "data_description": {},
-              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: nejvýše 400 ms mezi uvolněním a dalším stiskem. REST může zkrátit čekání, stream zachovává počet stisků. Při nedostupném REST zůstává rezervní čekání 1,4 s. Dlouhý stisk spustí akci jednou."
+              "data_description": {
+                "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu."
+              },
+              "description": "Krátký stisk reaguje bez čekání, pokud není povolený dvojklik nebo trojklik. Vyberte způsob zapnutí/vypnutí u každého stisku. Dlouhý stisk navíc nabízí plynulou regulaci po dobu držení."
             },
             "button_2": {
               "name": "Tlačítko 2",
               "data": {
                 "short_enabled": "Krátký stisk",
-                "short_targets": "Světla nebo akce",
+                "short_targets": "Zařízení nebo akce",
                 "long_enabled": "Dlouhý stisk",
-                "long_targets": "Světla nebo akce",
+                "long_targets": "Zařízení nebo akce",
                 "double_enabled": "Dvojklik",
-                "double_targets": "Světla nebo akce",
+                "double_targets": "Zařízení nebo akce",
                 "triple_enabled": "Trojklik",
-                "triple_targets": "Světla nebo akce"
+                "triple_targets": "Zařízení nebo akce",
+                "short_operation": "Akce",
+                "short_percentage": "Nastavené procento",
+                "long_operation": "Akce",
+                "long_percentage": "Nastavené procento",
+                "double_operation": "Akce",
+                "double_percentage": "Nastavené procento",
+                "triple_operation": "Akce",
+                "triple_percentage": "Nastavené procento"
               },
-              "data_description": {},
-              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: nejvýše 400 ms mezi uvolněním a dalším stiskem. REST může zkrátit čekání, stream zachovává počet stisků. Při nedostupném REST zůstává rezervní čekání 1,4 s. Dlouhý stisk spustí akci jednou."
+              "data_description": {
+                "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_targets": "Pro akci Dial se automaticky použije cíl krátkého stisku tohoto tlačítka; tento výběr se nepoužije."
+              },
+              "description": "Krátký stisk reaguje bez čekání, pokud není povolený dvojklik nebo trojklik. Vyberte způsob zapnutí/vypnutí u každého stisku. Dlouhý stisk navíc nabízí plynulou regulaci po dobu držení."
             },
             "button_3": {
               "name": "Tlačítko 3",
               "data": {
                 "short_enabled": "Krátký stisk",
-                "short_targets": "Světla nebo akce",
+                "short_targets": "Zařízení nebo akce",
                 "long_enabled": "Dlouhý stisk",
-                "long_targets": "Světla nebo akce",
+                "long_targets": "Zařízení nebo akce",
                 "double_enabled": "Dvojklik",
-                "double_targets": "Světla nebo akce",
+                "double_targets": "Zařízení nebo akce",
                 "triple_enabled": "Trojklik",
-                "triple_targets": "Světla nebo akce"
+                "triple_targets": "Zařízení nebo akce",
+                "short_operation": "Akce",
+                "short_percentage": "Nastavené procento",
+                "long_operation": "Akce",
+                "long_percentage": "Nastavené procento",
+                "double_operation": "Akce",
+                "double_percentage": "Nastavené procento",
+                "triple_operation": "Akce",
+                "triple_percentage": "Nastavené procento"
               },
-              "data_description": {},
-              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: nejvýše 400 ms mezi uvolněním a dalším stiskem. REST může zkrátit čekání, stream zachovává počet stisků. Při nedostupném REST zůstává rezervní čekání 1,4 s. Dlouhý stisk spustí akci jednou."
+              "data_description": {
+                "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_targets": "Pro akci Dial se automaticky použije cíl krátkého stisku tohoto tlačítka; tento výběr se nepoužije."
+              },
+              "description": "Krátký stisk reaguje bez čekání, pokud není povolený dvojklik nebo trojklik. Vyberte způsob zapnutí/vypnutí u každého stisku. Dlouhý stisk navíc nabízí plynulou regulaci po dobu držení."
             },
             "button_4": {
               "name": "Tlačítko 4",
               "data": {
                 "short_enabled": "Krátký stisk",
-                "short_targets": "Světla nebo akce",
+                "short_targets": "Zařízení nebo akce",
                 "long_enabled": "Dlouhý stisk",
-                "long_targets": "Světla nebo akce",
+                "long_targets": "Zařízení nebo akce",
                 "double_enabled": "Dvojklik",
-                "double_targets": "Světla nebo akce",
+                "double_targets": "Zařízení nebo akce",
                 "triple_enabled": "Trojklik",
-                "triple_targets": "Světla nebo akce"
+                "triple_targets": "Zařízení nebo akce",
+                "short_operation": "Akce",
+                "short_percentage": "Nastavené procento",
+                "long_operation": "Akce",
+                "long_percentage": "Nastavené procento",
+                "double_operation": "Akce",
+                "double_percentage": "Nastavené procento",
+                "triple_operation": "Akce",
+                "triple_percentage": "Nastavené procento"
               },
-              "data_description": {},
-              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: nejvýše 400 ms mezi uvolněním a dalším stiskem. REST může zkrátit čekání, stream zachovává počet stisků. Při nedostupném REST zůstává rezervní čekání 1,4 s. Dlouhý stisk spustí akci jednou."
+              "data_description": {
+                "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_targets": "Pro akci Dial se automaticky použije cíl krátkého stisku tohoto tlačítka; tento výběr se nepoužije."
+              },
+              "description": "Krátký stisk reaguje bez čekání, pokud není povolený dvojklik nebo trojklik. Vyberte způsob zapnutí/vypnutí u každého stisku. Dlouhý stisk navíc nabízí plynulou regulaci po dobu držení."
             }
           }
         },
@@ -133,105 +215,146 @@
               "name": "Dial",
               "data": {
                 "profile": "Chování kolečka",
-                "source": "Ovládaná světla",
-                "lights": "Vlastní světla",
                 "sensitivity": "Citlivost",
-                "transition": "Plynulý přechod (sekundy)"
+                "transition": "Přechod (sekundy)",
+                "nonlight_transition": "Rampa (sekundy)",
+                "adaptive_transition": "Adaptivní přechod podle otáčení (experimentální)",
+                "nonlight_sensitivity": "Citlivost",
+                "lights_heading": "",
+                "other_heading": ""
               },
-              "data_description": {
-                "source": "* Rychlá volba přebírá světla krátkého stisku tlačítka: jednotlivá světla, skupiny a seznamy. Pro scény a skripty zvolte Vlastní světla."
-              }
+              "data_description": {},
+              "description": "Hlavní cíl kolečka určuje krátký stisk tlačítka 1. Dlouhý stisk tlačítek 2–4 může kolečko dočasně přesměrovat: návrat po 5 s bez otočení nebo 5 s od posledního pohybu."
             },
             "button_1": {
               "name": "Tlačítko 1",
               "data": {
                 "short_enabled": "Krátký stisk",
-                "short_targets": "Světla nebo akce",
+                "short_targets": "Zařízení nebo akce",
                 "long_enabled": "Dlouhý stisk",
-                "long_targets": "Světla nebo akce",
+                "long_targets": "Zařízení nebo akce",
                 "double_enabled": "Dvojklik",
-                "double_targets": "Světla nebo akce",
+                "double_targets": "Zařízení nebo akce",
                 "triple_enabled": "Trojklik",
-                "triple_targets": "Světla nebo akce"
+                "triple_targets": "Zařízení nebo akce",
+                "short_operation": "Akce",
+                "short_percentage": "Nastavené procento",
+                "long_operation": "Akce",
+                "long_percentage": "Nastavené procento",
+                "double_operation": "Akce",
+                "double_percentage": "Nastavené procento",
+                "triple_operation": "Akce",
+                "triple_percentage": "Nastavené procento"
               },
-              "data_description": {},
-              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: nejvýše 400 ms mezi uvolněním a dalším stiskem. REST může zkrátit čekání, stream zachovává počet stisků. Při nedostupném REST zůstává rezervní čekání 1,4 s. Dlouhý stisk spustí akci jednou."
+              "data_description": {
+                "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu."
+              },
+              "description": "Krátký stisk reaguje bez čekání, pokud není povolený dvojklik nebo trojklik. Vyberte způsob zapnutí/vypnutí u každého stisku. Dlouhý stisk navíc nabízí plynulou regulaci po dobu držení."
             },
             "button_2": {
               "name": "Tlačítko 2",
               "data": {
                 "short_enabled": "Krátký stisk",
-                "short_targets": "Světla nebo akce",
+                "short_targets": "Zařízení nebo akce",
                 "long_enabled": "Dlouhý stisk",
-                "long_targets": "Světla nebo akce",
+                "long_targets": "Zařízení nebo akce",
                 "double_enabled": "Dvojklik",
-                "double_targets": "Světla nebo akce",
+                "double_targets": "Zařízení nebo akce",
                 "triple_enabled": "Trojklik",
-                "triple_targets": "Světla nebo akce"
+                "triple_targets": "Zařízení nebo akce",
+                "short_operation": "Akce",
+                "short_percentage": "Nastavené procento",
+                "long_operation": "Akce",
+                "long_percentage": "Nastavené procento",
+                "double_operation": "Akce",
+                "double_percentage": "Nastavené procento",
+                "triple_operation": "Akce",
+                "triple_percentage": "Nastavené procento"
               },
-              "data_description": {},
-              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: nejvýše 400 ms mezi uvolněním a dalším stiskem. REST může zkrátit čekání, stream zachovává počet stisků. Při nedostupném REST zůstává rezervní čekání 1,4 s. Dlouhý stisk spustí akci jednou."
+              "data_description": {
+                "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_targets": "Pro akci Dial se automaticky použije cíl krátkého stisku tohoto tlačítka; tento výběr se nepoužije."
+              },
+              "description": "Krátký stisk reaguje bez čekání, pokud není povolený dvojklik nebo trojklik. Vyberte způsob zapnutí/vypnutí u každého stisku. Dlouhý stisk navíc nabízí plynulou regulaci po dobu držení."
             },
             "button_3": {
               "name": "Tlačítko 3",
               "data": {
                 "short_enabled": "Krátký stisk",
-                "short_targets": "Světla nebo akce",
+                "short_targets": "Zařízení nebo akce",
                 "long_enabled": "Dlouhý stisk",
-                "long_targets": "Světla nebo akce",
+                "long_targets": "Zařízení nebo akce",
                 "double_enabled": "Dvojklik",
-                "double_targets": "Světla nebo akce",
+                "double_targets": "Zařízení nebo akce",
                 "triple_enabled": "Trojklik",
-                "triple_targets": "Světla nebo akce"
+                "triple_targets": "Zařízení nebo akce",
+                "short_operation": "Akce",
+                "short_percentage": "Nastavené procento",
+                "long_operation": "Akce",
+                "long_percentage": "Nastavené procento",
+                "double_operation": "Akce",
+                "double_percentage": "Nastavené procento",
+                "triple_operation": "Akce",
+                "triple_percentage": "Nastavené procento"
               },
-              "data_description": {},
-              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: nejvýše 400 ms mezi uvolněním a dalším stiskem. REST může zkrátit čekání, stream zachovává počet stisků. Při nedostupném REST zůstává rezervní čekání 1,4 s. Dlouhý stisk spustí akci jednou."
+              "data_description": {
+                "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_targets": "Pro akci Dial se automaticky použije cíl krátkého stisku tohoto tlačítka; tento výběr se nepoužije."
+              },
+              "description": "Krátký stisk reaguje bez čekání, pokud není povolený dvojklik nebo trojklik. Vyberte způsob zapnutí/vypnutí u každého stisku. Dlouhý stisk navíc nabízí plynulou regulaci po dobu držení."
             },
             "button_4": {
               "name": "Tlačítko 4",
               "data": {
                 "short_enabled": "Krátký stisk",
-                "short_targets": "Světla nebo akce",
+                "short_targets": "Zařízení nebo akce",
                 "long_enabled": "Dlouhý stisk",
-                "long_targets": "Světla nebo akce",
+                "long_targets": "Zařízení nebo akce",
                 "double_enabled": "Dvojklik",
-                "double_targets": "Světla nebo akce",
+                "double_targets": "Zařízení nebo akce",
                 "triple_enabled": "Trojklik",
-                "triple_targets": "Světla nebo akce"
+                "triple_targets": "Zařízení nebo akce",
+                "short_operation": "Akce",
+                "short_percentage": "Nastavené procento",
+                "long_operation": "Akce",
+                "long_percentage": "Nastavené procento",
+                "double_operation": "Akce",
+                "double_percentage": "Nastavené procento",
+                "triple_operation": "Akce",
+                "triple_percentage": "Nastavené procento"
               },
-              "data_description": {},
-              "description": "Krátký stisk nečeká, pokud není zapnutý dvojklik nebo trojklik. Víceklik: nejvýše 400 ms mezi uvolněním a dalším stiskem. REST může zkrátit čekání, stream zachovává počet stisků. Při nedostupném REST zůstává rezervní čekání 1,4 s. Dlouhý stisk spustí akci jednou."
+              "data_description": {
+                "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_targets": "Pro akci Dial se automaticky použije cíl krátkého stisku tohoto tlačítka; tento výběr se nepoužije."
+              },
+              "description": "Krátký stisk reaguje bez čekání, pokud není povolený dvojklik nebo trojklik. Vyberte způsob zapnutí/vypnutí u každého stisku. Dlouhý stisk navíc nabízí plynulou regulaci po dobu držení."
             }
           }
         }
       },
       "error": {
-        "lights_required": "Před zapnutím ovládání vyber světla kolečka.",
+        "lights_required": "Vyber alespoň světla kolečka nebo akci tlačítka.",
         "button_lights_only": "Zvolené tlačítko musí mít přiřazená světla, skupinu nebo seznam světel. Pro scénu či skript zvol Vlastní světla.",
-        "button_targets_invalid": "Tlačítko může ovládat seznam světel či skupin, nebo jednu scénu či skript.",
-        "button_target_required": "Vyberte cíl každého zapnutého stisku."
+        "button_targets_invalid": "Vyber seznam zařízení stejného typu (světla, ventilátory nebo číselné ovladače), nebo jednu scénu či skript.",
+        "button_target_required": "Vyberte cíl každého zapnutého stisku.",
+        "button_percentage_only": "Zvol světla, nebo ventilátory a číselné ovladače. Tyto dvě skupiny nelze v jedné rampě kombinovat.",
+        "button_percentage_invalid": "Zvol platnou akci a procento od 1 do 100.",
+        "dial_target_required": "Pro Dial zvol přímý cíl krátkého stisku (světlo, ventilátor nebo PWM číslo). Dočasné převzetí je dostupné jen u tlačítek 2–4."
       },
       "abort": {
         "no_unconfigured_controllers": "Všechny nalezené ovladače už jsou v seznamu. Pro nový ovladač nejprve znovu načti integraci."
-      }
-    }
-  },
-  "selector": {
-    "dial_profile": {
-      "options": {
-        "gentle": "Jemné",
-        "balanced": "Vyvážené",
-        "swift": "Svižné",
-        "custom": "Vlastní"
-      }
-    },
-    "dial_source": {
-      "options": {
-        "button_1": "Stejná jako krátký stisk tlačítka 1",
-        "button_2": "Stejná jako krátký stisk tlačítka 2",
-        "button_3": "Stejná jako krátký stisk tlačítka 3",
-        "button_4": "Stejná jako krátký stisk tlačítka 4",
-        "custom": "Vlastní světla"
       }
     }
   }

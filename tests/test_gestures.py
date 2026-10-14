@@ -20,12 +20,17 @@ async def recognition(monkeypatch):
         return timer
 
     monkeypatch.setattr(asyncio.get_running_loop(), "call_later", later)
-    engine = Gestures(lambda *args: actions, lambda *args: emitted.append(args))
-    return engine, actions, emitted, timers
+    holds = []
+    engine = Gestures(
+        lambda *args: actions,
+        lambda *args: emitted.append(args),
+        hold_event=lambda *args: holds.append(args),
+    )
+    return engine, actions, emitted, timers, holds
 
 
 async def test_short_only_has_no_timer_even_with_long_enabled(recognition):
-    engine, actions, emitted, timers = recognition
+    engine, actions, emitted, timers, _ = recognition
     actions["long"] = ["scene.a"]
     engine.feed("dial", 2, "initial_press", 10)
     engine.feed("dial", 2, "short_release", 10.078)
@@ -34,7 +39,7 @@ async def test_short_only_has_no_timer_even_with_long_enabled(recognition):
 
 
 async def test_physical_double_batch_emits_only_double(recognition):
-    engine, actions, emitted, timers = recognition
+    engine, actions, emitted, timers, _ = recognition
     actions["double"] = ["scene.a"]
     for event, updated in [
         ("initial_press", 51.058),
@@ -49,7 +54,7 @@ async def test_physical_double_batch_emits_only_double(recognition):
 
 
 async def test_physical_triple_batch_suppresses_short_and_double(recognition):
-    engine, actions, emitted, timers = recognition
+    engine, actions, emitted, timers, _ = recognition
     actions.update(double=["light.b"], triple=["script.a"])
     for initial, released in [(59.210, 59.282), (59.411, 59.486), (59.620, 59.693)]:
         engine.feed("dial", 2, "initial_press", initial)
@@ -59,7 +64,7 @@ async def test_physical_triple_batch_suppresses_short_and_double(recognition):
 
 
 async def test_pending_single_and_double_wait_only_when_needed(recognition):
-    engine, actions, emitted, timers = recognition
+    engine, actions, emitted, timers, _ = recognition
     actions.update(double=["light.b"], triple=["light.c"])
     engine.feed("dial", 2, "initial_press", 1)
     engine.feed("dial", 2, "short_release", 1.08)
@@ -76,7 +81,7 @@ async def test_pending_single_and_double_wait_only_when_needed(recognition):
 
 
 async def test_separate_clicks_in_same_delivery_do_not_become_double(recognition):
-    engine, actions, emitted, timers = recognition
+    engine, actions, emitted, timers, _ = recognition
     actions["double"] = ["scene.a"]
     for initial in (1, 2):
         engine.feed("dial", 2, "initial_press", initial)
@@ -87,7 +92,7 @@ async def test_separate_clicks_in_same_delivery_do_not_become_double(recognition
 
 
 async def test_long_runs_once_without_release_or_repeat_action(recognition):
-    engine, actions, emitted, timers = recognition
+    engine, actions, emitted, timers, _ = recognition
     actions["long"] = ["scene.a"]
     for event, updated in [
         ("initial_press", 41.789),
@@ -102,7 +107,7 @@ async def test_long_runs_once_without_release_or_repeat_action(recognition):
 
 
 async def test_duplicate_old_and_unarmed_reports_do_nothing(recognition):
-    engine, actions, emitted, timers = recognition
+    engine, actions, emitted, timers, _ = recognition
     engine.feed("dial", 2, "short_release", 1)
     engine.feed("dial", 2, "long_press", 1.1)
     engine.feed("dial", 2, "initial_press", 2)
@@ -113,7 +118,7 @@ async def test_duplicate_old_and_unarmed_reports_do_nothing(recognition):
 
 
 async def test_disabled_action_cannot_fire_from_pending_timer(recognition):
-    engine, actions, emitted, timers = recognition
+    engine, actions, emitted, timers, _ = recognition
     actions["double"] = ["scene.a"]
     engine.feed("dial", 2, "initial_press", 1)
     engine.feed("dial", 2, "short_release", 1.08)
@@ -123,7 +128,7 @@ async def test_disabled_action_cannot_fire_from_pending_timer(recognition):
 
 
 async def test_disconnect_or_unload_cancels_pending_and_requires_new_press(recognition):
-    engine, actions, emitted, timers = recognition
+    engine, actions, emitted, timers, _ = recognition
     actions.update(double=["scene.a"], long=["script.a"])
     engine.feed("dial", 2, "initial_press", 1)
     engine.feed("dial", 2, "short_release", 1.08)
@@ -136,7 +141,7 @@ async def test_disconnect_or_unload_cancels_pending_and_requires_new_press(recog
 
 
 async def test_long_second_press_completes_previous_short(recognition):
-    engine, actions, emitted, timers = recognition
+    engine, actions, emitted, timers, _ = recognition
     actions.update(double=["scene.a"], long=["script.a"])
     engine.feed("dial", 2, "initial_press", 1)
     engine.feed("dial", 2, "short_release", 1.08)
@@ -144,3 +149,23 @@ async def test_long_second_press_completes_previous_short(recognition):
     engine.feed("dial", 2, "long_press", 2)
     engine.feed("dial", 2, "long_release", 2.5)
     assert emitted == [("dial", 2, "short"), ("dial", 2, "long")]
+
+
+async def test_dimming_mode_tracks_hold_repeats_and_release(recognition):
+    engine, actions, emitted, _, holds = recognition
+    actions.update(long=["light.a"], long_mode="dimming")
+    for event, updated in [
+        ("initial_press", 1.0),
+        ("long_press", 1.8),
+        ("repeat", 2.6),
+        ("repeat", 3.0),
+        ("long_release", 3.2),
+    ]:
+        assert engine.feed("dial", 2, event, updated)
+    assert emitted == []
+    assert holds == [
+        ("dial", 2, "start", 1.8),
+        ("dial", 2, "repeat", 2.6),
+        ("dial", 2, "repeat", 3.0),
+        ("dial", 2, "release", 3.2),
+    ]

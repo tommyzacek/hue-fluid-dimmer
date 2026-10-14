@@ -1,5 +1,7 @@
 import asyncio
 
+import pytest
+
 from custom_components.hue_fluid_dimmer.control import Dimmer
 
 BINDING = {"enabled": True, "lights": ["light.test"], "sensitivity": 1.5, "transition": 1}
@@ -91,3 +93,70 @@ async def test_failure_resync_and_cancel():
     await dimmer.cancel_targets(("light.test",))
     assert dimmer.targets[("light.test",)].brightness is None
     await dimmer.close()
+
+
+async def test_button_ramp_steps_from_last_target_and_stops_immediately():
+    sent = []
+    now = [0.0]
+    dimmer = Dimmer(
+        lambda _: 40,
+        lambda lights, value, ramp: record(sent, value, ramp),
+        clock=lambda: now[0],
+        command_interval=0,
+    )
+    dimmer.button_step(("light.test",), "up", 0.65, step=5)
+    await wait_worker(dimmer)
+    now[0] = 0.65
+    dimmer.button_step(("light.test",), "up", 0.34, step=5)
+    await wait_worker(dimmer)
+    assert sent == [(45, 0.65), (50, 0.34)]
+    now[0] = 0.82
+    await dimmer.stop_button_ramp(("light.test",))
+    assert sent[-1] == (pytest.approx(47.5), 0)
+    assert dimmer.targets[("light.test",)].brightness == pytest.approx(47.5)
+
+
+async def test_button_ramp_release_freezes_current_transition_level():
+    sent = []
+    now = [10.0]
+    dimmer = Dimmer(
+        lambda _: 40,
+        lambda lights, value, ramp: record(sent, value, ramp),
+        clock=lambda: now[0],
+        command_interval=0,
+    )
+    dimmer.button_step(("light.test",), "up", 1.0, step=5)
+    await wait_worker(dimmer)
+
+    now[0] = 10.5
+    await dimmer.stop_button_ramp(("light.test",))
+
+    assert sent == [(45, 1.0), (42.5, 0)]
+    assert dimmer.targets[("light.test",)].brightness == 42.5
+
+
+async def test_adaptive_custom_follows_cadence_and_discards_old_goal_on_reverse():
+    now, sent = [10.0], []
+    dimmer = Dimmer(
+        lambda _: 40,
+        lambda lights, v, t: record(sent, v, t),
+        clock=lambda: now[0],
+        command_interval=0,
+    )
+    binding = {**BINDING, "dial_profile": "custom", "adaptive_transition": True}
+    dimmer.rotate(binding, 150)
+    await wait_worker(dimmer)
+    assert sent[-1] == (55, 0.4)
+    now[0] += 0.2
+    dimmer.rotate(binding, -15)
+    await wait_worker(dimmer)
+    assert sent[-1][0] == pytest.approx(46)
+    assert sent[-1][1] == pytest.approx(0.2)
+
+
+async def test_adaptive_flag_does_not_change_preset():
+    sent = []
+    dimmer = Dimmer(lambda _: 10, lambda lights, v, t: record(sent, v, t), command_interval=0)
+    dimmer.rotate({**BINDING, "dial_profile": "balanced", "adaptive_transition": True}, 15)
+    await wait_worker(dimmer)
+    assert sent == [(11.5, 1)]
