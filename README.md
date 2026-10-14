@@ -92,3 +92,11 @@ Tests cover report baselines/deduplication, batch polling, multiclick recognitio
 Doplněk k oficiální Hue integraci pro Tap Dial, Smart Button a Dimmer v2. Ovladače mají vlastní nastavení přímo v integraci, bez nových zařízení, entit nebo pomocníků. Každý stisk lze samostatně zapnout a nastavit. Button a Dimmer používají výchozí zařízení, vlastní výběr se objeví až po zapnutí příslušného přepínače. Scény nejsou součástí nabídky; vlastní logiku lze zapojit skriptem.
 
 Kolečko má oddělené nastavení pro světla a ostatní entity. Předvolby mají adaptivní přechod zapnutý. Dočasné přesměrování kolečka se vrací po 5 sekundách. Před zapnutím akce odstraň konkurenční přiřazení v Hue nebo automatizacích. Po aktualizaci restartuj HA a obnov stránku pro načtení nových překladů.
+
+## Known interaction: Adaptive Lighting and button toggles
+
+At the development installation, three Smart Button short presses each produced one `light.toggle` request for the bathroom light list. Adaptive Lighting immediately produced a child `light.turn_on` call for the available members, and the lights remained on. One selected member was unavailable. This is an observed interaction, not a confirmed root cause for every toggle failure or an upstream fix.
+
+Adaptive Lighting's `intercept` and `multi_light_intercept` options were both enabled. A diagnostic workaround is to test disabling `multi_light_intercept` for the affected Adaptive Lighting entry first, then `intercept` if necessary. This has not yet been tested at this installation. Disabling interception can change how promptly adaptive brightness/color is applied when lights turn on. Automatic adaptation need not be disabled entirely.
+
+An integration-side alternative under consideration is explicit `light.turn_off` when any target is on, otherwise `light.turn_on`. It has not been implemented in v0.7.0. No Adaptive Lighting settings are changed automatically by Hue Fluid Dimmer.
