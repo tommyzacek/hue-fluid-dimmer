@@ -66,7 +66,7 @@ async def test_release_cancels_worker_without_a_final_target_command():
     await ramp.close()
 
 
-async def test_maximum_skips_one_repeat_then_reverses():
+async def test_maximum_stops_without_reversing():
     ramp, _ = controller("number.pwm", "95", {"min": 0, "max": 100, "step": 1})
     key = ("dial", 1)
     ramp.start(key, ("number.pwm",), 10, 0.01)
@@ -74,7 +74,7 @@ async def test_maximum_skips_one_repeat_then_reverses():
     ramp.advance(key, 10, 0.01)
     assert ramp.ramps[key].goals["number.pwm"] == 100
     ramp.advance(key, 10, 0.01)
-    assert ramp.ramps[key].goals["number.pwm"] == 90
+    assert ramp.ramps[key].goals["number.pwm"] == 100
     await ramp.ramps[key].task
     await ramp.close()
 

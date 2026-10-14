@@ -154,9 +154,9 @@ async def test_adaptive_custom_follows_cadence_and_discards_old_goal_on_reverse(
     assert sent[-1][1] == pytest.approx(0.2)
 
 
-async def test_adaptive_flag_does_not_change_preset():
+async def test_named_presets_always_use_adaptive_transition():
     sent = []
     dimmer = Dimmer(lambda _: 10, lambda lights, v, t: record(sent, v, t), command_interval=0)
-    dimmer.rotate({**BINDING, "dial_profile": "balanced", "adaptive_transition": True}, 15)
+    dimmer.rotate({**BINDING, "dial_profile": "balanced", "adaptive_transition": False}, 15)
     await wait_worker(dimmer)
-    assert sent == [(11.5, 1)]
+    assert sent == [(11.5, 0.4)]

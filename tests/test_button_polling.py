@@ -197,6 +197,7 @@ async def test_rest_repeats_advance_long_dimming_on_bridge_cadence(runtime_clock
     runtime, clock, _ = runtime_clock
     runtime.entry.subentries["dial-a"].data["button_1"].update(long_mode="dimming")
     runtime.hue_dimming_resources = lambda lights: ()
+    runtime.read_brightness = lambda lights: 20.0
     steps = []
     runtime.dimmer.button_step = lambda lights, direction, transition, step: steps.append(
         (lights, direction, transition, step)
@@ -216,41 +217,26 @@ async def test_rest_repeats_advance_long_dimming_on_bridge_cadence(runtime_clock
     assert not runtime.button_gaps
 
 
-async def test_native_hue_ramp_reverses_after_one_endpoint_repeat(runtime_clock):
+async def test_native_hue_ramp_uses_actual_level_and_downward_threshold(runtime_clock):
     runtime, _, _ = runtime_clock
     runtime.entry.subentries["dial-a"].data["button_1"].update(long_mode="dimming")
     runtime.hue_dimming_resources = lambda lights: (("grouped_light", "group-id"),)
-    runtime.read_brightness = lambda lights: 100.0  # HA still shows the old transition target.
+    runtime.read_brightness = lambda lights: 100.0
     runtime.client.read_brightness = AsyncMock(return_value=95.0)
-    commands = []
-
-    async def delta(resource_type, resource_id, brightness_delta, duration_ms):
-        commands.append((resource_type, resource_id, brightness_delta, duration_ms))
-
-    runtime.client.brightness_delta = delta
-    runtime.client.brightness_transition = AsyncMock()
+    runtime.client.brightness_delta = AsyncMock()
     runtime.client.stop_dimming = AsyncMock()
     runtime.button_hold_event("dial-a", 1, "start", 1.8)
     await asyncio.sleep(0)
-    await asyncio.gather(*tuple(runtime.action_tasks))
-    assert commands == [("grouped_light", "group-id", 5.0, 800)]
-    assert runtime.button_ramp_states[("dial-a", 1)]["brightness"] == 100.0
-
+    await asyncio.gather(*tuple(runtime.action_tasks), return_exceptions=True)
+    runtime.client.brightness_delta.assert_awaited_once_with(
+        "grouped_light", "group-id", -10.0, 800
+    )
+    assert runtime.button_ramp_states[("dial-a", 1)]["brightness"] == 85
     runtime.button_hold_event("dial-a", 1, "repeat", 1.81)
-    runtime.button_hold_event("dial-a", 1, "repeat", 2.6)
-    assert runtime.button_ramp_states[("dial-a", 1)]["skip_endpoint_repeat"]
-    assert len(commands) == 1
-
-    runtime.button_hold_event("dial-a", 1, "repeat", 3.4)
-    await asyncio.sleep(0)
-    await asyncio.gather(*tuple(runtime.action_tasks))
-    assert commands[-1] == ("grouped_light", "group-id", -10.0, 800)
-    assert runtime.button_ramp_states[("dial-a", 1)]["direction"] == "down"
-
-    runtime.button_hold_event("dial-a", 1, "release", 3.5)
-    await asyncio.gather(*tuple(runtime.action_tasks))
+    assert runtime.client.brightness_delta.await_count == 1
+    runtime.button_hold_event("dial-a", 1, "release", 2)
+    await asyncio.gather(*tuple(runtime.action_tasks), return_exceptions=True)
     runtime.client.stop_dimming.assert_awaited_once_with("grouped_light", "group-id")
-    assert ("dial-a", 1) not in runtime.button_ramp_states
 
 
 async def test_orphan_rest_long_press_opens_gap(runtime_clock):

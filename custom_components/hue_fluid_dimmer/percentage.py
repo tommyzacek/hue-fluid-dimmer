@@ -140,12 +140,9 @@ class PercentageRamp:
         if ramp is None:
             return
         goals = ramp.goals or ramp.levels
-        if ramp.direction > 0 and all(value >= 100 for value in goals.values()):
-            if not ramp.pause:
-                ramp.pause = True
-                return
-            ramp.direction, ramp.pause = -1, False
-        elif ramp.direction < 0 and all(value <= 0 for value in goals.values()):
+        if (ramp.direction > 0 and all(value >= 100 for value in goals.values())) or (
+            ramp.direction < 0 and all(value <= 0 for value in goals.values())
+        ):
             return
         ramp.starts = dict(ramp.levels)
         ramp.goals = {

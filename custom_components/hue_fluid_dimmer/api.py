@@ -60,6 +60,28 @@ class BridgeClient:
             # Do not log request headers, URLs or credentials.
             raise BridgeError("Cannot read Hue rotary resources") from err
 
+    async def device_resources(self) -> list[dict[str, Any]]:
+        host, key = self.credentials()
+        try:
+            async with self.session.get(
+                f"https://{host}/clip/v2/resource/device",
+                headers={"hue-application-key": key},
+                timeout=aiohttp.ClientTimeout(total=3),
+            ) as response:
+                if response.status != 200:
+                    raise BridgeError(f"Hue HTTP status {response.status}", retry_delay(response))
+                payload = await response.json()
+                if (
+                    not isinstance(payload, dict)
+                    or payload.get("errors")
+                    or not isinstance(payload.get("data"), list)
+                    or any(not isinstance(item, dict) for item in payload["data"])
+                ):
+                    raise BridgeError("Invalid Hue device response")
+                return payload["data"]
+        except (aiohttp.ClientError, TimeoutError, ValueError) as err:
+            raise BridgeError("Cannot read Hue devices") from err
+
     async def button_resources(self) -> list[dict[str, Any]]:
         host, key = self.credentials()
         try:

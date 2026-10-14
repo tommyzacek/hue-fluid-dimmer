@@ -15,14 +15,10 @@
         "previous": "Vypnuto / předchozí procento",
         "configured": "Vypnuto / nastavené procento",
         "dimming": "Plynulá regulace při držení",
-        "dial": "Dial – dočasně převzít kolečko"
+        "dial": "Dial – dočasně převzít kolečko",
+        "step_up": "Zvýšit o 10 procentních bodů",
+        "step_down": "Snížit o 10 procentních bodů"
       }
-    },
-    "lights_heading": {
-      "value": "Světla"
-    },
-    "other_heading": {
-      "value": "Ostatní entity"
     }
   },
   "config": {
@@ -55,7 +51,7 @@
   },
   "config_subentries": {
     "tap_dial": {
-      "entry_type": "Hue Tap Dial",
+      "entry_type": "Hue ovladač",
       "initiate_flow": {
         "user": "Přidat ovladač",
         "reconfigure": "Nastavit"
@@ -64,13 +60,22 @@
         "user": {
           "title": "Vyber ovladač",
           "data": {
-            "controller": "Ovladač"
+            "controller": "Ovladač",
+            "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+            "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+            "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+            "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
           }
         },
         "binding": {
           "title": "Nastavení ovladače",
           "data": {
-            "enabled": "Zapnout ovládání"
+            "enabled": "Zapnout ovládání",
+            "shared_targets": "Výchozí světla / zařízení",
+            "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+            "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+            "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+            "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
           },
           "sections": {
             "dial": {
@@ -82,8 +87,8 @@
                 "nonlight_transition": "Rampa (sekundy)",
                 "adaptive_transition": "Adaptivní přechod podle otáčení (experimentální)",
                 "nonlight_sensitivity": "Citlivost",
-                "lights_heading": "",
-                "other_heading": ""
+                "lights_heading": "Světla",
+                "other_heading": "Ostatní entity"
               },
               "data_description": {},
               "description": "Hlavní cíl kolečka určuje krátký stisk tlačítka 1. Dlouhý stisk tlačítek 2–4 může kolečko dočasně přesměrovat: návrat po 5 s bez otočení nebo 5 s od posledního pohybu."
@@ -92,13 +97,13 @@
               "name": "Tlačítko 1",
               "data": {
                 "short_enabled": "Krátký stisk",
-                "short_targets": "Zařízení nebo akce",
+                "short_targets": "Zařízení nebo skript",
                 "long_enabled": "Dlouhý stisk",
-                "long_targets": "Zařízení nebo akce",
+                "long_targets": "Zařízení nebo skript",
                 "double_enabled": "Dvojklik",
-                "double_targets": "Zařízení nebo akce",
+                "double_targets": "Zařízení nebo skript",
                 "triple_enabled": "Trojklik",
-                "triple_targets": "Zařízení nebo akce",
+                "triple_targets": "Zařízení nebo skript",
                 "short_operation": "Akce",
                 "short_percentage": "Nastavené procento",
                 "long_operation": "Akce",
@@ -106,13 +111,18 @@
                 "double_operation": "Akce",
                 "double_percentage": "Nastavené procento",
                 "triple_operation": "Akce",
-                "triple_percentage": "Nastavené procento"
+                "triple_percentage": "Nastavené procento",
+                "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
               },
               "data_description": {
                 "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
                 "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
                 "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
-                "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu."
+                "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "short_targets": "Vlastní výběr nahrazuje výchozí zařízení."
               },
               "description": "Krátký stisk reaguje bez čekání, pokud není povolený dvojklik nebo trojklik. Vyberte způsob zapnutí/vypnutí u každého stisku. Dlouhý stisk navíc nabízí plynulou regulaci po dobu držení."
             },
@@ -120,13 +130,13 @@
               "name": "Tlačítko 2",
               "data": {
                 "short_enabled": "Krátký stisk",
-                "short_targets": "Zařízení nebo akce",
+                "short_targets": "Zařízení nebo skript",
                 "long_enabled": "Dlouhý stisk",
-                "long_targets": "Zařízení nebo akce",
+                "long_targets": "Zařízení nebo skript",
                 "double_enabled": "Dvojklik",
-                "double_targets": "Zařízení nebo akce",
+                "double_targets": "Zařízení nebo skript",
                 "triple_enabled": "Trojklik",
-                "triple_targets": "Zařízení nebo akce",
+                "triple_targets": "Zařízení nebo skript",
                 "short_operation": "Akce",
                 "short_percentage": "Nastavené procento",
                 "long_operation": "Akce",
@@ -134,14 +144,19 @@
                 "double_operation": "Akce",
                 "double_percentage": "Nastavené procento",
                 "triple_operation": "Akce",
-                "triple_percentage": "Nastavené procento"
+                "triple_percentage": "Nastavené procento",
+                "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
               },
               "data_description": {
                 "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
                 "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
                 "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
                 "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
-                "long_targets": "Pro akci Dial se automaticky použije cíl krátkého stisku tohoto tlačítka; tento výběr se nepoužije."
+                "long_targets": "Vlastní výběr nahrazuje výchozí zařízení.",
+                "short_targets": "Vlastní výběr nahrazuje výchozí zařízení."
               },
               "description": "Krátký stisk reaguje bez čekání, pokud není povolený dvojklik nebo trojklik. Vyberte způsob zapnutí/vypnutí u každého stisku. Dlouhý stisk navíc nabízí plynulou regulaci po dobu držení."
             },
@@ -149,13 +164,13 @@
               "name": "Tlačítko 3",
               "data": {
                 "short_enabled": "Krátký stisk",
-                "short_targets": "Zařízení nebo akce",
+                "short_targets": "Zařízení nebo skript",
                 "long_enabled": "Dlouhý stisk",
-                "long_targets": "Zařízení nebo akce",
+                "long_targets": "Zařízení nebo skript",
                 "double_enabled": "Dvojklik",
-                "double_targets": "Zařízení nebo akce",
+                "double_targets": "Zařízení nebo skript",
                 "triple_enabled": "Trojklik",
-                "triple_targets": "Zařízení nebo akce",
+                "triple_targets": "Zařízení nebo skript",
                 "short_operation": "Akce",
                 "short_percentage": "Nastavené procento",
                 "long_operation": "Akce",
@@ -163,14 +178,19 @@
                 "double_operation": "Akce",
                 "double_percentage": "Nastavené procento",
                 "triple_operation": "Akce",
-                "triple_percentage": "Nastavené procento"
+                "triple_percentage": "Nastavené procento",
+                "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
               },
               "data_description": {
                 "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
                 "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
                 "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
                 "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
-                "long_targets": "Pro akci Dial se automaticky použije cíl krátkého stisku tohoto tlačítka; tento výběr se nepoužije."
+                "long_targets": "Vlastní výběr nahrazuje výchozí zařízení.",
+                "short_targets": "Vlastní výběr nahrazuje výchozí zařízení."
               },
               "description": "Krátký stisk reaguje bez čekání, pokud není povolený dvojklik nebo trojklik. Vyberte způsob zapnutí/vypnutí u každého stisku. Dlouhý stisk navíc nabízí plynulou regulaci po dobu držení."
             },
@@ -178,13 +198,13 @@
               "name": "Tlačítko 4",
               "data": {
                 "short_enabled": "Krátký stisk",
-                "short_targets": "Zařízení nebo akce",
+                "short_targets": "Zařízení nebo skript",
                 "long_enabled": "Dlouhý stisk",
-                "long_targets": "Zařízení nebo akce",
+                "long_targets": "Zařízení nebo skript",
                 "double_enabled": "Dvojklik",
-                "double_targets": "Zařízení nebo akce",
+                "double_targets": "Zařízení nebo skript",
                 "triple_enabled": "Trojklik",
-                "triple_targets": "Zařízení nebo akce",
+                "triple_targets": "Zařízení nebo skript",
                 "short_operation": "Akce",
                 "short_percentage": "Nastavené procento",
                 "long_operation": "Akce",
@@ -192,14 +212,19 @@
                 "double_operation": "Akce",
                 "double_percentage": "Nastavené procento",
                 "triple_operation": "Akce",
-                "triple_percentage": "Nastavené procento"
+                "triple_percentage": "Nastavené procento",
+                "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
               },
               "data_description": {
                 "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
                 "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
                 "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
                 "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
-                "long_targets": "Pro akci Dial se automaticky použije cíl krátkého stisku tohoto tlačítka; tento výběr se nepoužije."
+                "long_targets": "Vlastní výběr nahrazuje výchozí zařízení.",
+                "short_targets": "Vlastní výběr nahrazuje výchozí zařízení."
               },
               "description": "Krátký stisk reaguje bez čekání, pokud není povolený dvojklik nebo trojklik. Vyberte způsob zapnutí/vypnutí u každého stisku. Dlouhý stisk navíc nabízí plynulou regulaci po dobu držení."
             }
@@ -208,7 +233,12 @@
         "reconfigure": {
           "title": "Nastavení – {controller}",
           "data": {
-            "enabled": "Zapnout ovládání"
+            "enabled": "Zapnout ovládání",
+            "shared_targets": "Výchozí světla / zařízení",
+            "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+            "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+            "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+            "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
           },
           "sections": {
             "dial": {
@@ -220,8 +250,8 @@
                 "nonlight_transition": "Rampa (sekundy)",
                 "adaptive_transition": "Adaptivní přechod podle otáčení (experimentální)",
                 "nonlight_sensitivity": "Citlivost",
-                "lights_heading": "",
-                "other_heading": ""
+                "lights_heading": "Světla",
+                "other_heading": "Ostatní entity"
               },
               "data_description": {},
               "description": "Hlavní cíl kolečka určuje krátký stisk tlačítka 1. Dlouhý stisk tlačítek 2–4 může kolečko dočasně přesměrovat: návrat po 5 s bez otočení nebo 5 s od posledního pohybu."
@@ -230,13 +260,13 @@
               "name": "Tlačítko 1",
               "data": {
                 "short_enabled": "Krátký stisk",
-                "short_targets": "Zařízení nebo akce",
+                "short_targets": "Zařízení nebo skript",
                 "long_enabled": "Dlouhý stisk",
-                "long_targets": "Zařízení nebo akce",
+                "long_targets": "Zařízení nebo skript",
                 "double_enabled": "Dvojklik",
-                "double_targets": "Zařízení nebo akce",
+                "double_targets": "Zařízení nebo skript",
                 "triple_enabled": "Trojklik",
-                "triple_targets": "Zařízení nebo akce",
+                "triple_targets": "Zařízení nebo skript",
                 "short_operation": "Akce",
                 "short_percentage": "Nastavené procento",
                 "long_operation": "Akce",
@@ -244,13 +274,18 @@
                 "double_operation": "Akce",
                 "double_percentage": "Nastavené procento",
                 "triple_operation": "Akce",
-                "triple_percentage": "Nastavené procento"
+                "triple_percentage": "Nastavené procento",
+                "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
               },
               "data_description": {
                 "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
                 "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
                 "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
-                "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu."
+                "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "short_targets": "Vlastní výběr nahrazuje výchozí zařízení."
               },
               "description": "Krátký stisk reaguje bez čekání, pokud není povolený dvojklik nebo trojklik. Vyberte způsob zapnutí/vypnutí u každého stisku. Dlouhý stisk navíc nabízí plynulou regulaci po dobu držení."
             },
@@ -258,13 +293,13 @@
               "name": "Tlačítko 2",
               "data": {
                 "short_enabled": "Krátký stisk",
-                "short_targets": "Zařízení nebo akce",
+                "short_targets": "Zařízení nebo skript",
                 "long_enabled": "Dlouhý stisk",
-                "long_targets": "Zařízení nebo akce",
+                "long_targets": "Zařízení nebo skript",
                 "double_enabled": "Dvojklik",
-                "double_targets": "Zařízení nebo akce",
+                "double_targets": "Zařízení nebo skript",
                 "triple_enabled": "Trojklik",
-                "triple_targets": "Zařízení nebo akce",
+                "triple_targets": "Zařízení nebo skript",
                 "short_operation": "Akce",
                 "short_percentage": "Nastavené procento",
                 "long_operation": "Akce",
@@ -272,14 +307,19 @@
                 "double_operation": "Akce",
                 "double_percentage": "Nastavené procento",
                 "triple_operation": "Akce",
-                "triple_percentage": "Nastavené procento"
+                "triple_percentage": "Nastavené procento",
+                "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
               },
               "data_description": {
                 "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
                 "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
                 "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
                 "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
-                "long_targets": "Pro akci Dial se automaticky použije cíl krátkého stisku tohoto tlačítka; tento výběr se nepoužije."
+                "long_targets": "Vlastní výběr nahrazuje výchozí zařízení.",
+                "short_targets": "Vlastní výběr nahrazuje výchozí zařízení."
               },
               "description": "Krátký stisk reaguje bez čekání, pokud není povolený dvojklik nebo trojklik. Vyberte způsob zapnutí/vypnutí u každého stisku. Dlouhý stisk navíc nabízí plynulou regulaci po dobu držení."
             },
@@ -287,13 +327,13 @@
               "name": "Tlačítko 3",
               "data": {
                 "short_enabled": "Krátký stisk",
-                "short_targets": "Zařízení nebo akce",
+                "short_targets": "Zařízení nebo skript",
                 "long_enabled": "Dlouhý stisk",
-                "long_targets": "Zařízení nebo akce",
+                "long_targets": "Zařízení nebo skript",
                 "double_enabled": "Dvojklik",
-                "double_targets": "Zařízení nebo akce",
+                "double_targets": "Zařízení nebo skript",
                 "triple_enabled": "Trojklik",
-                "triple_targets": "Zařízení nebo akce",
+                "triple_targets": "Zařízení nebo skript",
                 "short_operation": "Akce",
                 "short_percentage": "Nastavené procento",
                 "long_operation": "Akce",
@@ -301,14 +341,19 @@
                 "double_operation": "Akce",
                 "double_percentage": "Nastavené procento",
                 "triple_operation": "Akce",
-                "triple_percentage": "Nastavené procento"
+                "triple_percentage": "Nastavené procento",
+                "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
               },
               "data_description": {
                 "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
                 "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
                 "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
                 "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
-                "long_targets": "Pro akci Dial se automaticky použije cíl krátkého stisku tohoto tlačítka; tento výběr se nepoužije."
+                "long_targets": "Vlastní výběr nahrazuje výchozí zařízení.",
+                "short_targets": "Vlastní výběr nahrazuje výchozí zařízení."
               },
               "description": "Krátký stisk reaguje bez čekání, pokud není povolený dvojklik nebo trojklik. Vyberte způsob zapnutí/vypnutí u každého stisku. Dlouhý stisk navíc nabízí plynulou regulaci po dobu držení."
             },
@@ -316,13 +361,13 @@
               "name": "Tlačítko 4",
               "data": {
                 "short_enabled": "Krátký stisk",
-                "short_targets": "Zařízení nebo akce",
+                "short_targets": "Zařízení nebo skript",
                 "long_enabled": "Dlouhý stisk",
-                "long_targets": "Zařízení nebo akce",
+                "long_targets": "Zařízení nebo skript",
                 "double_enabled": "Dvojklik",
-                "double_targets": "Zařízení nebo akce",
+                "double_targets": "Zařízení nebo skript",
                 "triple_enabled": "Trojklik",
-                "triple_targets": "Zařízení nebo akce",
+                "triple_targets": "Zařízení nebo skript",
                 "short_operation": "Akce",
                 "short_percentage": "Nastavené procento",
                 "long_operation": "Akce",
@@ -330,24 +375,416 @@
                 "double_operation": "Akce",
                 "double_percentage": "Nastavené procento",
                 "triple_operation": "Akce",
-                "triple_percentage": "Nastavené procento"
+                "triple_percentage": "Nastavené procento",
+                "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
               },
               "data_description": {
                 "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
                 "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
                 "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
                 "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
-                "long_targets": "Pro akci Dial se automaticky použije cíl krátkého stisku tohoto tlačítka; tento výběr se nepoužije."
+                "long_targets": "Vlastní výběr nahrazuje výchozí zařízení.",
+                "short_targets": "Vlastní výběr nahrazuje výchozí zařízení."
               },
               "description": "Krátký stisk reaguje bez čekání, pokud není povolený dvojklik nebo trojklik. Vyberte způsob zapnutí/vypnutí u každého stisku. Dlouhý stisk navíc nabízí plynulou regulaci po dobu držení."
+            }
+          }
+        },
+        "binding_button": {
+          "title": "Smart Button – nastavení",
+          "data": {
+            "enabled": "Zapnout ovládání",
+            "shared_targets": "Výchozí světla / zařízení",
+            "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+            "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+            "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+            "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
+          },
+          "sections": {
+            "button_1": {
+              "name": "Tlačítko",
+              "data": {
+                "short_enabled": "Krátký stisk",
+                "short_targets": "Zařízení nebo skript",
+                "long_enabled": "Dlouhý stisk",
+                "long_targets": "Zařízení nebo skript",
+                "double_enabled": "Dvojklik",
+                "double_targets": "Zařízení nebo skript",
+                "triple_enabled": "Trojklik",
+                "triple_targets": "Zařízení nebo skript",
+                "short_operation": "Akce",
+                "short_percentage": "Nastavené procento",
+                "long_operation": "Akce",
+                "long_percentage": "Nastavené procento",
+                "double_operation": "Akce",
+                "double_percentage": "Nastavené procento",
+                "triple_operation": "Akce",
+                "triple_percentage": "Nastavené procento",
+                "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
+              },
+              "data_description": {
+                "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "short_targets": "Vlastní výběr nahrazuje výchozí zařízení."
+              },
+              "description": "Akce používají výchozí zařízení, pokud nezapnete vlastní výběr. Regulace při držení: pod 30 % nahoru, nad 60 % dolů, uprostřed střídá směr. Na kraji zastaví."
+            }
+          }
+        },
+        "binding_dimmer": {
+          "title": "Dimmer v2 – nastavení",
+          "data": {
+            "enabled": "Zapnout ovládání",
+            "shared_targets": "Výchozí světla / zařízení",
+            "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+            "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+            "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+            "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
+          },
+          "sections": {
+            "button_1": {
+              "name": "ON/OFF",
+              "data": {
+                "short_enabled": "Krátký stisk",
+                "short_targets": "Zařízení nebo skript",
+                "long_enabled": "Dlouhý stisk",
+                "long_targets": "Zařízení nebo skript",
+                "double_enabled": "Dvojklik",
+                "double_targets": "Zařízení nebo skript",
+                "triple_enabled": "Trojklik",
+                "triple_targets": "Zařízení nebo skript",
+                "short_operation": "Akce",
+                "short_percentage": "Nastavené procento",
+                "long_operation": "Akce",
+                "long_percentage": "Nastavené procento",
+                "double_operation": "Akce",
+                "double_percentage": "Nastavené procento",
+                "triple_operation": "Akce",
+                "triple_percentage": "Nastavené procento",
+                "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
+              },
+              "data_description": {
+                "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "short_targets": "Vlastní výběr nahrazuje výchozí zařízení."
+              },
+              "description": "Akce používají výchozí zařízení, pokud nezapnete vlastní výběr. Regulace při držení: pod 30 % nahoru, nad 60 % dolů, uprostřed střídá směr. Na kraji zastaví."
+            },
+            "button_2": {
+              "name": "+ · Zvýšit jas",
+              "data": {
+                "short_enabled": "Krátký stisk",
+                "short_targets": "Zařízení nebo skript",
+                "long_enabled": "Dlouhý stisk",
+                "long_targets": "Zařízení nebo skript",
+                "double_enabled": "Dvojklik",
+                "double_targets": "Zařízení nebo skript",
+                "triple_enabled": "Trojklik",
+                "triple_targets": "Zařízení nebo skript",
+                "short_operation": "Akce",
+                "short_percentage": "Nastavené procento",
+                "long_operation": "Akce",
+                "long_percentage": "Nastavené procento",
+                "double_operation": "Akce",
+                "double_percentage": "Nastavené procento",
+                "triple_operation": "Akce",
+                "triple_percentage": "Nastavené procento",
+                "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
+              },
+              "data_description": {
+                "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_targets": "Vlastní výběr nahrazuje výchozí zařízení.",
+                "short_targets": "Vlastní výběr nahrazuje výchozí zařízení."
+              },
+              "description": "Regulace při držení má pevný směr podle tlačítka."
+            },
+            "button_3": {
+              "name": "− · Snížit jas",
+              "data": {
+                "short_enabled": "Krátký stisk",
+                "short_targets": "Zařízení nebo skript",
+                "long_enabled": "Dlouhý stisk",
+                "long_targets": "Zařízení nebo skript",
+                "double_enabled": "Dvojklik",
+                "double_targets": "Zařízení nebo skript",
+                "triple_enabled": "Trojklik",
+                "triple_targets": "Zařízení nebo skript",
+                "short_operation": "Akce",
+                "short_percentage": "Nastavené procento",
+                "long_operation": "Akce",
+                "long_percentage": "Nastavené procento",
+                "double_operation": "Akce",
+                "double_percentage": "Nastavené procento",
+                "triple_operation": "Akce",
+                "triple_percentage": "Nastavené procento",
+                "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
+              },
+              "data_description": {
+                "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_targets": "Vlastní výběr nahrazuje výchozí zařízení.",
+                "short_targets": "Vlastní výběr nahrazuje výchozí zařízení."
+              },
+              "description": "Regulace při držení má pevný směr podle tlačítka."
+            },
+            "button_4": {
+              "name": "HUE",
+              "data": {
+                "short_enabled": "Krátký stisk",
+                "short_targets": "Zařízení nebo skript",
+                "long_enabled": "Dlouhý stisk",
+                "long_targets": "Zařízení nebo skript",
+                "double_enabled": "Dvojklik",
+                "double_targets": "Zařízení nebo skript",
+                "triple_enabled": "Trojklik",
+                "triple_targets": "Zařízení nebo skript",
+                "short_operation": "Akce",
+                "short_percentage": "Nastavené procento",
+                "long_operation": "Akce",
+                "long_percentage": "Nastavené procento",
+                "double_operation": "Akce",
+                "double_percentage": "Nastavené procento",
+                "triple_operation": "Akce",
+                "triple_percentage": "Nastavené procento",
+                "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
+              },
+              "data_description": {
+                "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_targets": "Vlastní výběr nahrazuje výchozí zařízení.",
+                "short_targets": "Vlastní výběr nahrazuje výchozí zařízení."
+              },
+              "description": "Akce používají výchozí zařízení, pokud nezapnete vlastní výběr. Regulace při držení: pod 30 % nahoru, nad 60 % dolů, uprostřed střídá směr. Na kraji zastaví."
+            }
+          }
+        },
+        "reconfigure_button": {
+          "title": "Smart Button – nastavení",
+          "data": {
+            "enabled": "Zapnout ovládání",
+            "shared_targets": "Výchozí světla / zařízení",
+            "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+            "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+            "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+            "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
+          },
+          "sections": {
+            "button_1": {
+              "name": "Tlačítko",
+              "data": {
+                "short_enabled": "Krátký stisk",
+                "short_targets": "Zařízení nebo skript",
+                "long_enabled": "Dlouhý stisk",
+                "long_targets": "Zařízení nebo skript",
+                "double_enabled": "Dvojklik",
+                "double_targets": "Zařízení nebo skript",
+                "triple_enabled": "Trojklik",
+                "triple_targets": "Zařízení nebo skript",
+                "short_operation": "Akce",
+                "short_percentage": "Nastavené procento",
+                "long_operation": "Akce",
+                "long_percentage": "Nastavené procento",
+                "double_operation": "Akce",
+                "double_percentage": "Nastavené procento",
+                "triple_operation": "Akce",
+                "triple_percentage": "Nastavené procento",
+                "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
+              },
+              "data_description": {
+                "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "short_targets": "Vlastní výběr nahrazuje výchozí zařízení."
+              },
+              "description": "Akce používají výchozí zařízení, pokud nezapnete vlastní výběr. Regulace při držení: pod 30 % nahoru, nad 60 % dolů, uprostřed střídá směr. Na kraji zastaví."
+            }
+          }
+        },
+        "reconfigure_dimmer": {
+          "title": "Dimmer v2 – nastavení",
+          "data": {
+            "enabled": "Zapnout ovládání",
+            "shared_targets": "Výchozí světla / zařízení",
+            "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+            "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+            "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+            "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
+          },
+          "sections": {
+            "button_1": {
+              "name": "ON/OFF",
+              "data": {
+                "short_enabled": "Krátký stisk",
+                "short_targets": "Zařízení nebo skript",
+                "long_enabled": "Dlouhý stisk",
+                "long_targets": "Zařízení nebo skript",
+                "double_enabled": "Dvojklik",
+                "double_targets": "Zařízení nebo skript",
+                "triple_enabled": "Trojklik",
+                "triple_targets": "Zařízení nebo skript",
+                "short_operation": "Akce",
+                "short_percentage": "Nastavené procento",
+                "long_operation": "Akce",
+                "long_percentage": "Nastavené procento",
+                "double_operation": "Akce",
+                "double_percentage": "Nastavené procento",
+                "triple_operation": "Akce",
+                "triple_percentage": "Nastavené procento",
+                "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
+              },
+              "data_description": {
+                "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "short_targets": "Vlastní výběr nahrazuje výchozí zařízení."
+              },
+              "description": "Akce používají výchozí zařízení, pokud nezapnete vlastní výběr. Regulace při držení: pod 30 % nahoru, nad 60 % dolů, uprostřed střídá směr. Na kraji zastaví."
+            },
+            "button_2": {
+              "name": "+ · Zvýšit jas",
+              "data": {
+                "short_enabled": "Krátký stisk",
+                "short_targets": "Zařízení nebo skript",
+                "long_enabled": "Dlouhý stisk",
+                "long_targets": "Zařízení nebo skript",
+                "double_enabled": "Dvojklik",
+                "double_targets": "Zařízení nebo skript",
+                "triple_enabled": "Trojklik",
+                "triple_targets": "Zařízení nebo skript",
+                "short_operation": "Akce",
+                "short_percentage": "Nastavené procento",
+                "long_operation": "Akce",
+                "long_percentage": "Nastavené procento",
+                "double_operation": "Akce",
+                "double_percentage": "Nastavené procento",
+                "triple_operation": "Akce",
+                "triple_percentage": "Nastavené procento",
+                "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
+              },
+              "data_description": {
+                "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_targets": "Vlastní výběr nahrazuje výchozí zařízení.",
+                "short_targets": "Vlastní výběr nahrazuje výchozí zařízení."
+              },
+              "description": "Regulace při držení má pevný směr podle tlačítka."
+            },
+            "button_3": {
+              "name": "− · Snížit jas",
+              "data": {
+                "short_enabled": "Krátký stisk",
+                "short_targets": "Zařízení nebo skript",
+                "long_enabled": "Dlouhý stisk",
+                "long_targets": "Zařízení nebo skript",
+                "double_enabled": "Dvojklik",
+                "double_targets": "Zařízení nebo skript",
+                "triple_enabled": "Trojklik",
+                "triple_targets": "Zařízení nebo skript",
+                "short_operation": "Akce",
+                "short_percentage": "Nastavené procento",
+                "long_operation": "Akce",
+                "long_percentage": "Nastavené procento",
+                "double_operation": "Akce",
+                "double_percentage": "Nastavené procento",
+                "triple_operation": "Akce",
+                "triple_percentage": "Nastavené procento",
+                "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
+              },
+              "data_description": {
+                "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_targets": "Vlastní výběr nahrazuje výchozí zařízení.",
+                "short_targets": "Vlastní výběr nahrazuje výchozí zařízení."
+              },
+              "description": "Regulace při držení má pevný směr podle tlačítka."
+            },
+            "button_4": {
+              "name": "HUE",
+              "data": {
+                "short_enabled": "Krátký stisk",
+                "short_targets": "Zařízení nebo skript",
+                "long_enabled": "Dlouhý stisk",
+                "long_targets": "Zařízení nebo skript",
+                "double_enabled": "Dvojklik",
+                "double_targets": "Zařízení nebo skript",
+                "triple_enabled": "Trojklik",
+                "triple_targets": "Zařízení nebo skript",
+                "short_operation": "Akce",
+                "short_percentage": "Nastavené procento",
+                "long_operation": "Akce",
+                "long_percentage": "Nastavené procento",
+                "double_operation": "Akce",
+                "double_percentage": "Nastavené procento",
+                "triple_operation": "Akce",
+                "triple_percentage": "Nastavené procento",
+                "short_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "long_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "double_other_targets": "Použít pro tuto akci jiná než výchozí zařízení",
+                "triple_other_targets": "Použít pro tuto akci jiná než výchozí zařízení"
+              },
+              "data_description": {
+                "short_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "double_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "triple_percentage": "Použije se pouze pro režim Nastavené procento. Číselné ovladače se přepočítávají podle vlastního rozsahu.",
+                "long_targets": "Vlastní výběr nahrazuje výchozí zařízení.",
+                "short_targets": "Vlastní výběr nahrazuje výchozí zařízení."
+              },
+              "description": "Akce používají výchozí zařízení, pokud nezapnete vlastní výběr. Regulace při držení: pod 30 % nahoru, nad 60 % dolů, uprostřed střídá směr. Na kraji zastaví."
             }
           }
         }
       },
       "error": {
         "lights_required": "Vyber alespoň světla kolečka nebo akci tlačítka.",
-        "button_lights_only": "Zvolené tlačítko musí mít přiřazená světla, skupinu nebo seznam světel. Pro scénu či skript zvol Vlastní světla.",
-        "button_targets_invalid": "Vyber seznam zařízení stejného typu (světla, ventilátory nebo číselné ovladače), nebo jednu scénu či skript.",
+        "button_targets_invalid": "Vyber seznam zařízení stejného typu (světla, ventilátory nebo číselné ovladače), nebo jeden skript.",
         "button_target_required": "Vyberte cíl každého zapnutého stisku.",
         "button_percentage_only": "Zvol světla, nebo ventilátory a číselné ovladače. Tyto dvě skupiny nelze v jedné rampě kombinovat.",
         "button_percentage_invalid": "Zvol platnou akci a procento od 1 do 100.",

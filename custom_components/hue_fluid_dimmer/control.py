@@ -51,7 +51,7 @@ class Dimmer:
             target.brightness = self.read_brightness(lights)
         if target.brightness is None:
             return  # All selected lights are unavailable: do not guess a target.
-        adaptive = binding.get("dial_profile") == "custom" and binding.get(
+        adaptive = binding.get("dial_profile") in ("gentle", "balanced", "swift") or binding.get(
             "adaptive_transition", False
         )
         if adaptive and target.command_target_brightness is None:

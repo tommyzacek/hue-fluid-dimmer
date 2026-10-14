@@ -30,34 +30,49 @@ def initialize_controllers(hass: HomeAssistant, entry: ConfigEntry) -> None:
     devices = dr.async_get(hass)
     controllers = entry.runtime_data.controllers()
     legacy = entry.options.get(CONF_BINDINGS, {})
-    if not entry.data.get(CONF_CONTROLLERS_INITIALIZED):
-        resources = {item["id"]: item for item in entry.runtime_data.resources if item.get("id")}
-        for resource_id in controllers.keys() | legacy.keys():
-            if any(sub.unique_id == resource_id for sub in entry.subentries.values()):
-                continue
-            resource = resources.get(resource_id, {})
-            old_device = devices.async_get_device_by_identifier(
-                (DOMAIN, resource.get("owner", {}).get("rid", "")), entry.entry_id
-            )
-            title = (
-                old_device.name_by_user
-                if old_device and old_device.name_by_user
-                else controllers.get(resource_id, resource_id)
-            )
-            hass.config_entries.async_add_subentry(
-                entry,
-                ConfigSubentry(
-                    subentry_type=SUBENTRY_TAP_DIAL,
-                    unique_id=resource_id,
-                    title=title,
-                    data=MappingProxyType(
-                        {CONF_RESOURCE: resource_id, **legacy.get(resource_id, {})}
-                    ),
+    controls = getattr(entry.runtime_data, "control_devices", {})
+    seen = set(entry.data.get("discovered_button_controllers", []))
+    bootstrap = not entry.data.get(CONF_CONTROLLERS_INITIALIZED)
+    candidates = (controllers.keys() | legacy.keys()) if bootstrap else controls.keys() - seen
+    resources = {item["id"]: item for item in entry.runtime_data.resources if item.get("id")}
+    for resource_id in candidates:
+        if any(sub.unique_id == resource_id for sub in entry.subentries.values()):
+            continue
+        resource = resources.get(resource_id, {})
+        old_device = devices.async_get_device_by_identifier(
+            (DOMAIN, resource.get("owner", {}).get("rid", "")), entry.entry_id
+        )
+        title = (
+            old_device.name_by_user
+            if old_device and old_device.name_by_user
+            else controllers.get(resource_id, resource_id)
+        )
+        model = controls.get(resource_id, {})
+        hass.config_entries.async_add_subentry(
+            entry,
+            ConfigSubentry(
+                subentry_type=SUBENTRY_TAP_DIAL,
+                unique_id=resource_id,
+                title=title,
+                data=MappingProxyType(
+                    {
+                        CONF_RESOURCE: resource_id,
+                        "controller_kind": model.get("kind", "tap_dial"),
+                        "controller_model": model.get("model"),
+                        **legacy.get(resource_id, {}),
+                    }
                 ),
-            )
+            ),
+        )
+    discovered = sorted(seen | controls.keys())
+    if bootstrap or discovered != sorted(seen):
         hass.config_entries.async_update_entry(
             entry,
-            data={**entry.data, CONF_CONTROLLERS_INITIALIZED: True},
+            data={
+                **entry.data,
+                CONF_CONTROLLERS_INITIALIZED: True,
+                "discovered_button_controllers": discovered,
+            },
             options={key: value for key, value in entry.options.items() if key != CONF_BINDINGS},
         )
 

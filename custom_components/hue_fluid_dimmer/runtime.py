@@ -38,6 +38,7 @@ from .const import (
     MODE_CONTINUOUS,
 )
 from .control import Dimmer
+from .controller_models import HoldDirections, controller_kind
 from .dial_routing import DialRouting
 from .gestures import CLICK_WINDOW, Gestures
 from .models import ReportTracker
@@ -76,6 +77,9 @@ class Runtime:
         )
         self.percentage = PercentageRamp(hass, self.create_task, storage=storage)
         self.dial_routing = DialRouting(clock=lambda: time.monotonic())
+        self.control_devices = {}
+        self.hold_directions = HoldDirections()
+        self.native_commands = {}
         self.button_locks: dict[str, asyncio.Lock] = {}
         self.button_task: asyncio.Task | None = None
         self.action_tasks: set[asyncio.Task] = set()
@@ -114,6 +118,18 @@ class Runtime:
         await self.percentage.load()
         self.resources = await self.client.rotary_resources()
         self.tracker.baseline(self.resources)
+        devices = await self.client.device_resources()
+        rotary_owners = {item.get("owner", {}).get("rid") for item in self.resources}
+        self.control_devices = {
+            item["id"]: {
+                "name": item.get("metadata", {}).get("name", item["id"]),
+                "kind": controller_kind(item.get("product_data", {}).get("model_id")),
+                "model": item.get("product_data", {}).get("model_id"),
+            }
+            for item in devices
+            if item.get("id") not in rotary_owners
+            and controller_kind(item.get("product_data", {}).get("model_id"))
+        }
 
     @callback
     def start(self) -> None:
@@ -129,19 +145,22 @@ class Runtime:
 
     def controllers(self) -> dict[str, str]:
         return {
-            item["id"]: (
-                device.name_by_user or device.name or item["id"]
-                if (device := self.device(item["owner"]["rid"]))
-                else item["id"]
-            )
-            for item in self.resources
-            if isinstance(item.get("id"), str) and item.get("owner", {}).get("rid")
+            **{key: value["name"] for key, value in self.control_devices.items()},
+            **{
+                item["id"]: (
+                    device.name_by_user or device.name or item["id"]
+                    if (device := self.device(item["owner"]["rid"]))
+                    else item["id"]
+                )
+                for item in self.resources
+                if isinstance(item.get("id"), str) and item.get("owner", {}).get("rid")
+            },
         }
 
     @callback
     def on_hue_event(self, event: Event) -> None:
         data = event.data
-        if data.get("unique_id") in self.controllers():
+        if data.get("unique_id") in {item["id"] for item in self.resources}:
             # Native rotary events only wake polling: never apply their steps twice.
             self.active_until = time.monotonic() + self.entry.options.get(
                 CONF_WINDOW, DEFAULT_WINDOW
@@ -172,8 +191,18 @@ class Runtime:
         key = resource_id, index
         if all(entity.startswith(("fan.", "number.")) for entity in lights):
             if event == "start":
+                self.percentage.cancel_entities(lights)
                 self.button_ramp_timestamps[key] = updated
-                self.percentage.start(key, lights, RAMP_STEP, RAMP_INITIAL_TRANSITION)
+                self.percentage.start(key, lights, 0, RAMP_INITIAL_TRANSITION)
+                ramp = self.percentage.ramps.get(key)
+                if ramp:
+                    direction = self.hold_directions.choose(
+                        key,
+                        sum(ramp.levels.values()) / len(ramp.levels),
+                        binding.get(f"button_{index}", {}).get("long_direction"),
+                    )
+                    ramp.direction = 1 if direction == "up" else -1
+                    self.percentage.advance(key, RAMP_STEP, RAMP_INITIAL_TRANSITION)
             elif event == "release":
                 self.button_ramp_timestamps.pop(key, None)
                 self.percentage.stop(key)
@@ -195,7 +224,7 @@ class Runtime:
                     "resources": resources,
                     "lights": lights,
                     "direction": "up",
-                    "skip_endpoint_repeat": False,
+                    "fixed_direction": binding.get(f"button_{index}", {}).get("long_direction"),
                     "finished": False,
                     "pending": True,
                 }
@@ -205,14 +234,19 @@ class Runtime:
                 task.add_done_callback(self.action_tasks.discard)
             else:
                 # Keep supporting non-Hue light entities with the stepped fallback.
-                self.button_ramp_states[key] = {"resources": None, "direction": "up"}
-                self.dimmer.button_step(lights, "up", RAMP_INITIAL_TRANSITION, step=RAMP_STEP)
+                direction = self.hold_directions.choose(
+                    key,
+                    self.read_brightness(lights) or 0,
+                    binding.get(f"button_{index}", {}).get("long_direction"),
+                )
+                self.button_ramp_states[key] = {"resources": None, "direction": direction}
+                self.dimmer.button_step(lights, direction, RAMP_INITIAL_TRANSITION, step=RAMP_STEP)
             return
         if event == "release":
             state = self.button_ramp_states.pop(key, None)
             self.button_ramp_timestamps.pop(key, None)
             if state and state.get("resources"):
-                task = self.create_task(self._stop_hue_transition(state["resources"]))
+                task = self.create_task(self._cancel_and_stop_native(state["resources"]))
             else:
                 task = self.create_task(self.dimmer.stop_button_ramp(lights))
             self.action_tasks.add(task)
@@ -233,13 +267,9 @@ class Runtime:
         if resources:
             if state.get("pending") or state.get("finished"):
                 return
-            if state["direction"] == "up" and state["brightness"] >= 100:
-                if not state["skip_endpoint_repeat"]:
-                    state["skip_endpoint_repeat"] = True
-                    return
-                state["direction"] = "down"
-                state["skip_endpoint_repeat"] = False
-            elif state["direction"] == "down" and state["brightness"] <= 0:
+            if (state["direction"] == "up" and state["brightness"] >= 100) or (
+                state["direction"] == "down" and state["brightness"] <= 0
+            ):
                 state["finished"] = True
                 return
             delta = min(RAMP_STEP, 100 - state["brightness"])
@@ -257,13 +287,9 @@ class Runtime:
 
         target = self.dimmer.targets.get(lights)
         if target and target.brightness is not None:
-            if state["direction"] == "up" and target.brightness >= 100:
-                if not state.get("skip_endpoint_repeat"):
-                    state["skip_endpoint_repeat"] = True
-                    return
-                state["direction"] = "down"
-                state["skip_endpoint_repeat"] = False
-            elif state["direction"] == "down" and target.brightness <= 0:
+            if (state["direction"] == "up" and target.brightness >= 100) or (
+                state["direction"] == "down" and target.brightness <= 0
+            ):
                 return
         transition = max(RAMP_MIN_TRANSITION, min(RAMP_MAX_TRANSITION, interval * 1.15))
         self.dimmer.button_step(lights, state["direction"], transition, step=RAMP_STEP)
@@ -293,6 +319,9 @@ class Runtime:
         self, resources: tuple[tuple[str, str], ...], brightness: float, duration_ms: int
     ) -> None:
         task = self.create_task(self._send_hue_transition(resources, brightness, duration_ms))
+        pending = self.native_commands.setdefault(resources, set())
+        pending.add(task)
+        task.add_done_callback(pending.discard)
         self.action_tasks.add(task)
         task.add_done_callback(self.action_tasks.discard)
 
@@ -314,11 +343,23 @@ class Runtime:
         current = sum(levels) / len(levels) if levels else 0.0
         state["brightness"] = current
         state["pending"] = False
-        delta = min(RAMP_STEP, 100 - current)
-        state["brightness"] = min(100.0, current + delta)
+        state["direction"] = self.hold_directions.choose(key, current, state.get("fixed_direction"))
+        delta = (
+            min(RAMP_STEP, 100 - current)
+            if state["direction"] == "up"
+            else -min(RAMP_STEP, current)
+        )
+        state["brightness"] = max(0.0, min(100.0, current + delta))
         duration_ms = round(RAMP_INITIAL_TRANSITION * 1000)
-        self._schedule_brightness_delta(resources, delta, duration_ms)
-        _LOGGER.warning(
+        if delta == 0:
+            state["finished"] = True
+            return
+        if state["brightness"] == 0:
+            self._schedule_ramp_transition(resources, 0.0, duration_ms)
+            state["finished"] = True
+        else:
+            self._schedule_brightness_delta(resources, delta, duration_ms)
+        _LOGGER.debug(
             "HFD_TRACE ramp_start key=%s bridge_brightness=%.1f delta=%.1f duration_ms=%d",
             key,
             current,
@@ -333,6 +374,9 @@ class Runtime:
         duration_ms: int,
     ) -> None:
         task = self.create_task(self._send_brightness_delta(resources, delta, duration_ms))
+        pending = self.native_commands.setdefault(resources, set())
+        pending.add(task)
+        task.add_done_callback(pending.discard)
         self.action_tasks.add(task)
         task.add_done_callback(self.action_tasks.discard)
 
@@ -369,6 +413,13 @@ class Runtime:
             if isinstance(result, Exception):
                 _LOGGER.warning("Unable to start native Hue dimming", exc_info=result)
 
+    async def _cancel_and_stop_native(self, resources):
+        pending = tuple(self.native_commands.pop(resources, ()))
+        for task in pending:
+            task.cancel()
+        await asyncio.gather(*pending, return_exceptions=True)
+        await self._stop_hue_transition(resources)
+
     async def _stop_hue_transition(self, resources: tuple[tuple[str, str], ...]) -> None:
         results = await asyncio.gather(
             *(
@@ -397,6 +448,7 @@ class Runtime:
 
     def map_buttons(self, buttons: list[dict]) -> None:
         owners = {item.get("owner", {}).get("rid"): item["id"] for item in self.resources}
+        owners.update({key: key for key in self.control_devices})
         self.button_map = {
             item["id"]: (owners[item["owner"]["rid"]], item["metadata"]["control_id"])
             for item in buttons
@@ -673,8 +725,8 @@ class Runtime:
             adaptive_options = (
                 {"adaptive": True}
                 if (
-                    binding.get("dial_profile") == "custom"
-                    and binding.get("adaptive_transition", False)
+                    binding.get("dial_profile") in ("gentle", "balanced", "swift")
+                    or binding.get("adaptive_transition", False)
                 )
                 else {}
             )
@@ -717,6 +769,21 @@ class Runtime:
     ) -> None:
         async with self.button_locks.setdefault(resource_id, asyncio.Lock()):
             operation, percentage = button_operation(binding, index, action)
+            if operation in ("step_up", "step_down"):
+                selected = targets(button_actions(binding, index).get(action))
+                sign = 1 if operation == "step_up" else -1
+                if selected and all(x.startswith("light.") for x in selected):
+                    self.dimmer.button_step(
+                        tuple(selected), "up" if sign > 0 else "down", 0.3, step=10
+                    )
+                elif selected:
+                    for other_key, other_ramp in tuple(self.percentage.ramps.items()):
+                        if other_key != (resource_id, index) and set(selected).intersection(
+                            other_ramp.levels
+                        ):
+                            self.percentage.stop(other_key)
+                    self.percentage.rotate((resource_id, index), selected, sign * 10, 0.3)
+                return
             if action == "long" and operation == "dial" and index > 1:
                 selected = targets(button_actions(binding, index).get("short"))
                 if percentage_targets(selected):
@@ -729,7 +796,7 @@ class Runtime:
                 return
             domain = selected[0].split(".", 1)[0]
             service = "toggle" if domain in ("light", "fan") else "turn_on"
-            if domain not in ("light", "scene", "script", "fan", "number"):
+            if domain not in ("light", "script", "fan", "number"):
                 return
             if any(item.split(".", 1)[0] != domain for item in selected):
                 return
@@ -743,7 +810,7 @@ class Runtime:
                     self.button_ramp_states.pop(key, None)
                     self.button_ramp_timestamps.pop(key, None)
                     if ramp.get("resources"):
-                        await self._stop_hue_transition(ramp["resources"])
+                        await self._cancel_and_stop_native(ramp["resources"])
             operation, percentage = button_operation(binding, index, action)
             if domain == "number" or (domain in ("light", "fan") and operation != "toggle"):
                 for entity in selected:
@@ -773,6 +840,14 @@ class Runtime:
             self.task.cancel()
             await asyncio.gather(self.task, return_exceptions=True)
         self.gestures.cancel()
+        resources = {
+            state["resources"]
+            for state in self.button_ramp_states.values()
+            if state.get("resources")
+        }
+        self.button_ramp_states.clear()
+        for selected in resources:
+            await self._cancel_and_stop_native(selected)
         tasks = list(self.action_tasks)
         if self.button_task:
             tasks.append(self.button_task)

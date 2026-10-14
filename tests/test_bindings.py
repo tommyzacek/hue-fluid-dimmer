@@ -20,11 +20,16 @@ def test_shared_selection_is_live_and_preserves_groups(selection):
 def test_shared_scene_and_script_are_rejected_without_guessing_lights(target):
     values = form_values({"enabled": True, "dial_source": "button_1", "button_1": target})
     _, error = parse_form(values)
-    assert error == "dial_target_required"
+    assert error == (
+        "button_targets_invalid" if target.startswith("scene.") else "dial_target_required"
+    )
     values["button_2"] = values["button_1"]
     values["button_1"] = form_values({"button_1": ["light.group"]})["button_1"]
     binding, error = parse_form(values)
-    assert error is None and binding["button_2"] == {"short": [target]}
+    if target.startswith("scene."):
+        assert error == "button_targets_invalid"
+    else:
+        assert error is None and binding["button_2"] == {"short": [target]}
 
 
 def test_long_dimming_requires_lights_and_defaults_to_up():
@@ -38,7 +43,7 @@ def test_long_dimming_requires_lights_and_defaults_to_up():
     }
     values["button_1"]["long_targets"] = ["scene.evening"]
     _, error = parse_form(values)
-    assert error == "button_percentage_only"
+    assert error == "button_targets_invalid"
 
 
 @pytest.mark.parametrize("target", ["fan.test", "number.pwm"])
@@ -98,7 +103,7 @@ def test_profile_switch_preserves_custom_values_and_legacy_settings():
     values["dial"]["profile"] = "gentle"
     binding, error = parse_form(values)
     assert error is None
-    assert binding["sensitivity"] == 0.75 and binding["transition"] == 1.0
+    assert binding["sensitivity"] == 1.2 and binding["transition"] == 1.0
     restored = form_values(binding)
     restored["dial"]["profile"] = "custom"
     binding, _ = parse_form(restored)
@@ -193,3 +198,21 @@ def test_custom_nonlight_sensitivity_is_independent():
     assert binding["sensitivity"] == 2.3
     assert binding["nonlight_sensitivity"] == 1.25
     assert form_values(binding)["dial"]["nonlight_sensitivity"] == 1.25
+
+
+@pytest.mark.parametrize(
+    "profile,light,other", [("gentle", 1.2, 0.75), ("balanced", 2.4, 1.5), ("swift", 4.8, 3)]
+)
+def test_internal_presets_derive_from_tested_custom_and_enable_adaptive(profile, light, other):
+    values = form_values({"button_1": ["light.main"]})
+    values["dial"].update(profile=profile, adaptive_transition=False)
+    binding, error = parse_form(values)
+    assert error is None
+    assert binding["sensitivity"] == light
+    assert binding["nonlight_sensitivity"] == other
+    assert binding["adaptive_transition"] is True
+    binding.update(sensitivity=99, nonlight_sensitivity=99, adaptive_transition=False)
+    effective = resolve_binding(binding)
+    assert effective["sensitivity"] == light
+    assert effective["nonlight_sensitivity"] == other
+    assert effective["adaptive_transition"] is True

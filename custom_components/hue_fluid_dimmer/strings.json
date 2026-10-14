@@ -15,14 +15,10 @@
         "previous": "Off / previous percentage",
         "configured": "Off / configured percentage",
         "dimming": "Smooth adjustment while held",
-        "dial": "Dial – temporarily take over the wheel"
+        "dial": "Dial – temporarily take over the wheel",
+        "step_up": "Increase by 10 percentage points",
+        "step_down": "Decrease by 10 percentage points"
       }
-    },
-    "lights_heading": {
-      "value": "Lights"
-    },
-    "other_heading": {
-      "value": "Other entities"
     }
   },
   "config": {
@@ -55,7 +51,7 @@
   },
   "config_subentries": {
     "tap_dial": {
-      "entry_type": "Hue Tap Dial",
+      "entry_type": "Hue controller",
       "initiate_flow": {
         "user": "Add controller",
         "reconfigure": "Configure"
@@ -64,13 +60,22 @@
         "user": {
           "title": "Select controller",
           "data": {
-            "controller": "Controller"
+            "controller": "Controller",
+            "short_other_targets": "Use different devices for this action",
+            "long_other_targets": "Use different devices for this action",
+            "double_other_targets": "Use different devices for this action",
+            "triple_other_targets": "Use different devices for this action"
           }
         },
         "binding": {
           "title": "Controller settings",
           "data": {
-            "enabled": "Enable control"
+            "enabled": "Enable control",
+            "shared_targets": "Default lights / devices",
+            "short_other_targets": "Use different devices for this action",
+            "long_other_targets": "Use different devices for this action",
+            "double_other_targets": "Use different devices for this action",
+            "triple_other_targets": "Use different devices for this action"
           },
           "sections": {
             "dial": {
@@ -82,8 +87,8 @@
                 "nonlight_transition": "Ramp (seconds)",
                 "adaptive_transition": "Adaptive transition following rotation (experimental)",
                 "nonlight_sensitivity": "Sensitivity",
-                "lights_heading": "",
-                "other_heading": ""
+                "lights_heading": "Lights",
+                "other_heading": "Other entities"
               },
               "data_description": {},
               "description": "The wheel normally controls button 1’s short-press devices. Buttons 2–4 can temporarily take over: return after 5 s without rotation or 5 s after the last movement."
@@ -92,13 +97,13 @@
               "name": "Button 1",
               "data": {
                 "short_enabled": "Short press",
-                "short_targets": "Devices or action",
+                "short_targets": "Devices or script",
                 "long_enabled": "Long press",
-                "long_targets": "Devices or action",
+                "long_targets": "Devices or script",
                 "double_enabled": "Double press",
-                "double_targets": "Devices or action",
+                "double_targets": "Devices or script",
                 "triple_enabled": "Triple press",
-                "triple_targets": "Devices or action",
+                "triple_targets": "Devices or script",
                 "short_operation": "Action",
                 "short_percentage": "Configured percentage",
                 "long_operation": "Action",
@@ -106,13 +111,18 @@
                 "double_operation": "Action",
                 "double_percentage": "Configured percentage",
                 "triple_operation": "Action",
-                "triple_percentage": "Configured percentage"
+                "triple_percentage": "Configured percentage",
+                "short_other_targets": "Use different devices for this action",
+                "long_other_targets": "Use different devices for this action",
+                "double_other_targets": "Use different devices for this action",
+                "triple_other_targets": "Use different devices for this action"
               },
               "data_description": {
                 "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
                 "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
                 "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
-                "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range."
+                "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "short_targets": "This selection replaces the default devices."
               },
               "description": "Short press responds immediately unless double or triple press is enabled. Choose a power/level action for each press type. Long press also offers smooth adjustment while held."
             },
@@ -120,13 +130,13 @@
               "name": "Button 2",
               "data": {
                 "short_enabled": "Short press",
-                "short_targets": "Devices or action",
+                "short_targets": "Devices or script",
                 "long_enabled": "Long press",
-                "long_targets": "Devices or action",
+                "long_targets": "Devices or script",
                 "double_enabled": "Double press",
-                "double_targets": "Devices or action",
+                "double_targets": "Devices or script",
                 "triple_enabled": "Triple press",
-                "triple_targets": "Devices or action",
+                "triple_targets": "Devices or script",
                 "short_operation": "Action",
                 "short_percentage": "Configured percentage",
                 "long_operation": "Action",
@@ -134,14 +144,19 @@
                 "double_operation": "Action",
                 "double_percentage": "Configured percentage",
                 "triple_operation": "Action",
-                "triple_percentage": "Configured percentage"
+                "triple_percentage": "Configured percentage",
+                "short_other_targets": "Use different devices for this action",
+                "long_other_targets": "Use different devices for this action",
+                "double_other_targets": "Use different devices for this action",
+                "triple_other_targets": "Use different devices for this action"
               },
               "data_description": {
                 "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
                 "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
                 "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
                 "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
-                "long_targets": "Dial automatically uses this button’s short-press target; this target selection is ignored."
+                "long_targets": "This selection replaces the default devices.",
+                "short_targets": "This selection replaces the default devices."
               },
               "description": "Short press responds immediately unless double or triple press is enabled. Choose a power/level action for each press type. Long press also offers smooth adjustment while held."
             },
@@ -149,13 +164,13 @@
               "name": "Button 3",
               "data": {
                 "short_enabled": "Short press",
-                "short_targets": "Devices or action",
+                "short_targets": "Devices or script",
                 "long_enabled": "Long press",
-                "long_targets": "Devices or action",
+                "long_targets": "Devices or script",
                 "double_enabled": "Double press",
-                "double_targets": "Devices or action",
+                "double_targets": "Devices or script",
                 "triple_enabled": "Triple press",
-                "triple_targets": "Devices or action",
+                "triple_targets": "Devices or script",
                 "short_operation": "Action",
                 "short_percentage": "Configured percentage",
                 "long_operation": "Action",
@@ -163,14 +178,19 @@
                 "double_operation": "Action",
                 "double_percentage": "Configured percentage",
                 "triple_operation": "Action",
-                "triple_percentage": "Configured percentage"
+                "triple_percentage": "Configured percentage",
+                "short_other_targets": "Use different devices for this action",
+                "long_other_targets": "Use different devices for this action",
+                "double_other_targets": "Use different devices for this action",
+                "triple_other_targets": "Use different devices for this action"
               },
               "data_description": {
                 "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
                 "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
                 "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
                 "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
-                "long_targets": "Dial automatically uses this button’s short-press target; this target selection is ignored."
+                "long_targets": "This selection replaces the default devices.",
+                "short_targets": "This selection replaces the default devices."
               },
               "description": "Short press responds immediately unless double or triple press is enabled. Choose a power/level action for each press type. Long press also offers smooth adjustment while held."
             },
@@ -178,13 +198,13 @@
               "name": "Button 4",
               "data": {
                 "short_enabled": "Short press",
-                "short_targets": "Devices or action",
+                "short_targets": "Devices or script",
                 "long_enabled": "Long press",
-                "long_targets": "Devices or action",
+                "long_targets": "Devices or script",
                 "double_enabled": "Double press",
-                "double_targets": "Devices or action",
+                "double_targets": "Devices or script",
                 "triple_enabled": "Triple press",
-                "triple_targets": "Devices or action",
+                "triple_targets": "Devices or script",
                 "short_operation": "Action",
                 "short_percentage": "Configured percentage",
                 "long_operation": "Action",
@@ -192,14 +212,19 @@
                 "double_operation": "Action",
                 "double_percentage": "Configured percentage",
                 "triple_operation": "Action",
-                "triple_percentage": "Configured percentage"
+                "triple_percentage": "Configured percentage",
+                "short_other_targets": "Use different devices for this action",
+                "long_other_targets": "Use different devices for this action",
+                "double_other_targets": "Use different devices for this action",
+                "triple_other_targets": "Use different devices for this action"
               },
               "data_description": {
                 "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
                 "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
                 "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
                 "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
-                "long_targets": "Dial automatically uses this button’s short-press target; this target selection is ignored."
+                "long_targets": "This selection replaces the default devices.",
+                "short_targets": "This selection replaces the default devices."
               },
               "description": "Short press responds immediately unless double or triple press is enabled. Choose a power/level action for each press type. Long press also offers smooth adjustment while held."
             }
@@ -208,7 +233,12 @@
         "reconfigure": {
           "title": "Configure – {controller}",
           "data": {
-            "enabled": "Enable control"
+            "enabled": "Enable control",
+            "shared_targets": "Default lights / devices",
+            "short_other_targets": "Use different devices for this action",
+            "long_other_targets": "Use different devices for this action",
+            "double_other_targets": "Use different devices for this action",
+            "triple_other_targets": "Use different devices for this action"
           },
           "sections": {
             "dial": {
@@ -220,8 +250,8 @@
                 "nonlight_transition": "Ramp (seconds)",
                 "adaptive_transition": "Adaptive transition following rotation (experimental)",
                 "nonlight_sensitivity": "Sensitivity",
-                "lights_heading": "",
-                "other_heading": ""
+                "lights_heading": "Lights",
+                "other_heading": "Other entities"
               },
               "data_description": {},
               "description": "The wheel normally controls button 1’s short-press devices. Buttons 2–4 can temporarily take over: return after 5 s without rotation or 5 s after the last movement."
@@ -230,13 +260,13 @@
               "name": "Button 1",
               "data": {
                 "short_enabled": "Short press",
-                "short_targets": "Devices or action",
+                "short_targets": "Devices or script",
                 "long_enabled": "Long press",
-                "long_targets": "Devices or action",
+                "long_targets": "Devices or script",
                 "double_enabled": "Double press",
-                "double_targets": "Devices or action",
+                "double_targets": "Devices or script",
                 "triple_enabled": "Triple press",
-                "triple_targets": "Devices or action",
+                "triple_targets": "Devices or script",
                 "short_operation": "Action",
                 "short_percentage": "Configured percentage",
                 "long_operation": "Action",
@@ -244,13 +274,18 @@
                 "double_operation": "Action",
                 "double_percentage": "Configured percentage",
                 "triple_operation": "Action",
-                "triple_percentage": "Configured percentage"
+                "triple_percentage": "Configured percentage",
+                "short_other_targets": "Use different devices for this action",
+                "long_other_targets": "Use different devices for this action",
+                "double_other_targets": "Use different devices for this action",
+                "triple_other_targets": "Use different devices for this action"
               },
               "data_description": {
                 "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
                 "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
                 "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
-                "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range."
+                "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "short_targets": "This selection replaces the default devices."
               },
               "description": "Short press responds immediately unless double or triple press is enabled. Choose a power/level action for each press type. Long press also offers smooth adjustment while held."
             },
@@ -258,13 +293,13 @@
               "name": "Button 2",
               "data": {
                 "short_enabled": "Short press",
-                "short_targets": "Devices or action",
+                "short_targets": "Devices or script",
                 "long_enabled": "Long press",
-                "long_targets": "Devices or action",
+                "long_targets": "Devices or script",
                 "double_enabled": "Double press",
-                "double_targets": "Devices or action",
+                "double_targets": "Devices or script",
                 "triple_enabled": "Triple press",
-                "triple_targets": "Devices or action",
+                "triple_targets": "Devices or script",
                 "short_operation": "Action",
                 "short_percentage": "Configured percentage",
                 "long_operation": "Action",
@@ -272,14 +307,19 @@
                 "double_operation": "Action",
                 "double_percentage": "Configured percentage",
                 "triple_operation": "Action",
-                "triple_percentage": "Configured percentage"
+                "triple_percentage": "Configured percentage",
+                "short_other_targets": "Use different devices for this action",
+                "long_other_targets": "Use different devices for this action",
+                "double_other_targets": "Use different devices for this action",
+                "triple_other_targets": "Use different devices for this action"
               },
               "data_description": {
                 "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
                 "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
                 "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
                 "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
-                "long_targets": "Dial automatically uses this button’s short-press target; this target selection is ignored."
+                "long_targets": "This selection replaces the default devices.",
+                "short_targets": "This selection replaces the default devices."
               },
               "description": "Short press responds immediately unless double or triple press is enabled. Choose a power/level action for each press type. Long press also offers smooth adjustment while held."
             },
@@ -287,13 +327,13 @@
               "name": "Button 3",
               "data": {
                 "short_enabled": "Short press",
-                "short_targets": "Devices or action",
+                "short_targets": "Devices or script",
                 "long_enabled": "Long press",
-                "long_targets": "Devices or action",
+                "long_targets": "Devices or script",
                 "double_enabled": "Double press",
-                "double_targets": "Devices or action",
+                "double_targets": "Devices or script",
                 "triple_enabled": "Triple press",
-                "triple_targets": "Devices or action",
+                "triple_targets": "Devices or script",
                 "short_operation": "Action",
                 "short_percentage": "Configured percentage",
                 "long_operation": "Action",
@@ -301,14 +341,19 @@
                 "double_operation": "Action",
                 "double_percentage": "Configured percentage",
                 "triple_operation": "Action",
-                "triple_percentage": "Configured percentage"
+                "triple_percentage": "Configured percentage",
+                "short_other_targets": "Use different devices for this action",
+                "long_other_targets": "Use different devices for this action",
+                "double_other_targets": "Use different devices for this action",
+                "triple_other_targets": "Use different devices for this action"
               },
               "data_description": {
                 "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
                 "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
                 "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
                 "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
-                "long_targets": "Dial automatically uses this button’s short-press target; this target selection is ignored."
+                "long_targets": "This selection replaces the default devices.",
+                "short_targets": "This selection replaces the default devices."
               },
               "description": "Short press responds immediately unless double or triple press is enabled. Choose a power/level action for each press type. Long press also offers smooth adjustment while held."
             },
@@ -316,13 +361,13 @@
               "name": "Button 4",
               "data": {
                 "short_enabled": "Short press",
-                "short_targets": "Devices or action",
+                "short_targets": "Devices or script",
                 "long_enabled": "Long press",
-                "long_targets": "Devices or action",
+                "long_targets": "Devices or script",
                 "double_enabled": "Double press",
-                "double_targets": "Devices or action",
+                "double_targets": "Devices or script",
                 "triple_enabled": "Triple press",
-                "triple_targets": "Devices or action",
+                "triple_targets": "Devices or script",
                 "short_operation": "Action",
                 "short_percentage": "Configured percentage",
                 "long_operation": "Action",
@@ -330,24 +375,416 @@
                 "double_operation": "Action",
                 "double_percentage": "Configured percentage",
                 "triple_operation": "Action",
-                "triple_percentage": "Configured percentage"
+                "triple_percentage": "Configured percentage",
+                "short_other_targets": "Use different devices for this action",
+                "long_other_targets": "Use different devices for this action",
+                "double_other_targets": "Use different devices for this action",
+                "triple_other_targets": "Use different devices for this action"
               },
               "data_description": {
                 "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
                 "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
                 "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
                 "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
-                "long_targets": "Dial automatically uses this button’s short-press target; this target selection is ignored."
+                "long_targets": "This selection replaces the default devices.",
+                "short_targets": "This selection replaces the default devices."
               },
               "description": "Short press responds immediately unless double or triple press is enabled. Choose a power/level action for each press type. Long press also offers smooth adjustment while held."
+            }
+          }
+        },
+        "binding_button": {
+          "title": "Smart Button settings",
+          "data": {
+            "enabled": "Enable control",
+            "shared_targets": "Default lights / devices",
+            "short_other_targets": "Use different devices for this action",
+            "long_other_targets": "Use different devices for this action",
+            "double_other_targets": "Use different devices for this action",
+            "triple_other_targets": "Use different devices for this action"
+          },
+          "sections": {
+            "button_1": {
+              "name": "Button",
+              "data": {
+                "short_enabled": "Short press",
+                "short_targets": "Devices or script",
+                "long_enabled": "Long press",
+                "long_targets": "Devices or script",
+                "double_enabled": "Double press",
+                "double_targets": "Devices or script",
+                "triple_enabled": "Triple press",
+                "triple_targets": "Devices or script",
+                "short_operation": "Action",
+                "short_percentage": "Configured percentage",
+                "long_operation": "Action",
+                "long_percentage": "Configured percentage",
+                "double_operation": "Action",
+                "double_percentage": "Configured percentage",
+                "triple_operation": "Action",
+                "triple_percentage": "Configured percentage",
+                "short_other_targets": "Use different devices for this action",
+                "long_other_targets": "Use different devices for this action",
+                "double_other_targets": "Use different devices for this action",
+                "triple_other_targets": "Use different devices for this action"
+              },
+              "data_description": {
+                "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "short_targets": "This selection replaces the default devices."
+              },
+              "description": "Actions use the default devices unless a different selection is enabled. Held regulation starts upward below 30%, downward above 60%, alternating in between. Stops at endpoints."
+            }
+          }
+        },
+        "binding_dimmer": {
+          "title": "Dimmer v2 settings",
+          "data": {
+            "enabled": "Enable control",
+            "shared_targets": "Default lights / devices",
+            "short_other_targets": "Use different devices for this action",
+            "long_other_targets": "Use different devices for this action",
+            "double_other_targets": "Use different devices for this action",
+            "triple_other_targets": "Use different devices for this action"
+          },
+          "sections": {
+            "button_1": {
+              "name": "ON/OFF",
+              "data": {
+                "short_enabled": "Short press",
+                "short_targets": "Devices or script",
+                "long_enabled": "Long press",
+                "long_targets": "Devices or script",
+                "double_enabled": "Double press",
+                "double_targets": "Devices or script",
+                "triple_enabled": "Triple press",
+                "triple_targets": "Devices or script",
+                "short_operation": "Action",
+                "short_percentage": "Configured percentage",
+                "long_operation": "Action",
+                "long_percentage": "Configured percentage",
+                "double_operation": "Action",
+                "double_percentage": "Configured percentage",
+                "triple_operation": "Action",
+                "triple_percentage": "Configured percentage",
+                "short_other_targets": "Use different devices for this action",
+                "long_other_targets": "Use different devices for this action",
+                "double_other_targets": "Use different devices for this action",
+                "triple_other_targets": "Use different devices for this action"
+              },
+              "data_description": {
+                "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "short_targets": "This selection replaces the default devices."
+              },
+              "description": "Actions use the default devices unless a different selection is enabled. Held regulation starts upward below 30%, downward above 60%, alternating in between. Stops at endpoints."
+            },
+            "button_2": {
+              "name": "+ · Brighten",
+              "data": {
+                "short_enabled": "Short press",
+                "short_targets": "Devices or script",
+                "long_enabled": "Long press",
+                "long_targets": "Devices or script",
+                "double_enabled": "Double press",
+                "double_targets": "Devices or script",
+                "triple_enabled": "Triple press",
+                "triple_targets": "Devices or script",
+                "short_operation": "Action",
+                "short_percentage": "Configured percentage",
+                "long_operation": "Action",
+                "long_percentage": "Configured percentage",
+                "double_operation": "Action",
+                "double_percentage": "Configured percentage",
+                "triple_operation": "Action",
+                "triple_percentage": "Configured percentage",
+                "short_other_targets": "Use different devices for this action",
+                "long_other_targets": "Use different devices for this action",
+                "double_other_targets": "Use different devices for this action",
+                "triple_other_targets": "Use different devices for this action"
+              },
+              "data_description": {
+                "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_targets": "This selection replaces the default devices.",
+                "short_targets": "This selection replaces the default devices."
+              },
+              "description": "Held regulation uses the fixed direction of this button."
+            },
+            "button_3": {
+              "name": "− · Dim",
+              "data": {
+                "short_enabled": "Short press",
+                "short_targets": "Devices or script",
+                "long_enabled": "Long press",
+                "long_targets": "Devices or script",
+                "double_enabled": "Double press",
+                "double_targets": "Devices or script",
+                "triple_enabled": "Triple press",
+                "triple_targets": "Devices or script",
+                "short_operation": "Action",
+                "short_percentage": "Configured percentage",
+                "long_operation": "Action",
+                "long_percentage": "Configured percentage",
+                "double_operation": "Action",
+                "double_percentage": "Configured percentage",
+                "triple_operation": "Action",
+                "triple_percentage": "Configured percentage",
+                "short_other_targets": "Use different devices for this action",
+                "long_other_targets": "Use different devices for this action",
+                "double_other_targets": "Use different devices for this action",
+                "triple_other_targets": "Use different devices for this action"
+              },
+              "data_description": {
+                "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_targets": "This selection replaces the default devices.",
+                "short_targets": "This selection replaces the default devices."
+              },
+              "description": "Held regulation uses the fixed direction of this button."
+            },
+            "button_4": {
+              "name": "HUE",
+              "data": {
+                "short_enabled": "Short press",
+                "short_targets": "Devices or script",
+                "long_enabled": "Long press",
+                "long_targets": "Devices or script",
+                "double_enabled": "Double press",
+                "double_targets": "Devices or script",
+                "triple_enabled": "Triple press",
+                "triple_targets": "Devices or script",
+                "short_operation": "Action",
+                "short_percentage": "Configured percentage",
+                "long_operation": "Action",
+                "long_percentage": "Configured percentage",
+                "double_operation": "Action",
+                "double_percentage": "Configured percentage",
+                "triple_operation": "Action",
+                "triple_percentage": "Configured percentage",
+                "short_other_targets": "Use different devices for this action",
+                "long_other_targets": "Use different devices for this action",
+                "double_other_targets": "Use different devices for this action",
+                "triple_other_targets": "Use different devices for this action"
+              },
+              "data_description": {
+                "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_targets": "This selection replaces the default devices.",
+                "short_targets": "This selection replaces the default devices."
+              },
+              "description": "Actions use the default devices unless a different selection is enabled. Held regulation starts upward below 30%, downward above 60%, alternating in between. Stops at endpoints."
+            }
+          }
+        },
+        "reconfigure_button": {
+          "title": "Smart Button settings",
+          "data": {
+            "enabled": "Enable control",
+            "shared_targets": "Default lights / devices",
+            "short_other_targets": "Use different devices for this action",
+            "long_other_targets": "Use different devices for this action",
+            "double_other_targets": "Use different devices for this action",
+            "triple_other_targets": "Use different devices for this action"
+          },
+          "sections": {
+            "button_1": {
+              "name": "Button",
+              "data": {
+                "short_enabled": "Short press",
+                "short_targets": "Devices or script",
+                "long_enabled": "Long press",
+                "long_targets": "Devices or script",
+                "double_enabled": "Double press",
+                "double_targets": "Devices or script",
+                "triple_enabled": "Triple press",
+                "triple_targets": "Devices or script",
+                "short_operation": "Action",
+                "short_percentage": "Configured percentage",
+                "long_operation": "Action",
+                "long_percentage": "Configured percentage",
+                "double_operation": "Action",
+                "double_percentage": "Configured percentage",
+                "triple_operation": "Action",
+                "triple_percentage": "Configured percentage",
+                "short_other_targets": "Use different devices for this action",
+                "long_other_targets": "Use different devices for this action",
+                "double_other_targets": "Use different devices for this action",
+                "triple_other_targets": "Use different devices for this action"
+              },
+              "data_description": {
+                "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "short_targets": "This selection replaces the default devices."
+              },
+              "description": "Actions use the default devices unless a different selection is enabled. Held regulation starts upward below 30%, downward above 60%, alternating in between. Stops at endpoints."
+            }
+          }
+        },
+        "reconfigure_dimmer": {
+          "title": "Dimmer v2 settings",
+          "data": {
+            "enabled": "Enable control",
+            "shared_targets": "Default lights / devices",
+            "short_other_targets": "Use different devices for this action",
+            "long_other_targets": "Use different devices for this action",
+            "double_other_targets": "Use different devices for this action",
+            "triple_other_targets": "Use different devices for this action"
+          },
+          "sections": {
+            "button_1": {
+              "name": "ON/OFF",
+              "data": {
+                "short_enabled": "Short press",
+                "short_targets": "Devices or script",
+                "long_enabled": "Long press",
+                "long_targets": "Devices or script",
+                "double_enabled": "Double press",
+                "double_targets": "Devices or script",
+                "triple_enabled": "Triple press",
+                "triple_targets": "Devices or script",
+                "short_operation": "Action",
+                "short_percentage": "Configured percentage",
+                "long_operation": "Action",
+                "long_percentage": "Configured percentage",
+                "double_operation": "Action",
+                "double_percentage": "Configured percentage",
+                "triple_operation": "Action",
+                "triple_percentage": "Configured percentage",
+                "short_other_targets": "Use different devices for this action",
+                "long_other_targets": "Use different devices for this action",
+                "double_other_targets": "Use different devices for this action",
+                "triple_other_targets": "Use different devices for this action"
+              },
+              "data_description": {
+                "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "short_targets": "This selection replaces the default devices."
+              },
+              "description": "Actions use the default devices unless a different selection is enabled. Held regulation starts upward below 30%, downward above 60%, alternating in between. Stops at endpoints."
+            },
+            "button_2": {
+              "name": "+ · Brighten",
+              "data": {
+                "short_enabled": "Short press",
+                "short_targets": "Devices or script",
+                "long_enabled": "Long press",
+                "long_targets": "Devices or script",
+                "double_enabled": "Double press",
+                "double_targets": "Devices or script",
+                "triple_enabled": "Triple press",
+                "triple_targets": "Devices or script",
+                "short_operation": "Action",
+                "short_percentage": "Configured percentage",
+                "long_operation": "Action",
+                "long_percentage": "Configured percentage",
+                "double_operation": "Action",
+                "double_percentage": "Configured percentage",
+                "triple_operation": "Action",
+                "triple_percentage": "Configured percentage",
+                "short_other_targets": "Use different devices for this action",
+                "long_other_targets": "Use different devices for this action",
+                "double_other_targets": "Use different devices for this action",
+                "triple_other_targets": "Use different devices for this action"
+              },
+              "data_description": {
+                "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_targets": "This selection replaces the default devices.",
+                "short_targets": "This selection replaces the default devices."
+              },
+              "description": "Held regulation uses the fixed direction of this button."
+            },
+            "button_3": {
+              "name": "− · Dim",
+              "data": {
+                "short_enabled": "Short press",
+                "short_targets": "Devices or script",
+                "long_enabled": "Long press",
+                "long_targets": "Devices or script",
+                "double_enabled": "Double press",
+                "double_targets": "Devices or script",
+                "triple_enabled": "Triple press",
+                "triple_targets": "Devices or script",
+                "short_operation": "Action",
+                "short_percentage": "Configured percentage",
+                "long_operation": "Action",
+                "long_percentage": "Configured percentage",
+                "double_operation": "Action",
+                "double_percentage": "Configured percentage",
+                "triple_operation": "Action",
+                "triple_percentage": "Configured percentage",
+                "short_other_targets": "Use different devices for this action",
+                "long_other_targets": "Use different devices for this action",
+                "double_other_targets": "Use different devices for this action",
+                "triple_other_targets": "Use different devices for this action"
+              },
+              "data_description": {
+                "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_targets": "This selection replaces the default devices.",
+                "short_targets": "This selection replaces the default devices."
+              },
+              "description": "Held regulation uses the fixed direction of this button."
+            },
+            "button_4": {
+              "name": "HUE",
+              "data": {
+                "short_enabled": "Short press",
+                "short_targets": "Devices or script",
+                "long_enabled": "Long press",
+                "long_targets": "Devices or script",
+                "double_enabled": "Double press",
+                "double_targets": "Devices or script",
+                "triple_enabled": "Triple press",
+                "triple_targets": "Devices or script",
+                "short_operation": "Action",
+                "short_percentage": "Configured percentage",
+                "long_operation": "Action",
+                "long_percentage": "Configured percentage",
+                "double_operation": "Action",
+                "double_percentage": "Configured percentage",
+                "triple_operation": "Action",
+                "triple_percentage": "Configured percentage",
+                "short_other_targets": "Use different devices for this action",
+                "long_other_targets": "Use different devices for this action",
+                "double_other_targets": "Use different devices for this action",
+                "triple_other_targets": "Use different devices for this action"
+              },
+              "data_description": {
+                "short_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "double_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "triple_percentage": "Used only in Configured percentage mode. Number controls are scaled to their own range.",
+                "long_targets": "This selection replaces the default devices.",
+                "short_targets": "This selection replaces the default devices."
+              },
+              "description": "Actions use the default devices unless a different selection is enabled. Held regulation starts upward below 30%, downward above 60%, alternating in between. Stops at endpoints."
             }
           }
         }
       },
       "error": {
         "lights_required": "Select dial lights or at least one button action.",
-        "button_lights_only": "The selected button must target lights/groups. Choose Custom lights for scenes or scripts.",
-        "button_targets_invalid": "Select devices of the same type (lights, fans or number controls), or a single scene or script.",
+        "button_targets_invalid": "Select devices of the same type (lights, fans or number entities), or one script.",
         "button_target_required": "Select a target for each enabled press type.",
         "button_percentage_only": "Select lights, or fans and number controls. Do not mix these two groups in one ramp.",
         "button_percentage_invalid": "Select a valid action and a percentage from 1 to 100.",

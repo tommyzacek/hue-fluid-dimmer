@@ -146,3 +146,15 @@ async def test_sse_eof_causes_reconnect_instead_of_busy_loop():
     response.content.__aiter__.side_effect = lines
     with pytest.raises(BridgeError, match="closed"):
         await anext(api.button_events())
+
+
+async def test_device_resources_are_discovered_once_without_button_poll_traffic():
+    api = client({"data": [{"id": "remote", "product_data": {"model_id": "RWL022"}}]})
+    assert (await api.device_resources())[0]["id"] == "remote"
+    assert api.session.get.call_args.args[0].endswith("/resource/device")
+
+
+@pytest.mark.parametrize("data", [None, "invalid", [None]])
+async def test_device_discovery_rejects_invalid_resource_lists(data):
+    with pytest.raises(BridgeError):
+        await client({"data": data}).device_resources()

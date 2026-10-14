@@ -1,19 +1,14 @@
-# v0.5.0 — Dial routing, smooth percentage controls and redesigned settings
+# v0.7.0 — Smart Button, Dimmer v2 and simpler controller settings
 
-This release combines the changes tested internally since v0.1.8.
+- Add model-specific setup for Smart Button ROM001/RDM003/RDM005 and Dimmer v2 RWL022. Newly discovered controllers appear as disabled configuration rows, without duplicate entities or devices.
+- Simplify default targets: each Button/Dimmer action uses the controller's default devices unless **Use different devices for this action** is enabled. Turning it off removes the override. Function toggles use switches throughout.
+- Remove scene selection and scene cycling. Scripts remain available for custom actions. Existing scene assignments are no longer executed; replace them with a script or a supported target.
+- Continuous held regulation chooses its direction at the start: below 30% up, above 60% down, otherwise alternate from the previous hold (first up). It stops at endpoints and on release. Dimmer +/− have fixed direction and 10-point short-press steps.
+- Cancel pending native Hue held commands before stopping, including on unload; prevent a delayed initial brightness read from starting a ramp after release.
+- Make the tested adaptive tuning the default presets. Light sensitivities are 1.2 / 2.4 / 4.8; other entity sensitivities are 0.75 / 1.5 / 3. Balanced other-entity ramp remains 0.75 s. Every named preset enables adaptive transitions; Custom retains independent fields and its adaptive switch.
+- Add Slovak translations alongside Czech and English, improve target labels, and fix the invalid heading translation keys that failed hassfest in v0.5.0.
+- Align development package and integration versions at 0.7.0, and refresh documentation.
 
-- Button 1's short-press targets are the main dial targets. Separate dial target selection is removed.
-- Buttons 2–4 can temporarily assign their short-press targets to the dial using the long-press **Dial** action. It returns after 5 seconds without rotation or 5 seconds after the last movement.
-- Fan and number entities support dial control, held regulation, and button actions: off/on, off/previous percentage, or off/configured percentage.
-- Long-press continuous regulation starts upward, pauses at maximum for one repeat, then reverses. Release stops further commands.
-- Native Hue lights use relative dimming and a stop command during held regulation; other percentage targets use HA services.
-- Custom dial settings have **Lights** and **Other entities** headings with independent sensitivity and transition/ramp fields. Balanced fan/number ramp is 0.75 seconds; preset light timing is unchanged.
-- Optional experimental adaptive transitions follow report cadence and discard the old goal on direction reversal. Disabled by default; only applies to the Custom profile.
-- Previous nonzero levels are saved for explicit restore actions.
-- Button multiclick recognition uses a 350 ms Bridge-timestamp interval. Short-only actions do not wait for additional clicks.
+Tap Dial temporary routing still returns after 5 seconds, and short-only actions retain immediate release handling. Existing targets and custom values are preserved. New Button/Dimmer control remains experimental and requires physical validation; RDM005 has not been physically tested at the development installation.
 
-Existing main dial targets migrate into button 1's short-press targets only when button 1 has no short assignment. Temporary routing is not persisted and resets on reload. Controller configuration remains in the integration, without duplicate devices or helper entities.
-
-Physical tests covered Tap Dial rotary control, held dimming on a Hue light and number-based PWM fan control. Other device capabilities vary. A recurring external brightness change to approximately 8% is under investigation; no cause or fix is claimed in this release.
-
-Requires Home Assistant 2026.10.1 or newer and its configured official Hue integration. After updating in HACS, restart Home Assistant and refresh the browser to load the changed form labels.
+Requires Home Assistant 2026.10.1 or newer and the official Hue integration. After updating through HACS, restart HA and refresh the browser to load the new form labels. Disable competing native Hue or automation assignments before enabling new controller actions.

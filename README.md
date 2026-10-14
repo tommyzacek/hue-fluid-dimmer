@@ -2,67 +2,78 @@
 
 *Smooth dimming. Low latency.*
 
-An experimental Home Assistant companion integration for Hue Tap Dial controllers. It uses an existing official Hue integration, reads rotary reports from the Bridge and configures button actions without per-controller automations or brightness helpers. It is not an official Signify or Home Assistant product.
+An experimental Home Assistant companion for Philips Hue **Tap Dial**, **Smart Button** and **Dimmer v2** controllers. Configure targets and button gestures directly in the integration, without per-controller automations, duplicate controller entities or brightness helpers.
 
-## Installation
+Requires **Home Assistant 2026.10.1 or newer**, a Hue v2 bridge and the configured official **Philips Hue** integration. This project is independent of Signify and Home Assistant.
 
-Requires Home Assistant **2026.10.1 or newer** and a configured official **Philips Hue v2** integration.
+## Installation and updates
 
-1. Add `https://github.com/tommyzacek/hue-fluid-dimmer` as an **Integration** in HACS Custom repositories.
-2. Download and restart Home Assistant.
-3. Add **Hue Fluid Dimmer** in Settings → Devices & services and select your existing Hue bridge.
-4. Open a discovered controller's Configure gear, assign button 1's short-press targets and enable control.
+1. Add `https://github.com/tommyzacek/hue-fluid-dimmer` to HACS custom repositories as an **Integration**.
+2. Download the release and restart Home Assistant.
+3. Add **Hue Fluid Dimmer** in **Settings → Devices & services**, then select your existing Hue bridge.
+4. Open a controller's **Configure** gear, select targets and enable control. New controller rows start disabled.
+5. The bridge's **Configure** button opens polling settings. Refresh the browser after updating to load new form translations.
 
-Alternatively copy `custom_components/hue_fluid_dimmer` into your HA configuration and restart.
+Alternatively copy `custom_components/hue_fluid_dimmer` into your HA configuration's `custom_components` directory and restart.
 
-Disable competing blueprints, automations and direct Hue assignments for gestures controlled by this integration. Unassigned gestures can continue to be handled elsewhere. Configuration rows do not create duplicate device or event entities.
+Disable competing direct Hue assignments, blueprints or automations for any gestures enabled here. Otherwise both systems may send commands. No official Hue integration settings, automations, scripts or scenes are modified by this integration.
 
-## Dial and temporary targets
+## Supported controllers
 
-The main dial controls button 1's short-press targets: lights, light groups, lists of lights, fans or number entities. Scenes and scripts cannot be dial targets.
+| Controller | Models | Configuration |
+| --- | --- | --- |
+| Tap Dial | Discovered rotary resources | Dial and four buttons |
+| Smart Button | ROM001, RDM003, RDM005 | One button |
+| Dimmer v2 | RWL022 | ON/OFF, +, − and HUE buttons |
 
-For buttons 2–4, enable a short action with percentage targets and choose **Dial** for the long action. Holding that button temporarily borrows its short-press targets without toggling them. Routing returns to button 1 after **5 seconds without a first rotation**, or **5 seconds after the last rotation**. Routing is local to each controller and resets on reload.
+New supported Smart Buttons and Dimmer v2 devices are added as disabled configuration rows when the integration loads. Deleted rows are not recreated on every reload; **Add controller** can restore them. Dimmer v1 and Hue wall modules are outside this release's scope.
 
-| Profile | Light sensitivity / 15 reported steps | Light transition | Fan/number sensitivity / 15 steps | Fan/number ramp |
+Tap Dial control and a number-based PWM fan have been physically exercised at the development installation. New Smart Button/Dimmer integration-owned actions still require physical validation. RDM005 support is based on its model mapping, not a physical test.
+
+## Dial
+
+Button 1's short-press targets are the main dial targets. A long-press **Dial** action on buttons 2–4 temporarily borrows that button's short-press targets. Routing returns to the main targets after **5 seconds without a first rotation**, or **5 seconds after the last rotation**.
+
+| Profile | Light sensitivity¹ | Light transition | Other entity sensitivity¹ | Other entity ramp |
 | --- | --- | --- | --- | --- |
-| Gentle | 0.75 percentage points | 1 s | 0.75 percentage points | 1 s |
-| Balanced | 1.5 percentage points | 1 s | 1.5 percentage points | 0.75 s |
-| Swift | 3 percentage points | 0.5 s | 3 percentage points | 0.5 s |
-| Custom | Independent setting | Independent setting | Independent setting | Independent setting |
+| Gentle | 1.2 | 1 s | 0.75 | 1 s |
+| Balanced | 2.4 | 1 s | 1.5 | 0.75 s |
+| Swift | 4.8 | 0.5 s | 3 | 0.5 s |
+| Custom | User choice | User choice | User choice | User choice |
 
-Custom settings are grouped under **Lights** and **Other entities**, and are preserved when switching presets. Optional **adaptive transitions** apply only to Custom: report cadence determines a short transition, bounded by the configured duration and 0.5 seconds. Changes in direction discard the previous goal and follow the current estimated level. It remains experimental and does not remove Bridge event latency. The option is off by default.
+¹ Base percentage points per 15 reported steps. Adaptive behavior changes the response according to rotation cadence; these are not guaranteed physical brightness increments.
 
-Number entities are normalized using their min/max range and rounded to their supported step. Fan/number ramp values are sent through HA services approximately every 100 ms; lights execute their supported transition. Device reporting and physical behavior can differ.
+All named profiles enable adaptive transitions. Custom exposes separate **Lights** and **Other entities** groups, with their own sensitivity and transition/ramp fields, plus an adaptive toggle. Custom values are retained when switching profiles. Profile changes affect the command response, not event arrival latency.
+
+Lights use their integration's transition support; fan and number entities use a software ramp with HA services, respecting the entity's range/step. Actual smoothness depends on device capabilities, reporting and network delays. Future targets are discarded when rotation changes direction.
 
 ## Buttons
 
-Each of the four buttons has independently enabled short, long, double and triple actions. Turning an action off removes its binding.
+Short, long, double and triple presses have independent enable switches and actions. Short press is immediate on release when no multiclick action is enabled. Multiclick recognition uses Bridge timestamps with a **350 ms** interval; transport delays can add latency.
 
-- **Off / on**: normal light/fan toggle; number entities switch between minimum and maximum.
-- **Off / previous percentage**: restore a recorded previous nonzero level, saved across reloads.
-- **Off / configured percentage**: toggle to a chosen percentage.
-- **Continuous regulation while held**: long press only. Start upward, skip one repeat at maximum and reverse downward. Release stops additional commands.
-- **Dial**: long press on buttons 2–4 only, as described above.
+Actions include off/on, off/previous percentage and off/configured percentage. Targets can be lights/groups, fans, number entities or one script. Scene selection and scene cycling are not provided. Percentage regulation requires compatible percentage targets; unrelated target types cannot be mixed in a single ramp.
 
-Normal actions can also recall a scene or run a script. Native Hue held dimming reads actual Bridge brightness, uses relative dimming commands and stops on release. Other targets use HA services.
+Smart Button and Dimmer have **Default lights / devices**. An action uses these unless **Use different devices for this action** is enabled; only then does its own target picker appear. Turning this override off returns to the defaults and discards the old target override. Disabling a gesture removes its binding.
 
-Short-only bindings have no multiclick waiting window. With double/triple actions enabled, recognition uses a **350 ms** interval between release and the next press, using Bridge timestamps. REST reads complement the button event stream; missing intermediate transitions wait for stream history rather than inventing clicks.
+Long press additionally supports **continuous regulation while held**. Direction is chosen once at the start: below 30% upward, above 60% downward, otherwise opposite the previous hold (first hold upward). It stops at the endpoint and on release, without reversing during the same hold. Dimmer +/− use fixed directions; short presses step by 10 percentage points. Native Hue held regulation uses relative dimming and a stop command; other targets use HA services. Device/network delays may still affect the visible stop.
 
-## Bridge polling
+## Polling and connection
 
-The default mode reads during activity; Continuous mode also reads while idle. The default polling interval is **100 ms**. Dials and buttons each use one batch request per Bridge, regardless of controller count, plus a button SSE stream. Continuous mode at 100 ms therefore sends approximately 20 REST requests per second per Bridge. Network errors cause backoff and fresh baselines after recovery.
+The default **After first event** mode uses official HA Hue events and the companion's timestamped button SSE stream to wake temporary batch reads. Rotary and button activity windows are separate; mode and interval are shared. **Continuous** reads both resource types while idle as well.
 
-The Bridge exposes its latest report, not every physical detent. Polling cannot recover overwritten reports. These settings are experimental, not a verified vendor traffic recommendation or a guarantee of native Hue latency.
+Default interval: **100 ms**; default activity window: **3 s**. Each resource type uses one batch request for the whole bridge (`relative_rotary` and `button`), independent of controller count. Continuous mode at 100 ms is approximately 20 REST requests/s per bridge plus one SSE stream. Requests do not overlap; failures apply backoff. This experimental polling interval is not a verified vendor recommendation.
 
-The companion uses the official integration's credentials in memory and HA's shared HTTP session. It does not save credentials in its own configuration or diagnostics. Compatibility depends on the official integration's credential fields. No official Hue files or automation YAML files are modified.
+REST snapshots and timestamped SSE reports share a gesture state machine. Missing transitions wait for SSE history; duplicate/old reports are ignored. Startup/reconnection establishes fresh baselines instead of replaying old actions. A bridge exposes its latest rotary report, not every physical detent, so polling cannot recover overwritten movement.
 
-## Updates and validation
+The official Hue integration must remain configured and loaded. The companion reads its host and application key in memory and uses HA's shared HTTP session; no extra pairing is needed and the key is not copied into companion configuration or diagnostics. The official integration's credential field names are an implementation dependency. Bridge HTTPS certificate verification follows the existing local Hue approach and is disabled for these requests.
 
-See [v0.5.0 release notes](RELEASE_NOTES.md). After a HACS update, restart HA and refresh the browser for new form labels.
+Unloading/reconfiguring cancels polling, stream subscriptions, gesture timers, routing and active ramps. Diagnostics redact controller bindings. The `hue_fluid_dimmer_event` bus event remains available for advanced rotary automations.
 
-Physical tests covered Tap Dial control, Hue held dimming and a numeric PWM fan. Hue Button and Dimmer controller models remain unsupported pending model-specific validation. An intermittent external change to roughly 8% brightness is being investigated; this release does not claim a fix.
+## Languages
 
-Automated tests cover report tracking, gesture recognition, temporary routing, configuration migration, percentage controls, restoration and adaptive transitions. A synthetic 100-resource test verifies batching, not 100 physical devices on one Bridge.
+The HA profile language selects **Czech**, **Slovak** or **English**. English is the fallback for other languages. Controller names and user-created entity names retain their own names.
+
+## Development
 
 ```sh
 python3.14 -m venv .venv
@@ -72,8 +83,12 @@ python3.14 -m venv .venv
 .venv/bin/pytest -q
 ```
 
-The repository can be installed as a HACS custom repository without default catalog inclusion. HACS catalog and HA Core inclusion are separate review processes.
+CI runs tests, Ruff, hassfest and HACS validation. HACS custom repository installation does not require inclusion in its default catalog; catalog submission and Home Assistant Core inclusion are separate processes.
+
+Tests cover report baselines/deduplication, batch polling, multiclick recognition, model discovery, native HA form schemas, target overrides, routing, percentage controls and held regulation. Synthetic controller-count tests are not physical scalability validation. A previously observed external brightness drop to approximately 8% remains without a confirmed cause; this release does not claim a fix.
 
 ## Česky
 
-Hlavní cíl kolečka určuje krátký stisk tlačítka 1. Tlačítka 2–4 mohou dlouhým stiskem dočasně převzít kolečko pro své cíle; návrat nastane po 5 sekundách nečinnosti. Vlastní nastavení odděluje citlivost a přechod světel od citlivosti a rampy ostatních entit. Adaptivní přechod je volitelný a experimentální. Tlačítka podporují přepnutí, předchozí nebo nastavené procento a plynulou regulaci při držení. Bez pomocníků a samostatných automatizací pro každý ovladač.
+Doplněk k oficiální Hue integraci pro Tap Dial, Smart Button a Dimmer v2. Ovladače mají vlastní nastavení přímo v integraci, bez nových zařízení, entit nebo pomocníků. Každý stisk lze samostatně zapnout a nastavit. Button a Dimmer používají výchozí zařízení, vlastní výběr se objeví až po zapnutí příslušného přepínače. Scény nejsou součástí nabídky; vlastní logiku lze zapojit skriptem.
+
+Kolečko má oddělené nastavení pro světla a ostatní entity. Předvolby mají adaptivní přechod zapnutý. Dočasné přesměrování kolečka se vrací po 5 sekundách. Před zapnutím akce odstraň konkurenční přiřazení v Hue nebo automatizacích. Po aktualizaci restartuj HA a obnov stránku pro načtení nových překladů.

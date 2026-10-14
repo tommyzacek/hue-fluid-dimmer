@@ -66,24 +66,41 @@ class VisibleLights(selector.EntitySelector):
 
 
 class VisibleActionTargets(selector.EntitySelector):
-    def __init__(self, action: str):
-        domains = ["light", "scene", "script", "fan", "number"]
+    def __init__(self, action: str, kind="tap_dial"):
+        domains = ["light", "script", "fan", "number"]
         super().__init__({"domain": domains, "multiple": True})
         self.action = action
+        self.kind = kind
 
     def serialize(self):
+        conditions = [{"field": f"{self.action}_enabled", "value": True}]
+        if self.kind != "tap_dial":
+            conditions.append({"field": f"{self.action}_other_targets", "value": True})
         return {
             **super().serialize(),
-            "visible": {"field": f"{self.action}_enabled", "value": True},
+            "visible": conditions[0] if len(conditions) == 1 else conditions,
         }
 
 
+class OtherTargets(selector.BooleanSelector):
+    def __init__(self, action):
+        super().__init__()
+        self.action = action
+
+    def serialize(self):
+        conditions = [{"field": f"{self.action}_enabled", "value": True}]
+        return {**super().serialize(), "visible": conditions}
+
+
 class VisibleOperation(selector.SelectSelector):
-    def __init__(self, action, index=2):
+    def __init__(self, action, index=2, kind="tap_dial"):
         options = ["toggle", "previous", "configured"]
+        if action == "short":
+            if kind == "dimmer" and index in (2, 3):
+                options.extend(["step_up", "step_down"])
         if action == "long":
             options.append("dimming")
-            if index > 1:
+            if index > 1 and kind == "tap_dial":
                 options.append("dial")
         super().__init__(
             {"options": options, "translation_key": "button_operation", "mode": "dropdown"}
@@ -111,9 +128,10 @@ class VisiblePercentage(selector.NumberSelector):
 
 def binding_schema(old: dict, submitted: dict | None = None) -> p.Schema:
     data = submitted if submitted is not None else form_values(old)
+    kind = old.get("controller_kind", "tap_dial")
     dial = data["dial"]
     schema = {
-        p.Required("enabled", default=data["enabled"]): bool,
+        p.Required("enabled", default=data["enabled"]): selector.BooleanSelector(),
         p.Required("dial", default=data["dial"]): section(
             p.Schema(
                 {
@@ -128,7 +146,7 @@ def binding_schema(old: dict, submitted: dict | None = None) -> p.Schema:
                         "adaptive_transition", default=dial["adaptive_transition"]
                     ): VisibleCustomBoolean(),
                     p.Optional("lights_heading", default="lights"): CustomHeading(
-                        {"value": "lights", "translation_key": "lights_heading"}
+                        {"value": "lights", "label": ""}
                     ),
                     p.Required("sensitivity", default=dial["sensitivity"]): VisibleNumber(
                         {"min": 0.1, "max": 10, "step": 0.05, "mode": "box"}
@@ -137,7 +155,7 @@ def binding_schema(old: dict, submitted: dict | None = None) -> p.Schema:
                         {"min": 0.1, "max": 3, "step": 0.1, "mode": "box"}
                     ),
                     p.Optional("other_heading", default="other"): CustomHeading(
-                        {"value": "other", "translation_key": "other_heading"}
+                        {"value": "other", "label": ""}
                     ),
                     p.Required(
                         "nonlight_sensitivity", default=dial["nonlight_sensitivity"]
@@ -149,17 +167,32 @@ def binding_schema(old: dict, submitted: dict | None = None) -> p.Schema:
             )
         ),
     }
-    for index in range(1, 5):
+    if kind != "tap_dial":
+        schema = {
+            p.Required("enabled", default=data["enabled"]): selector.BooleanSelector(),
+            p.Required(
+                "shared_targets", default=data.get("shared_targets", [])
+            ): selector.EntitySelector({"domain": ["light", "fan", "number"], "multiple": True}),
+        }
+    for index in range(1, 2 if kind == "button" else 5):
         field = f"button_{index}"
         fields = {}
         for action in GESTURES:
-            fields[p.Required(f"{action}_enabled", default=data[field][f"{action}_enabled"])] = bool
+            fields[p.Required(f"{action}_enabled", default=data[field][f"{action}_enabled"])] = (
+                selector.BooleanSelector()
+            )
+            if kind != "tap_dial":
+                fields[
+                    p.Required(
+                        f"{action}_other_targets", default=data[field][f"{action}_other_targets"]
+                    )
+                ] = OtherTargets(action)
             fields[p.Optional(f"{action}_targets", default=data[field][f"{action}_targets"])] = (
-                VisibleActionTargets(action)
+                VisibleActionTargets(action, kind)
             )
             fields[
                 p.Required(f"{action}_operation", default=data[field][f"{action}_operation"])
-            ] = VisibleOperation(action, index)
+            ] = VisibleOperation(action, index, kind)
             fields[
                 p.Required(f"{action}_percentage", default=data[field][f"{action}_percentage"])
             ] = VisiblePercentage(action)
@@ -269,9 +302,12 @@ class TapDialSubentryFlow(ConfigSubentryFlow):
         assert self.resource_id is not None
         entry = self._get_entry()
         errors = {}
-        old = {}
+        device = getattr(entry.runtime_data, "control_devices", {}).get(self.resource_id, {})
+        old = {"controller_kind": device.get("kind", "tap_dial")}
         if user_input is not None:
-            binding, error = parse_form(user_input)
+            binding, error = parse_form(
+                {**user_input, "controller_kind": old.get("controller_kind", "tap_dial")}
+            )
             if error:
                 errors["base"] = error
                 old = binding
@@ -279,10 +315,19 @@ class TapDialSubentryFlow(ConfigSubentryFlow):
                 return self.async_create_entry(
                     title=entry.runtime_data.controllers().get(self.resource_id, self.resource_id),
                     unique_id=self.resource_id,
-                    data={CONF_RESOURCE: self.resource_id, **binding},
+                    data={
+                        CONF_RESOURCE: self.resource_id,
+                        "controller_model": device.get("model"),
+                        **binding,
+                    },
                 )
         return self.async_show_form(
-            step_id="binding",
+            step_id="binding"
+            + (
+                "_" + old["controller_kind"]
+                if old.get("controller_kind", "tap_dial") != "tap_dial"
+                else ""
+            ),
             data_schema=binding_schema(old, user_input if errors else None),
             errors=errors,
         )
@@ -295,7 +340,9 @@ class TapDialSubentryFlow(ConfigSubentryFlow):
         old = dict(subentry.data)
         errors = {}
         if user_input is not None:
-            binding, error = parse_form(user_input)
+            binding, error = parse_form(
+                {**user_input, "controller_kind": old.get("controller_kind", "tap_dial")}
+            )
             if error:
                 errors["base"] = error
                 old = binding
@@ -305,11 +352,32 @@ class TapDialSubentryFlow(ConfigSubentryFlow):
                 return self.async_update_and_abort(
                     entry,
                     subentry,
-                    data={CONF_RESOURCE: subentry.data[CONF_RESOURCE], **binding},
+                    data={
+                        CONF_RESOURCE: subentry.data[CONF_RESOURCE],
+                        "controller_model": old.get("controller_model"),
+                        **binding,
+                    },
                 )
         return self.async_show_form(
-            step_id="reconfigure",
+            step_id="reconfigure"
+            + (
+                "_" + old["controller_kind"]
+                if old.get("controller_kind", "tap_dial") != "tap_dial"
+                else ""
+            ),
             data_schema=binding_schema(old, user_input if errors else None),
             errors=errors,
             description_placeholders={"controller": subentry.title},
         )
+
+    async def async_step_binding_button(self, user_input=None):
+        return await self.async_step_binding(user_input)
+
+    async def async_step_binding_dimmer(self, user_input=None):
+        return await self.async_step_binding(user_input)
+
+    async def async_step_reconfigure_button(self, user_input=None):
+        return await self.async_step_reconfigure(user_input)
+
+    async def async_step_reconfigure_dimmer(self, user_input=None):
+        return await self.async_step_reconfigure(user_input)
