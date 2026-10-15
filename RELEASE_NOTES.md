@@ -1,3 +1,27 @@
+# v1.1.0 — Complete Hue Reconfigo rename
+
+**Stable release. Requires Home Assistant 2026.10.1+.**
+
+Hue Reconfigo now uses the technical domain and component directory `hue_reconfigo`. The sidebar panel is `/hue-reconfigo`; static assets, frontend selectors and the overview API use the new name. The rotary event is now `hue_reconfigo_event`.
+
+**Existing installations:** do not treat this as an ordinary one-click update from `hue_fluid_dimmer`. Follow the [domain migration guide](https://github.com/tommyzacek/hue-reconfigo/blob/v1.1.0/docs/en/domain-migration.md) before restarting with this release. The offline tool preserves Bridge/controller IDs, settings and brightness memories, updates HACS metadata and backs up the old component and affected storage. New installations need no migration. Installations already migrated internally can use this release normally. Update custom event listeners and panel links separately.
+
+Controller behavior is unchanged. The official Hue integration remains required; Adaptive Lighting remains optional. Validation includes 364 tests, migration conflict/rollback tests, Ruff, JavaScript syntax, hassfest and complete HACS validation.
+
+## Česky
+
+Dokončené přejmenování: technická doména i adresář jsou `hue_reconfigo`, panel je na `/hue-reconfigo` a událost rotace se jmenuje `hue_reconfigo_event`. Chování ovladačů se nemění.
+
+**Stávající instalace se starou doménou musí před restartem provést [převod konfigurace](https://github.com/tommyzacek/hue-reconfigo/blob/v1.1.0/docs/cs/domain-migration.md). Nejde o běžnou aktualizaci jedním kliknutím.** Nástroj zachová ID, nastavení i paměť jasů a vytvoří zálohu. Nové a již převedené instalace převod nepotřebují. Vlastní odkazy na panel a posluchače staré události upravte samostatně.
+
+## Slovenčina
+
+Dokončené premenovanie: technická doména aj priečinok sú `hue_reconfigo`, panel je na `/hue-reconfigo` a udalosť rotácie sa volá `hue_reconfigo_event`. Správanie ovládačov sa nemení.
+
+**Existujúce inštalácie so starou doménou musia pred reštartom vykonať [prevod konfigurácie](https://github.com/tommyzacek/hue-reconfigo/blob/v1.1.0/docs/sk/domain-migration.md). Nejde o bežnú aktualizáciu jedným kliknutím.** Nástroj zachová ID, nastavenia aj pamäť jasu a vytvorí zálohu. Nové a už prevedené inštalácie prevod nepotrebujú. Vlastné odkazy na panel a poslucháčov starej udalosti upravte samostatne.
+
+---
+
 # v1.0.1 — Full HACS validation
 
 Stable maintenance release. Enable the complete HACS validation, including bundled brand assets, with no ignored checks. This release prepares the repository for a HACS default-catalog submission.
