@@ -63,7 +63,11 @@ def resolve_binding(binding: dict) -> dict:
         result["adaptive_transition"] = True
     if result.get("dial_linked"):
         selected = button_actions(result, 1).get("short", [])
-        result["lights"] = selected if percentage_targets(selected) else []
+        result["lights"] = (
+            targets(result.get("dial_targets")) if result.get("dial_override") else selected
+        )
+        if not percentage_targets(result["lights"]):
+            result["lights"] = []
         return result
     source = result.get("dial_source", "custom")
     if source != "custom":
@@ -101,6 +105,8 @@ def form_values(binding: dict) -> dict:
         "shared_targets": binding.get("shared_targets", []),
         "enabled": binding.get("enabled", False),
         "dial": {
+            "override": binding.get("dial_override", False),
+            "targets": binding.get("dial_targets", []),
             "profile": profile,
             "adaptive_transition": binding.get("adaptive_transition", False),
             "nonlight_sensitivity": binding.get("custom_nonlight_sensitivity", 1.5),
@@ -177,6 +183,10 @@ def parse_form(values: dict) -> tuple[dict, str | None]:
         if dial["profile"] in PROFILES
         else dial.get("adaptive_transition", False),
         "dial_linked": True,
+        "dial_override": kind == "tap_dial" and bool(dial.get("override")),
+        "dial_targets": targets(dial.get("targets"))
+        if kind == "tap_dial" and dial.get("override")
+        else [],
         "custom_sensitivity": dial["sensitivity"],
         "custom_transition": dial["transition"],
         "custom_nonlight_sensitivity": dial.get("nonlight_sensitivity", 1.5),
@@ -268,9 +278,11 @@ def parse_form(values: dict) -> tuple[dict, str | None]:
                 actions["long_direction"] = "up" if index == 2 else "down"
         if actions:
             result[field] = actions
+    if result["dial_override"] and not percentage_targets(result["dial_targets"]):
+        return result, "dial_target_required"
     if result["enabled"] and kind == "tap_dial":
         main = button_actions(result, 1).get("short", [])
-        if main and not percentage_targets(main):
+        if main and not result["dial_override"] and not percentage_targets(main):
             return result, "dial_target_required"
         if not main and any(
             result.get(f"button_{index}", {}).get("long_operation") == "dial"

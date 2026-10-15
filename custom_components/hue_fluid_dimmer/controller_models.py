@@ -24,3 +24,18 @@ class HoldDirections:
             direction = "down" if self.previous.get(key) == "up" else "up"
         self.previous[key] = direction
         return direction
+
+
+def motion_service_role(entity_id, unique_id, services):
+    """Hue enable switches share sensor resource IDs; never treat them as readings."""
+    resource = unique_id.rsplit(":", 1)[-1]
+    if entity_id.startswith("switch."):
+        if resource == services.get("motion"):
+            return "motion_enabled"
+        if resource == services.get("light_level"):
+            return "lux_enabled"
+    if entity_id.startswith("binary_sensor.") and resource == services.get("motion"):
+        return "motion"
+    if entity_id.startswith("sensor.") and resource == services.get("light_level"):
+        return "lux"
+    return None

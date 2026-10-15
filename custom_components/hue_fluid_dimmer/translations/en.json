@@ -19,6 +19,63 @@
         "step_up": "Increase by 10 percentage points",
         "step_down": "Decrease by 10 percentage points"
       }
+    },
+    "motion_end_mode": {
+      "options": {
+        "half": "Gradually dim to 50%",
+        "fade": "Smooth fade to off",
+        "half_quick": "Quickly dim to 50%, then turn off"
+      }
+    },
+    "startup_brightness": {
+      "options": {
+        "unchanged": "Previous state",
+        "configured": "Configured percentage"
+      }
+    },
+    "startup_color": {
+      "options": {
+        "unchanged": "Leave unchanged",
+        "temperature": "White temperature",
+        "rgb": "Custom color"
+      }
+    },
+    "motion_arrival": {
+      "options": {
+        "apply": "Apply Motion settings",
+        "keep": "Keep current brightness and color"
+      }
+    },
+    "motion_departure": {
+      "options": {
+        "off": "Switch off",
+        "keep": "Leave on",
+        "restore": "Restore state before arrival"
+      }
+    },
+    "motion_manual_change": {
+      "options": {
+        "continue": "Continue the timer",
+        "handover": "Hand over to manual control"
+      }
+    },
+    "motion_manual_off": {
+      "options": {
+        "resume": "Next motion may switch on again",
+        "hold": "Keep off until a new cycle"
+      }
+    },
+    "motion_manual_scope": {
+      "options": {
+        "touched": "Only affected lights",
+        "all": "Entire Motion selection"
+      }
+    },
+    "motion_return": {
+      "options": {
+        "off": "After the light is switched off",
+        "idle": "After a period without motion"
+      }
     }
   },
   "config": {
@@ -39,14 +96,26 @@
   "options": {
     "step": {
       "init": {
-        "title": "Bridge polling",
-        "description": "Shared mode and interval for dials and buttons. Active mode starts temporary reads after the first event. Continuous mode also reads while idle. Dials and buttons use two bridge-wide batch requests.",
+        "title": "Control and bridge settings",
         "data": {
           "polling_mode": "Polling mode",
           "poll_interval": "Read interval (seconds)",
-          "active_window": "Active window after movement (seconds)"
+          "active_window": "Active window after movement (seconds)",
+          "adaptive_lighting": "Cooperate with Adaptive Lighting",
+          "motion_gate_enabled": "Restrict Motion control by entity state",
+          "motion_gate_entity": "Control entity",
+          "motion_gate_states": "Allowed states",
+          "bridge_settings": "Control and polling"
+        },
+        "data_description": {
+          "adaptive_lighting": "Marks manual brightness changes in Adaptive Lighting. For groups tracked as a whole, control the whole group or enable expand_light_groups in AL. Older AL versions may pause color changes too.",
+          "motion_gate_enabled": "Motion is allowed only when the control entity has an allowed state. Running cycles can finish; blocked motion does not extend them.",
+          "motion_gate_states": "Enter exact state values, separated by commas. No default values are provided. Unknown or unavailable states block Motion."
         }
       }
+    },
+    "error": {
+      "motion_gate_required": "Select a control entity and enter at least one allowed state. Unknown and unavailable cannot be allowed."
     }
   },
   "config_subentries": {
@@ -88,10 +157,12 @@
                 "adaptive_transition": "Adaptive transition following rotation (experimental)",
                 "nonlight_sensitivity": "Sensitivity",
                 "lights_heading": "Lights",
-                "other_heading": "Other entities"
+                "other_heading": "Other entities",
+                "override": "Use different devices for Dial than button 1",
+                "targets": "Dial targets"
               },
               "data_description": {},
-              "description": "The wheel normally controls button 1’s short-press devices. Buttons 2–4 can temporarily take over: return after 5 s without rotation or 5 s after the last movement."
+              "description": "The dial normally controls button 1 short-press targets. A custom selection can replace them. Temporary routing from buttons 2–4 returns after 5 seconds."
             },
             "button_1": {
               "name": "Button 1",
@@ -251,10 +322,12 @@
                 "adaptive_transition": "Adaptive transition following rotation (experimental)",
                 "nonlight_sensitivity": "Sensitivity",
                 "lights_heading": "Lights",
-                "other_heading": "Other entities"
+                "other_heading": "Other entities",
+                "override": "Use different devices for Dial than button 1",
+                "targets": "Dial targets"
               },
               "data_description": {},
-              "description": "The wheel normally controls button 1’s short-press devices. Buttons 2–4 can temporarily take over: return after 5 s without rotation or 5 s after the last movement."
+              "description": "The dial normally controls button 1 short-press targets. A custom selection can replace them. Temporary routing from buttons 2–4 returns after 5 seconds."
             },
             "button_1": {
               "name": "Button 1",
@@ -780,6 +853,66 @@
               "description": "Actions use the default devices unless a different selection is enabled. Held regulation starts upward below 30%, downward above 60%, alternating in between. Stops at endpoints."
             }
           }
+        },
+        "binding_motion": {
+          "title": "Motion settings",
+          "data": {
+            "enabled": "Enable control",
+            "motion_targets": "Target lights",
+            "motion_sensitivity": "Motion sensitivity",
+            "motion_lux_slider": "Light sensitivity",
+            "motion_soft_end": "Gradual switch-off",
+            "motion_end_mode": "Ending style",
+            "motion_periods": "Dedicated times"
+          },
+          "data_description": {
+            "motion_end_mode": "Final 30 seconds: gradually dim to half, fade out to zero, or dim to half over 2 seconds and hold until the timeout ends. Starting brightness is captured when dimming begins. Renewed motion quickly and smoothly restores it."
+          },
+          "sections": {
+            "motion_behavior": {
+              "name": "Control behavior",
+              "description": "Only actions from controllers configured in this integration count as manual intervention. HA, Hue app and other automations do not trigger handover. New motion renews the timer without reapplying startup settings.",
+              "data": {
+                "arrival": "Already-on lights at cycle start",
+                "departure": "Already-on lights when the timer ends",
+                "manual_change": "Manual brightness or color change",
+                "manual_off": "Manual switch-off",
+                "manual_scope": "Scope of manual intervention",
+                "return": "Return from manual control",
+                "return_seconds": "Time without motion before returning"
+              }
+            }
+          }
+        },
+        "reconfigure_motion": {
+          "title": "Motion settings",
+          "data": {
+            "enabled": "Enable control",
+            "motion_targets": "Target lights",
+            "motion_sensitivity": "Motion sensitivity",
+            "motion_lux_slider": "Light sensitivity",
+            "motion_soft_end": "Gradual switch-off",
+            "motion_end_mode": "Ending style",
+            "motion_periods": "Dedicated times"
+          },
+          "data_description": {
+            "motion_end_mode": "Final 30 seconds: gradually dim to half, fade out to zero, or dim to half over 2 seconds and hold until the timeout ends. Starting brightness is captured when dimming begins. Renewed motion quickly and smoothly restores it."
+          },
+          "sections": {
+            "motion_behavior": {
+              "name": "Control behavior",
+              "description": "Only actions from controllers configured in this integration count as manual intervention. HA, Hue app and other automations do not trigger handover. New motion renews the timer without reapplying startup settings.",
+              "data": {
+                "arrival": "Already-on lights at cycle start",
+                "departure": "Already-on lights when the timer ends",
+                "manual_change": "Manual brightness or color change",
+                "manual_off": "Manual switch-off",
+                "manual_scope": "Scope of manual intervention",
+                "return": "Return from manual control",
+                "return_seconds": "Time without motion before returning"
+              }
+            }
+          }
         }
       },
       "error": {
@@ -788,7 +921,13 @@
         "button_target_required": "Select a target for each enabled press type.",
         "button_percentage_only": "Select lights, or fans and number controls. Do not mix these two groups in one ramp.",
         "button_percentage_invalid": "Select a valid action and a percentage from 1 to 100.",
-        "dial_target_required": "Dial requires direct short-press targets (lights, fans or number controls). Temporary takeover is available only on buttons 2–4."
+        "dial_target_required": "Dial requires direct short-press targets (lights, fans or number controls). Temporary takeover is available only on buttons 2–4.",
+        "motion_targets_required": "Select target lights.",
+        "motion_bridge_error": "Unable to read or save motion sensor sensitivity in Hue Bridge. Check Bridge connectivity and try saving again.",
+        "motion_end_invalid": "Choose a valid ending style.",
+        "motion_start_invalid": "Choose valid switch-on settings.",
+        "motion_behavior_invalid": "Choose valid control behavior.",
+        "motion_periods_invalid": "Check period times, unique starts, timeouts and target lights."
       },
       "abort": {
         "no_unconfigured_controllers": "All discovered controllers are already listed. Reload the integration before adding a new controller."

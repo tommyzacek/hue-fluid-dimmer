@@ -127,12 +127,13 @@ async def test_button_bus_does_not_duplicate_sse_actions(monkeypatch, resource):
 
 async def test_light_list_button_sends_one_service_call(monkeypatch):
     runtime, _ = make_runtime(monkeypatch, {})
+    runtime.hass.states = SimpleNamespace(get=lambda entity: None)
     call = AsyncMock()
     runtime.hass.services = SimpleNamespace(async_call=call)
     binding = {"lights": ["light.group"], "button_1": ["light.group", "light.single"]}
     await runtime.button("dial-a", binding, 1)
     call.assert_awaited_once_with(
-        "light", "toggle", {"entity_id": ["light.group", "light.single"]}, blocking=True
+        "light", "turn_on", {"entity_id": ["light.group", "light.single"]}, blocking=True
     )
     await runtime.close()
 
@@ -278,4 +279,25 @@ async def test_sse_reconnect_cancels_gesture_and_backoffs(monkeypatch, resource)
     assert runtime.button_map == {"button-a": ("dial-a", 2)}
     assert runtime.button_baselined
     assert runtime.button_snapshots[("dial-a", 2)][1] == "short_release"
+    await runtime.close()
+
+
+@pytest.mark.parametrize("action", ["short", "long", "double", "triple"])
+@pytest.mark.parametrize(
+    "states,service",
+    [
+        ({"light.a": "on", "light.b": "off"}, "turn_off"),
+        ({"light.a": "on", "light.b": "unavailable"}, "turn_off"),
+        ({"light.a": "off", "light.b": "off"}, "turn_on"),
+    ],
+)
+async def test_light_toggle_resolves_whole_selection_to_explicit_command(
+    monkeypatch, action, states, service
+):
+    runtime, _ = make_runtime(monkeypatch, {})
+    runtime.hass.states = SimpleNamespace(get=lambda entity: SimpleNamespace(state=states[entity]))
+    call = AsyncMock()
+    runtime.hass.services = SimpleNamespace(async_call=call)
+    await runtime.button("button", {"button_1": {action: list(states)}}, 1, action)
+    call.assert_awaited_once_with("light", service, {"entity_id": list(states)}, blocking=True)
     await runtime.close()

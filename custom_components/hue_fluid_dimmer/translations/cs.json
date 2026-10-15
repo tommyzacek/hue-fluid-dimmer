@@ -19,6 +19,63 @@
         "step_up": "Zvýšit o 10 procentních bodů",
         "step_down": "Snížit o 10 procentních bodů"
       }
+    },
+    "motion_end_mode": {
+      "options": {
+        "half": "Plynulé ztlumení na 50 %",
+        "fade": "Plynulé dohasnutí",
+        "half_quick": "Rychlé ztlumení na 50 % a vypnutí"
+      }
+    },
+    "startup_brightness": {
+      "options": {
+        "unchanged": "Předchozí stav",
+        "configured": "Nastavené %"
+      }
+    },
+    "startup_color": {
+      "options": {
+        "unchanged": "Ponechat beze změny",
+        "temperature": "Teplota bílé",
+        "rgb": "Vlastní barva"
+      }
+    },
+    "motion_arrival": {
+      "options": {
+        "apply": "Použít nastavení Motionu",
+        "keep": "Ponechat aktuální jas a barvu"
+      }
+    },
+    "motion_departure": {
+      "options": {
+        "off": "Zhasnout",
+        "keep": "Ponechat rozsvícená",
+        "restore": "Obnovit stav před příchodem"
+      }
+    },
+    "motion_manual_change": {
+      "options": {
+        "continue": "Pokračovat v časovači",
+        "handover": "Předat ručnímu řízení"
+      }
+    },
+    "motion_manual_off": {
+      "options": {
+        "resume": "Další pohyb může znovu rozsvítit",
+        "hold": "Ponechat vypnuté do nového cyklu"
+      }
+    },
+    "motion_manual_scope": {
+      "options": {
+        "touched": "Pouze dotčená světla",
+        "all": "Celý výběr Motionu"
+      }
+    },
+    "motion_return": {
+      "options": {
+        "off": "Po vypnutí světla",
+        "idle": "Po době bez pohybu"
+      }
     }
   },
   "config": {
@@ -39,14 +96,26 @@
   "options": {
     "step": {
       "init": {
-        "title": "Čtení Bridge",
-        "description": "Společný režim a interval pro kolečko i tlačítka. Aktivní režim spustí dočasné čtení po první události. Trvalý režim čte i v klidu. Kolečko a tlačítka používají dva hromadné požadavky na Bridge.",
+        "title": "Nastavení ovládání a Bridge",
         "data": {
           "polling_mode": "Režim čtení",
           "poll_interval": "Interval čtení (sekundy)",
-          "active_window": "Doba čtení po pohybu (sekundy)"
+          "active_window": "Doba čtení po pohybu (sekundy)",
+          "adaptive_lighting": "Spolupracovat s Adaptive Lighting",
+          "motion_gate_enabled": "Podmínit ovládání Motionu stavem entity",
+          "motion_gate_entity": "Řídicí entita",
+          "motion_gate_states": "Povolené stavy",
+          "bridge_settings": "Ovládání a čtení"
+        },
+        "data_description": {
+          "adaptive_lighting": "Ruční změny jasu označí v Adaptive Lighting. U skupin sledovaných jako celek je nutné ovládat celou skupinu nebo v AL zapnout expand_light_groups. Starší AL může pozastavit i změny barvy.",
+          "motion_gate_enabled": "Motion smí ovládat světla pouze v povoleném stavu řídicí entity. Běžící cykly doběhnou; blokovaný pohyb je neprodlužuje.",
+          "motion_gate_states": "Zadejte přesné hodnoty stavů, více hodnot oddělte čárkou. Žádné hodnoty nejsou přednastavené. Neznámý nebo nedostupný stav Motion zablokuje."
         }
       }
+    },
+    "error": {
+      "motion_gate_required": "Vyberte řídicí entitu a napište alespoň jeden povolený stav. Stavy unknown a unavailable nelze povolit."
     }
   },
   "config_subentries": {
@@ -88,10 +157,12 @@
                 "adaptive_transition": "Adaptivní přechod podle otáčení (experimentální)",
                 "nonlight_sensitivity": "Citlivost",
                 "lights_heading": "Světla",
-                "other_heading": "Ostatní entity"
+                "other_heading": "Ostatní entity",
+                "override": "Pro Dial použít jiná zařízení než pro tlačítko 1",
+                "targets": "Zařízení ovládaná kolečkem"
               },
               "data_description": {},
-              "description": "Hlavní cíl kolečka určuje krátký stisk tlačítka 1. Dlouhý stisk tlačítek 2–4 může kolečko dočasně přesměrovat: návrat po 5 s bez otočení nebo 5 s od posledního pohybu."
+              "description": "Standardně kolečko ovládá cíl krátkého stisku tlačítka 1. Vlastní výběr jej může nahradit. Dočasné přesměrování tlačítky 2–4 se vrací po 5 sekundách."
             },
             "button_1": {
               "name": "Tlačítko 1",
@@ -251,10 +322,12 @@
                 "adaptive_transition": "Adaptivní přechod podle otáčení (experimentální)",
                 "nonlight_sensitivity": "Citlivost",
                 "lights_heading": "Světla",
-                "other_heading": "Ostatní entity"
+                "other_heading": "Ostatní entity",
+                "override": "Pro Dial použít jiná zařízení než pro tlačítko 1",
+                "targets": "Zařízení ovládaná kolečkem"
               },
               "data_description": {},
-              "description": "Hlavní cíl kolečka určuje krátký stisk tlačítka 1. Dlouhý stisk tlačítek 2–4 může kolečko dočasně přesměrovat: návrat po 5 s bez otočení nebo 5 s od posledního pohybu."
+              "description": "Standardně kolečko ovládá cíl krátkého stisku tlačítka 1. Vlastní výběr jej může nahradit. Dočasné přesměrování tlačítky 2–4 se vrací po 5 sekundách."
             },
             "button_1": {
               "name": "Tlačítko 1",
@@ -780,6 +853,66 @@
               "description": "Akce používají výchozí zařízení, pokud nezapnete vlastní výběr. Regulace při držení: pod 30 % nahoru, nad 60 % dolů, uprostřed střídá směr. Na kraji zastaví."
             }
           }
+        },
+        "binding_motion": {
+          "title": "Motion – nastavení",
+          "data": {
+            "enabled": "Zapnout ovládání",
+            "motion_targets": "Cílová světla",
+            "motion_sensitivity": "Citlivost na pohyb",
+            "motion_lux_slider": "Citlivost na světlo",
+            "motion_soft_end": "Pozvolné zhasnutí",
+            "motion_end_mode": "Styl pozvolného zhasnutí",
+            "motion_periods": "Vyhrazené časy"
+          },
+          "data_description": {
+            "motion_end_mode": "Pozvolné zhasnutí začne posledních 30 sekund daného cyklu. Obnovený pohyb jej rychle a plynule vrátí na výchozí jas, který se uložil při zahájení ztlumení."
+          },
+          "sections": {
+            "motion_behavior": {
+              "name": "Chování při ovládání",
+              "description": "Ruční zásah znamená pouze akci ovladače nastaveného v této integraci. HA, aplikace Hue ani jiné automatizace předání nevyvolají. Další pohyb obnovuje časovač bez opakování nastavení při zapnutí.",
+              "data": {
+                "arrival": "Již rozsvícená světla při zahájení cyklu",
+                "departure": "Původně rozsvícená světla po doběhnutí časovače",
+                "manual_change": "Ruční změna jasu nebo barvy",
+                "manual_off": "Ruční vypnutí",
+                "manual_scope": "Rozsah ručního zásahu",
+                "return": "Návrat z ručního řízení",
+                "return_seconds": "Doba bez pohybu před návratem"
+              }
+            }
+          }
+        },
+        "reconfigure_motion": {
+          "title": "Motion – nastavení",
+          "data": {
+            "enabled": "Zapnout ovládání",
+            "motion_targets": "Cílová světla",
+            "motion_sensitivity": "Citlivost na pohyb",
+            "motion_lux_slider": "Citlivost na světlo",
+            "motion_soft_end": "Pozvolné zhasnutí",
+            "motion_end_mode": "Styl pozvolného zhasnutí",
+            "motion_periods": "Vyhrazené časy"
+          },
+          "data_description": {
+            "motion_end_mode": "Pozvolné zhasnutí začne posledních 30 sekund daného cyklu. Obnovený pohyb jej rychle a plynule vrátí na výchozí jas, který se uložil při zahájení ztlumení."
+          },
+          "sections": {
+            "motion_behavior": {
+              "name": "Chování při ovládání",
+              "description": "Ruční zásah znamená pouze akci ovladače nastaveného v této integraci. HA, aplikace Hue ani jiné automatizace předání nevyvolají. Další pohyb obnovuje časovač bez opakování nastavení při zapnutí.",
+              "data": {
+                "arrival": "Již rozsvícená světla při zahájení cyklu",
+                "departure": "Původně rozsvícená světla po doběhnutí časovače",
+                "manual_change": "Ruční změna jasu nebo barvy",
+                "manual_off": "Ruční vypnutí",
+                "manual_scope": "Rozsah ručního zásahu",
+                "return": "Návrat z ručního řízení",
+                "return_seconds": "Doba bez pohybu před návratem"
+              }
+            }
+          }
         }
       },
       "error": {
@@ -788,7 +921,13 @@
         "button_target_required": "Vyberte cíl každého zapnutého stisku.",
         "button_percentage_only": "Zvol světla, nebo ventilátory a číselné ovladače. Tyto dvě skupiny nelze v jedné rampě kombinovat.",
         "button_percentage_invalid": "Zvol platnou akci a procento od 1 do 100.",
-        "dial_target_required": "Pro Dial zvol přímý cíl krátkého stisku (světlo, ventilátor nebo PWM číslo). Dočasné převzetí je dostupné jen u tlačítek 2–4."
+        "dial_target_required": "Pro Dial zvol přímý cíl krátkého stisku (světlo, ventilátor nebo PWM číslo). Dočasné převzetí je dostupné jen u tlačítek 2–4.",
+        "motion_targets_required": "Vyberte cílová světla.",
+        "motion_bridge_error": "Nelze načíst nebo uložit citlivost pohybového senzoru v Hue Bridge. Zkontrolujte dostupnost Bridge a zkuste uložení znovu.",
+        "motion_end_invalid": "Zvolte platný způsob zhasnutí.",
+        "motion_start_invalid": "Zvolte platné nastavení při zapnutí.",
+        "motion_behavior_invalid": "Zvolte platné chování při ovládání.",
+        "motion_periods_invalid": "Zkontrolujte časy bloků, jejich jedinečné začátky, časovače a cílová světla."
       },
       "abort": {
         "no_unconfigured_controllers": "Všechny nalezené ovladače už jsou v seznamu. Pro nový ovladač nejprve znovu načti integraci."

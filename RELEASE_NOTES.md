@@ -1,14 +1,24 @@
-# v0.7.0 — Smart Button, Dimmer v2 and simpler controller settings
+# v0.9.0 — Motion schedules, shared control conditions and Adaptive Lighting cooperation
 
-- Add model-specific setup for Smart Button ROM001/RDM003/RDM005 and Dimmer v2 RWL022. Newly discovered controllers appear as disabled configuration rows, without duplicate entities or devices.
-- Simplify default targets: each Button/Dimmer action uses the controller's default devices unless **Use different devices for this action** is enabled. Turning it off removes the override. Function toggles use switches throughout.
-- Remove scene selection and scene cycling. Scripts remain available for custom actions. Existing scene assignments are no longer executed; replace them with a script or a supported target.
-- Continuous held regulation chooses its direction at the start: below 30% up, above 60% down, otherwise alternate from the previous hold (first up). It stops at endpoints and on release. Dimmer +/− have fixed direction and 10-point short-press steps.
-- Cancel pending native Hue held commands before stopping, including on unload; prevent a delayed initial brightness read from starting a ramp after release.
-- Make the tested adaptive tuning the default presets. Light sensitivities are 1.2 / 2.4 / 4.8; other entity sensitivities are 0.75 / 1.5 / 3. Balanced other-entity ramp remains 0.75 s. Every named preset enables adaptive transitions; Custom retains independent fields and its adaptive switch.
-- Add Slovak translations alongside Czech and English, improve target labels, and fix the invalid heading translation keys that failed hassfest in v0.5.0.
-- Align development package and integration versions at 0.7.0, and refresh documentation.
+**Pre-release / experimental.** Requires Home Assistant 2026.10.1+, Hue v2 Bridge and the official Hue integration.
 
-Tap Dial temporary routing still returns after 5 seconds, and short-only actions retain immediate release handling. Existing targets and custom values are preserved. New Button/Dimmer control remains experimental and requires physical validation; RDM005 has not been physically tested at the development installation.
+- Add Hue Motion control using official HA sensor events, without fast motion polling. New Motion rows start disabled; disable competing native Hue lighting rules before enabling them.
+- Add adjacent time periods with independent brightness/color, absence timers, target overrides and Do not disturb. One period is All day. Already running cycles retain their original period settings.
+- Add live lux preview, 650 lx / ∞ threshold, three-position movement sensitivity, and disabled-sensor warnings. Lux filtering is local; sensitivity writes occur only on enabled configuration saves.
+- Add three final-30-second ending styles, 0.5 s startup/recovery and 2 s final-off transitions. Endings use actual pre-ending brightness. Persist the pre-ending level to prevent repeated brightness halving across cycles; saving Motion settings replaces the old cycle.
+- Add independent Motion arrival/departure/manual-action policies and touched-light versus whole-group handover. Manual provenance covers only controls configured in this integration.
+- Add a shared optional entity-state condition, independently selectable for Motion, Button, Dial and Dimmer. Allowed states are typed manually. Blocked motion cannot extend existing cycles; those can finish normally. Unknown/unavailable sources cannot grant control.
+- Add opt-in Adaptive Lighting cooperation using its public manual-control service, matching group members and all relevant profiles. Partial targets of an unexpanded AL group are skipped with a warning: control the whole group or enable `expand_light_groups`. Existing manual flags are preserved; no AL settings are changed automatically. Works without AL installed.
+- Use explicit on/off services for ordinary light toggles to avoid the AL toggle interception observed in testing. Add optional independent main Dial targets while retaining button-1 inheritance by default.
+- Unify form switches, outlined selections and sliders. Localize polling choices, reveal numeric fields only in Continuous mode and explain the additional traffic/load. Refresh the browser after updating.
+- Bundle the selected dark logo as local integration brand assets.
 
-Requires Home Assistant 2026.10.1 or newer and the official Hue integration. After updating through HACS, restart HA and refresh the browser to load the new form labels. Disable competing native Hue or automation assignments before enabling new controller actions.
+Validation: **273 tests**, Ruff lint/format and frontend JavaScript syntax checks. Hardware behavior remains device-dependent; this is not a physical scalability certification. Native Hue transitions may report the target/off state before the physical fade completes. RDM005 and all possible group/AL combinations have not been physically validated. An earlier external drop to approximately 8% remains unexplained; this release does not claim an upstream fix.
+
+Update through HACS, **restart Home Assistant and refresh the browser**. The shared condition and AL cooperation are opt-in. Keep the official Hue integration loaded. Public release notes and README describe group limitations and AL interaction details.
+
+---
+
+## Česky
+
+Předběžná verze přidává Motion s časovými bloky, třemi styly dohasnutí a uložením jasu před ztlumením. Obsahuje volitelnou spolupráci s Adaptivním osvětlením, společnou podmínku podle stavu entity se samostatným výběrem typů ovladačů a sjednocené formuláře. Po instalaci restartuj HA a obnov stránku. Před zapnutím Motionu vypni souběžné pravidlo ovládání světel v Hue. U AL skupin bez rozbalení členů je potřeba ovládat celou skupinu nebo zapnout `expand_light_groups`.
