@@ -1,3 +1,19 @@
+# v1.0.1 — Full HACS validation
+
+Stable maintenance release. Enable the complete HACS validation, including bundled brand assets, with no ignored checks. This release prepares the repository for a HACS default-catalog submission.
+
+No device-control or configuration behavior changes from 1.0.0. Existing settings and the `hue_fluid_dimmer` domain are preserved.
+
+## Česky
+
+Stabilní servisní vydání: plná kontrola HACS včetně loga, bez vynechaných kontrol. Příprava pro žádost o zařazení do výchozího katalogu. Chování zařízení ani konfigurace se oproti 1.0.0 nemění.
+
+## Slovenčina
+
+Stabilné servisné vydanie: úplná kontrola HACS vrátane loga, bez vynechaných kontrol. Príprava žiadosti o zaradenie do predvoleného katalógu. Správanie zariadení ani konfigurácie sa oproti 1.0.0 nemení.
+
+---
+
 # v1.0.0 — Hue Reconfigo
 
 **Stable release.** Requires Home Assistant **2026.10.1+**, a Hue Bridge with API v2 and the official Philips Hue integration. Adaptive Lighting is optional and can be installed through HACS.
