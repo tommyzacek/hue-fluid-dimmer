@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, Mock
 
 import pytest
 
-from custom_components.hue_fluid_dimmer.percentage import PercentageRamp
+from custom_components.hue_reconfigo.percentage import PercentageRamp
 
 
 def controller(entity, state, attributes):
@@ -147,7 +147,7 @@ async def test_one_way_percentage_actions_do_not_toggle(entity, state, attribute
     from types import SimpleNamespace
     from unittest.mock import AsyncMock
 
-    from custom_components.hue_fluid_dimmer.percentage import PercentageRamp
+    from custom_components.hue_reconfigo.percentage import PercentageRamp
 
     current = SimpleNamespace(state=state, attributes=attributes)
     call = AsyncMock()

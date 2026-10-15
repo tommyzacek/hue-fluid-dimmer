@@ -4,7 +4,7 @@ from unittest.mock import Mock
 import pytest
 from test_runtime import make_runtime
 
-from custom_components.hue_fluid_dimmer.gate import allows
+from custom_components.hue_reconfigo.gate import allows
 
 
 def test_gate_families_are_independent_and_old_motion_settings_migrate():

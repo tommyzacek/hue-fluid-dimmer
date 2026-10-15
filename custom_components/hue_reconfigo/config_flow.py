@@ -52,14 +52,14 @@ class VisibleNumber(selector.NumberSelector):
     def serialize(self):
         config = super().serialize()["selector"]["number"]
         return {
-            "selector": {"hfd_number": config},
+            "selector": {"hrc_number": config},
             "visible": {"field": "profile", "value": "custom"},
         }
 
 
 class ControllerEnabled(selector.BooleanSelector):
     def serialize(self):
-        return {"selector": {"hfd_control_enabled": {}}}
+        return {"selector": {"hrc_control_enabled": {}}}
 
 
 class VisibleCustomBoolean(selector.BooleanSelector):
@@ -71,7 +71,7 @@ class CustomHeading(selector.ConstantSelector):
     """Display a static heading only for the custom dial profile."""
 
     def serialize(self):
-        return {"selector": {"hfd_heading": {}}, "visible": {"field": "profile", "value": "custom"}}
+        return {"selector": {"hrc_heading": {}}, "visible": {"field": "profile", "value": "custom"}}
 
 
 class VisibleLights(selector.EntitySelector):
@@ -136,7 +136,7 @@ class VisibleOperation(selector.ObjectSelector):
     def serialize(self):
         return {
             "selector": {
-                "hfd_button_action": {
+                "hrc_button_action": {
                     "options": self.options,
                     "action": self.action,
                     "index": self.index,
@@ -156,7 +156,7 @@ class VisiblePercentage(selector.NumberSelector):
 
     def serialize(self):
         return {
-            "selector": {"hfd_brightness": {}},
+            "selector": {"hrc_brightness": {}},
             "visible": {"field": f"{self.action}_operation", "value": "configured"},
         }
 
@@ -173,7 +173,7 @@ class MotionLux(selector.NumberSelector):
 
     def serialize(self):
         return {
-            "selector": {"hfd_lux": {"entity": self.entity, "enabled_entity": self.enabled_entity}}
+            "selector": {"hrc_lux": {"entity": self.entity, "enabled_entity": self.enabled_entity}}
         }
 
 
@@ -190,7 +190,7 @@ class MotionTimeout(selector.NumberSelector):
         return result
 
     def serialize(self):
-        return {"selector": {"hfd_timeout": {}}}
+        return {"selector": {"hrc_timeout": {}}}
 
 
 class MotionPeriods(selector.ObjectSelector):
@@ -201,7 +201,7 @@ class MotionPeriods(selector.ObjectSelector):
             raise p.Invalid(str(err)) from err
 
     def serialize(self):
-        return {"selector": {"hfd_motion_periods": {}}}
+        return {"selector": {"hrc_motion_periods": {}}}
 
 
 class MotionSensitivity(selector.NumberSelector):
@@ -209,7 +209,7 @@ class MotionSensitivity(selector.NumberSelector):
         super().__init__({"min": 0, "max": 2, "step": 1, "mode": "slider"})
 
     def serialize(self):
-        return {"selector": {"hfd_sensitivity": {}}}
+        return {"selector": {"hrc_sensitivity": {}}}
 
 
 class MotionEnabled(selector.BooleanSelector):
@@ -218,7 +218,7 @@ class MotionEnabled(selector.BooleanSelector):
         self.entity = entity
 
     def serialize(self):
-        return {"selector": {"hfd_motion_enabled": {"entity": self.entity}}}
+        return {"selector": {"hrc_motion_enabled": {"entity": self.entity}}}
 
 
 class MotionEndMode(selector.SelectSelector):
@@ -246,7 +246,7 @@ class StartupTemperature(selector.ColorTempSelector):
 
     def serialize(self):
         return {
-            "selector": {"hfd_temperature": {}},
+            "selector": {"hrc_temperature": {}},
             "visible": {"field": "color", "value": "temperature"},
         }
 
@@ -291,7 +291,7 @@ def startup_schema(values):
 
 class MotionBehavior(selector.ObjectSelector):
     def serialize(self):
-        return {"selector": {"hfd_motion_behavior": {}}}
+        return {"selector": {"hrc_motion_behavior": {}}}
 
 
 def behavior_schema(values):
@@ -454,7 +454,7 @@ def binding_schema(old: dict, submitted: dict | None = None) -> p.Schema:
     return p.Schema(schema)
 
 
-class HueFluidDimmerFlow(ConfigFlow, domain=DOMAIN):
+class HueReconfigoFlow(ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     @classmethod
@@ -467,7 +467,7 @@ class HueFluidDimmerFlow(ConfigFlow, domain=DOMAIN):
     @staticmethod
     @callback
     def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlow:
-        return HueFluidDimmerOptionsFlow()
+        return HueReconfigoOptionsFlow()
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         bridges = {
@@ -515,10 +515,10 @@ class BridgeSettings(selector.ObjectSelector):
         )(value)
 
     def serialize(self):
-        return {"selector": {"hfd_bridge_settings": {}}}
+        return {"selector": {"hrc_bridge_settings": {}}}
 
 
-class HueFluidDimmerOptionsFlow(OptionsFlow):
+class HueReconfigoOptionsFlow(OptionsFlow):
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         return await self.async_step_polling(user_input)
 

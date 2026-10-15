@@ -6,8 +6,8 @@ from unittest.mock import AsyncMock, Mock
 import pytest
 from test_runtime import make_runtime
 
-from custom_components.hue_fluid_dimmer.bindings import button_actions, form_values, parse_form
-from custom_components.hue_fluid_dimmer.config_flow import VisibleOperation
+from custom_components.hue_reconfigo.bindings import button_actions, form_values, parse_form
+from custom_components.hue_reconfigo.config_flow import VisibleOperation
 
 
 @pytest.mark.parametrize("action", ["short", "long", "double", "triple"])

@@ -7,11 +7,11 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 
-from custom_components.hue_fluid_dimmer.configuration import (
+from custom_components.hue_reconfigo.configuration import (
     controller_binding,
     initialize_controllers,
 )
-from custom_components.hue_fluid_dimmer.const import DOMAIN
+from custom_components.hue_reconfigo.const import DOMAIN
 
 
 async def test_upgrade_moves_bindings_into_rows_and_removes_only_companion_registry_records(

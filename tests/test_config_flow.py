@@ -10,13 +10,13 @@ from homeassistant.config_entries import (
 )
 from homeassistant.core import HomeAssistant
 
-from custom_components.hue_fluid_dimmer.bindings import form_values
-from custom_components.hue_fluid_dimmer.config_flow import (
-    HueFluidDimmerFlow,
-    HueFluidDimmerOptionsFlow,
+from custom_components.hue_reconfigo.bindings import form_values
+from custom_components.hue_reconfigo.config_flow import (
+    HueReconfigoFlow,
+    HueReconfigoOptionsFlow,
     TapDialSubentryFlow,
 )
-from custom_components.hue_fluid_dimmer.const import CONF_RESOURCE, DOMAIN, SUBENTRY_TAP_DIAL
+from custom_components.hue_reconfigo.const import CONF_RESOURCE, DOMAIN, SUBENTRY_TAP_DIAL
 
 
 def entry(options=None):
@@ -35,7 +35,7 @@ def entry(options=None):
 
 
 def options_flow(tmp_path, options=None):
-    flow = HueFluidDimmerOptionsFlow()
+    flow = HueReconfigoOptionsFlow()
     flow.hass = HomeAssistant(str(tmp_path))
     config_entry = entry(options)
     flow.handler = config_entry.entry_id
@@ -160,7 +160,7 @@ async def test_all_discovered_controllers_already_listed(tmp_path):
 
 
 async def test_setup_requires_official_hue_v2(tmp_path):
-    flow = HueFluidDimmerFlow()
+    flow = HueReconfigoFlow()
     flow.hass = HomeAssistant(str(tmp_path))
     flow.hass.config_entries = SimpleNamespace(
         async_entries=lambda domain: [
@@ -184,7 +184,7 @@ async def test_button_validation_error_keeps_form_open(tmp_path, kind):
 
 
 async def test_motion_error_keeps_live_sensor_metadata(tmp_path):
-    from custom_components.hue_fluid_dimmer.motion import DEFAULTS
+    from custom_components.hue_reconfigo.motion import DEFAULTS
 
     flow, config_entry = subentry_flow(tmp_path, {"dial-a": {"controller_kind": "motion"}})
     config_entry.runtime_data = SimpleNamespace(
@@ -202,11 +202,11 @@ async def test_motion_error_keeps_live_sensor_metadata(tmp_path):
     assert result["errors"]
     selectors = {key.schema: value for key, value in result["data_schema"].schema.items()}
     assert (
-        selectors["motion_lux_slider"].serialize()["selector"]["hfd_lux"]["entity"]
+        selectors["motion_lux_slider"].serialize()["selector"]["hrc_lux"]["entity"]
         == "sensor.room_lux"
     )
     assert (
-        selectors["enabled"].serialize()["selector"]["hfd_motion_enabled"]["entity"]
+        selectors["enabled"].serialize()["selector"]["hrc_motion_enabled"]["entity"]
         == "switch.motion"
     )
 
@@ -214,7 +214,7 @@ async def test_motion_error_keeps_live_sensor_metadata(tmp_path):
 async def test_motion_periods_save_replaces_only_selected_controller(tmp_path):
     from unittest.mock import AsyncMock
 
-    from custom_components.hue_fluid_dimmer.config_flow import binding_schema
+    from custom_components.hue_reconfigo.config_flow import binding_schema
 
     flow, config_entry = subentry_flow(
         tmp_path,

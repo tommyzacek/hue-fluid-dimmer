@@ -3,9 +3,9 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from custom_components.hue_fluid_dimmer import motion
-from custom_components.hue_fluid_dimmer.motion import DEFAULTS, MotionLighting
-from custom_components.hue_fluid_dimmer.motion_targets import expand_targets, hue_group_members
+from custom_components.hue_reconfigo import motion
+from custom_components.hue_reconfigo.motion import DEFAULTS, MotionLighting
+from custom_components.hue_reconfigo.motion_targets import expand_targets, hue_group_members
 
 
 def setup(policy=None, on=False):
@@ -330,7 +330,7 @@ async def test_disabling_one_motion_keeps_other_session():
 
 
 async def test_quick_half_takes_two_seconds_but_waits_until_timeout(monkeypatch):
-    from custom_components.hue_fluid_dimmer.motion import parse_motion
+    from custom_components.hue_reconfigo.motion import parse_motion
 
     engine, states, call, binding = setup(on=True)
     binding.update(motion_timeout=60, motion_end_mode="half_quick")
@@ -376,10 +376,10 @@ async def test_manual_off_remains_limited_to_switched_lights_with_all_lights_cha
 
 
 def test_new_behavior_form_retains_choices_and_removes_timed_return_on_save():
-    from custom_components.hue_fluid_dimmer.config_flow import behavior_schema
-    from custom_components.hue_fluid_dimmer.motion import parse_motion
+    from custom_components.hue_reconfigo.config_flow import behavior_schema
+    from custom_components.hue_reconfigo.motion import parse_motion
 
-    assert behavior_schema({}).serialize() == {"selector": {"hfd_motion_behavior": {}}}
+    assert behavior_schema({}).serialize() == {"selector": {"hrc_motion_behavior": {}}}
     binding, error = parse_motion(
         {
             "motion_behavior": {

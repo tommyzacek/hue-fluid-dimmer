@@ -1,6 +1,6 @@
 from unittest.mock import AsyncMock
 
-from custom_components.hue_fluid_dimmer import motion_bridge as bridge
+from custom_components.hue_reconfigo import motion_bridge as bridge
 
 
 async def test_save_unchanged_sensitivity_and_sync_off_does_not_write(monkeypatch):

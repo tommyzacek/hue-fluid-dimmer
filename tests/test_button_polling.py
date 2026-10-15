@@ -41,7 +41,7 @@ async def runtime_clock(monkeypatch, resource):
     runtime.resources = [resource()]
     runtime.map_buttons([button("initial_press", 0)])
     monkeypatch.setattr(
-        "custom_components.hue_fluid_dimmer.runtime.time",
+        "custom_components.hue_reconfigo.runtime.time",
         SimpleNamespace(monotonic=lambda: clock[0]),
     )
     monkeypatch.setattr(asyncio.get_running_loop(), "call_later", lambda *args: Mock())

@@ -5,8 +5,8 @@ from unittest.mock import Mock
 
 import pytest
 
-from custom_components.hue_fluid_dimmer.configuration import update_brand_title
-from custom_components.hue_fluid_dimmer.const import DOMAIN
+from custom_components.hue_reconfigo.configuration import update_brand_title
+from custom_components.hue_reconfigo.const import DOMAIN
 
 
 @pytest.mark.parametrize(
@@ -28,4 +28,4 @@ def test_rebrand_preserves_custom_titles_and_bindings(title, expected):
     else:
         update.assert_called_once_with(entry, title=expected)
     assert entry.data == {"controllers": {"one": {"enabled": True}}}
-    assert DOMAIN == "hue_fluid_dimmer"
+    assert DOMAIN == "hue_reconfigo"

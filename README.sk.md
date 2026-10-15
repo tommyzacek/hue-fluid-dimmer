@@ -10,7 +10,7 @@ Vyžaduje **Home Assistant 2026.10.1 alebo novší**, Hue Bridge s API v2 a nast
 
 Oficiálna integrácia **Philips Hue** je potrebná. **Adaptive Lighting** je samostatná, voliteľná vlastná integrácia inštalovaná cez **HACS**. Ak ju používate, zapnite spoluprácu v nastavení Bridge v Hue Reconfigo, aby jej oznamoval ručné ovládanie jasu a farby. Hue Reconfigo funguje aj bez Adaptive Lighting.
 
-Integrácia sa predtým volala **Hue Fluid Dimmer**. Technická doména aj priečinok zostávajú `hue_fluid_dimmer`, aby sa zachovali existujúce nastavenia. Nové párovanie nie je potrebné.
+Integrácia sa predtým volala **Hue Fluid Dimmer**. Technická doména aj priečinok sú teraz `hue_reconfigo`. Existujúce inštalácie musia pred spustením tejto verzie vykonať [prevod domény](docs/sk/domain-migration.md). Párovanie Hue Bridge zostáva zachované.
 
 ## Používateľské návody
 
@@ -33,7 +33,7 @@ Začnite časťou [Skôr než začnete](docs/sk/README.md#skôr-než-začnete). 
 4. V Hue nastavte príslušenstvo na **Konfigurovať v inej aplikácii**. Vypnite konkurenčné automatizácie pre rovnaké vstupy; oficiálnu Hue integráciu ponechajte zapnutú.
 5. Ako správca otvorte bočný panel **Hue Reconfigo**. Vyberte ovládač, nastavte ciele/akcie a zapnite ovládanie. Koliesko vedľa Bridge otvorí spoločné nastavenia. Po aktualizáciách obnovte stránku.
 
-Pri ručnej inštalácii skopírujte `custom_components/hue_fluid_dimmer` do `custom_components` konfigurácie HA a reštartujte. Bočný panel je súčasťou, neinštaluje sa samostatne.
+Pri ručnej inštalácii skopírujte `custom_components/hue_reconfigo` do `custom_components` konfigurácie HA a reštartujte. Bočný panel je súčasťou, neinštaluje sa samostatne.
 
 ## Podporované zariadenia
 
