@@ -17,7 +17,7 @@ Symbol neurčuje funkciu napevno. Podporované stlačenia nastavíte vo formulá
 
 ## Základné nastavenie
 
-Otvorte **Hue Fluid Dimmer → Bridge → Dimmer → váš ovládač**, vyberte predvolené ciele a nastavte tlačidlá. Nové nastavenia majú pre + a − pripravený krátky krok a dlhú reguláciu. Pred uložením ich skontrolujte; predtým uložené voľby sa môžu líšiť.
+Otvorte **Hue Reconfigo → Bridge → Dimmer → váš ovládač**, vyberte predvolené ciele a nastavte tlačidlá. Nové nastavenia majú pre + a − pripravený krátky krok a dlhú reguláciu. Pred uložením ich skontrolujte; predtým uložené voľby sa môžu líšiť.
 
 | Tlačidlo a stlačenie | Odporúčaná akcia | Výsledok |
 | --- | --- | --- |

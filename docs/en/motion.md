@@ -8,7 +8,7 @@ Motion turns selected lights on when motion is detected, then off after a config
 
 ## First setup
 
-1. Open **Hue Fluid Dimmer → Bridge → Motion → your sensor**.
+1. Open **Hue Reconfigo → Bridge → Motion → your sensor**.
 2. Select target lights or a group.
 3. Configure light and motion sensitivity.
 4. In **All day**, set brightness, color and the no-motion timeout.
@@ -90,7 +90,7 @@ Example: the lamp is already at 40% and the ceiling is off. Keep current brightn
 
 ## Controller intervention
 
-**Only controllers configured in Hue Fluid Dimmer count as manual intervention. Changes from apps or other automations do not.** External changes can affect the current brightness used for final dimming, but do not themselves invoke the handover policies below.
+**Only controllers configured in Hue Reconfigo count as manual intervention. Changes from apps or other automations do not.** External changes can affect the current brightness used for final dimming, but do not themselves invoke the handover policies below.
 
 ### Should Motion switch off after a manual brightness or color change?
 

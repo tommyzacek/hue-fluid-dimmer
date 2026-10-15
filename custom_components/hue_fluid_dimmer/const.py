@@ -1,4 +1,4 @@
-"""Constants for Hue Fluid Dimmer."""
+"""Constants for Hue Reconfigo."""
 
 DOMAIN = "hue_fluid_dimmer"
 HUE_DOMAIN = "hue"

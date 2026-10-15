@@ -1,14 +1,16 @@
-# Hue Fluid Dimmer
+# Hue Reconfigo
 
 [Čeština](README.cs.md) | [Slovenčina](README.sk.md) | [English](README.md)
 
-*Smooth dimming. Low latency.*
+*Home Assistant control hub for Hue Tap Dial, Dimmer, Smart Button and Motion sensors.*
 
 An experimental Home Assistant companion for Philips Hue **Tap Dial**, **Smart Button**, **Dimmer v2** and **Motion sensors**. Configure actions, targets, brightness and color directly in the integration, without per-controller automations or duplicate controller entities.
 
 Requires **Home Assistant 2026.10.1 or newer**, a Hue Bridge with API v2 and the configured official **Philips Hue** integration. This project is independent of Signify and Home Assistant. Documentation follows the latest development; use the release notes for the scope of a specific installed version.
 
-The official **Philips Hue** integration is required. **Adaptive Lighting** is a separate, optional custom integration installed through **HACS**. If you use it, enable cooperation in Hue Fluid Dimmer’s Bridge settings to report manual brightness/color control. Hue Fluid Dimmer works without Adaptive Lighting.
+The official **Philips Hue** integration is required. **Adaptive Lighting** is a separate, optional custom integration installed through **HACS**. If you use it, enable cooperation in Hue Reconfigo’s Bridge settings to report manual brightness/color control. Hue Reconfigo works without Adaptive Lighting.
+
+The integration was previously named **Hue Fluid Dimmer**. Its technical domain and component directory remain `hue_fluid_dimmer` to preserve existing configuration. No re-pairing is required.
 
 ## User guides
 
@@ -25,11 +27,11 @@ Start with [Before you start](docs/en/README.md#before-you-start). Each guide in
 
 ## Quick installation
 
-1. Add `https://github.com/tommyzacek/hue-fluid-dimmer` to HACS custom repositories as an **Integration**.
+1. Add `https://github.com/tommyzacek/hue-reconfigo` to HACS custom repositories as an **Integration**.
 2. Download a release and restart Home Assistant.
-3. Add **Hue Fluid Dimmer** in **Settings → Devices & services**, then select your existing Hue Bridge.
+3. Add **Hue Reconfigo** in **Settings → Devices & services**, then select your existing Hue Bridge.
 4. In the Hue app, set managed accessories to **Configure in another app**. Disable competing automations for the same inputs; keep the official Hue integration enabled.
-5. Open **Hue Fluid Dimmer** in the sidebar as an administrator. Select a controller, configure its targets/actions and enable control. The Bridge gear opens shared settings. Refresh the browser after updates.
+5. Open **Hue Reconfigo** in the sidebar as an administrator. Select a controller, configure its targets/actions and enable control. The Bridge gear opens shared settings. Refresh the browser after updates.
 
 For manual installation, copy `custom_components/hue_fluid_dimmer` into your HA configuration's `custom_components` directory and restart. The sidebar panel is included; no separate dashboard installation is needed.
 

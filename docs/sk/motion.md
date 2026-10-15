@@ -8,7 +8,7 @@ Motion rozsvieti vybrané svetlá pri pohybe a po čase bez pohybu ich podľa na
 
 ## Prvé nastavenie
 
-1. Otvorte **Hue Fluid Dimmer → Bridge → Motion → váš senzor**.
+1. Otvorte **Hue Reconfigo → Bridge → Motion → váš senzor**.
 2. Vyberte cieľové svetlá alebo skupinu.
 3. Nastavte citlivosť na svetlo a pohyb.
 4. V **Celý deň** nastavte jas, farbu a čas bez pohybu.
@@ -90,7 +90,7 @@ Príklad: lampa svieti na 40 %, strop je vypnutý. Ponechať aktuálny jas/farbu
 
 ## Zásah ovládačom
 
-**Platí iba pre ovládače nastavené v Hue Fluid Dimmer. Zmeny z aplikácií ani iných automatizácií sa nepovažujú za zásah ovládačom.** Externá zmena môže ovplyvniť jas pre záverečnú rampu, sama však neaktivuje odovzdanie ovládania.
+**Platí iba pre ovládače nastavené v Hue Reconfigo. Zmeny z aplikácií ani iných automatizácií sa nepovažujú za zásah ovládačom.** Externá zmena môže ovplyvniť jas pre záverečnú rampu, sama však neaktivuje odovzdanie ovládania.
 
 ### Má Motion po ručnej zmene jasu alebo farby automaticky zhasnúť?
 

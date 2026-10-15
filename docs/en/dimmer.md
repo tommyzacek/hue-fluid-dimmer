@@ -17,7 +17,7 @@ The printed symbol does not lock a button to one function. Configure its support
 
 ## Basic setup
 
-Open **Hue Fluid Dimmer → Bridge → Dimmer → your controller**, select default targets and configure the buttons. New configurations prepare a short step and long regulation for + and −. Check these before saving; previously saved choices may differ.
+Open **Hue Reconfigo → Bridge → Dimmer → your controller**, select default targets and configure the buttons. New configurations prepare a short step and long regulation for + and −. Check these before saving; previously saved choices may differ.
 
 | Button and gesture | Suggested action | Result |
 | --- | --- | --- |

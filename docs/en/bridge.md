@@ -6,10 +6,10 @@
 
 ## Installation and opening settings
 
-1. Add `https://github.com/tommyzacek/hue-fluid-dimmer` to HACS as a custom repository of type **Integration**.
+1. Add `https://github.com/tommyzacek/hue-reconfigo` to HACS as a custom repository of type **Integration**.
 2. Download the desired release and restart Home Assistant. Enable pre-release visibility in HACS if you want pre-releases.
-3. In **Settings → Devices & services → Add integration**, choose Hue Fluid Dimmer and your existing Hue Bridge.
-4. Open **Hue Fluid Dimmer** in the sidebar. Controllers are grouped into Dial, Button, Dimmer and Motion.
+3. In **Settings → Devices & services → Add integration**, choose Hue Reconfigo and your existing Hue Bridge.
+4. Open **Hue Reconfigo** in the sidebar. Controllers are grouped into Dial, Button, Dimmer and Motion.
 
 The gear beside the Bridge name opens shared settings directly in the panel. Standard integration settings remain available in Devices & services too. The panel needs no separate installation, creates no extra Bridge or duplicate entities and adds no periodic polling itself.
 
@@ -32,7 +32,7 @@ This condition limits integration actions. It is not a security system.
 
 ## Adaptive Lighting cooperation
 
-**Adaptive Lighting (AL) is a separate, optional custom integration installed through HACS.** It is not part of the official Philips Hue integration and is not required by Hue Fluid Dimmer. The official Philips Hue integration, in contrast, is required and must remain enabled.
+**Adaptive Lighting (AL) is a separate, optional custom integration installed through HACS.** It is not part of the official Philips Hue integration and is not required by Hue Reconfigo. The official Philips Hue integration, in contrast, is required and must remain enabled.
 
 If you use Adaptive Lighting (AL), you can enable cooperation. The integration discovers matching AL configurations and reports manual brightness/color control using `adaptive_lighting.set_manual_control`.
 
@@ -42,7 +42,7 @@ If you use Adaptive Lighting (AL), you can enable cooperation. The integration d
 - Brightness and color are distinguished where the installed AL version supports it. Older AL may pause the other component too.
 - Explicit Motion startup brightness/color choices are manual parameters. Temporary final dimming uses a separate pause that is subsequently released. Restoring pre-dimming brightness alone does not request a new manual flag.
 
-The integration does not change AL configuration or create profiles. AL determines when adaptation resumes after manual control. Hue Fluid Dimmer also works without AL. Explicitly turning a light off cannot prevent another automation from subsequently turning it on.
+The integration does not change AL configuration or create profiles. AL determines when adaptation resumes after manual control. Hue Reconfigo also works without AL. Explicitly turning a light off cannot prevent another automation from subsequently turning it on.
 
 ## Polling mode
 

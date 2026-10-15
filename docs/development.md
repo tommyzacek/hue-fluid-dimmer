@@ -18,7 +18,7 @@ CI runs tests, Ruff, hassfest and HACS validation. HACS custom repository instal
 
 ## Connection and event handling
 
-The official Hue integration must remain configured and loaded. Hue Fluid Dimmer reads its host/application key in memory and uses HA's shared HTTP session. No extra pairing is needed; the key is not copied into companion configuration or diagnostics. The official integration's credential field names are an implementation dependency. Bridge HTTPS certificate verification follows the existing local Hue approach and is disabled for these requests.
+The official Hue integration must remain configured and loaded. Hue Reconfigo reads its host/application key in memory and uses HA's shared HTTP session. No extra pairing is needed; the key is not copied into companion configuration or diagnostics. The official integration's credential field names are an implementation dependency. Bridge HTTPS certificate verification follows the existing local Hue approach and is disabled for these requests.
 
 REST snapshots and timestamped button SSE reports share a gesture state machine. Missing transitions wait for SSE history; duplicate/old reports are ignored. Startup/reconnection establishes fresh baselines instead of replaying old actions. Bridge exposes its latest rotary report, not every physical detent; polling cannot recover overwritten movement.
 
