@@ -49,7 +49,7 @@ def test_nonrotary_forms_have_no_dial_and_use_shared_targets(kind, count):
     assert "dial" not in names
     assert "shared_targets" in names
     assert sum(x.startswith("button_") for x in names) == count
-    values = form_values({"controller_kind": kind})
+    values = schema({})
     values["enabled"] = True
     values["shared_targets"] = ["light.bath"]
     # The actual schema excludes the internal kind; flow injects it server-side.
@@ -141,10 +141,30 @@ def test_scene_controls_are_removed_from_form_and_parser():
     button = next(field for field in fields if field["name"] == "button_1")
     children = {field["name"]: field for field in button["schema"]}
     assert "scenes" not in children and "cycle_off" not in children
-    assert "cycle" not in children["short_operation"]["selector"]["select"]["options"]
+    assert "cycle" not in children["short_operation"]["selector"]["hfd_button_action"]["options"]
     assert "scene" not in children["short_targets"]["selector"]["entity"]["domain"]
     values = form_values({"controller_kind": "button"})
     values["button_1"].update(
         short_other_targets=True, short_targets=["scene.a"], long_enabled=False
     )
     assert parse_form(values)[1] == "button_targets_invalid"
+
+
+@pytest.mark.parametrize(
+    "entity,unique,expected",
+    [
+        ("sensor.bath_lux", "light-resource", "lux"),
+        ("switch.bath_light_enabled", "light-resource", "lux_enabled"),
+        ("binary_sensor.bath_motion", "motion-resource", "motion"),
+        ("switch.bath_motion_enabled", "motion-resource", "motion_enabled"),
+    ],
+)
+def test_motion_mapping_separates_readings_from_enable_switches(entity, unique, expected):
+    from custom_components.hue_fluid_dimmer.controller_models import motion_service_role
+
+    assert (
+        motion_service_role(
+            entity, unique, {"motion": "motion-resource", "light_level": "light-resource"}
+        )
+        == expected
+    )

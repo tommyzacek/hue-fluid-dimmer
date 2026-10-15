@@ -4,7 +4,7 @@
 
 *Centrum nastavení Hue Tap Dial, Dimmer, Smart Button a pohybových senzorů v Home Assistantu.*
 
-Experimentální doplněk Home Assistantu pro Philips Hue **Tap Dial**, **Smart Button**, **Dimmer v2** a **pohybové senzory**. Akce, cíle, jas a barvu nastavíte přímo v integraci, bez automatizací pro každý ovladač a bez duplicitních entit ovladačů.
+Doplněk Home Assistantu pro Philips Hue **Tap Dial**, **Smart Button**, **Dimmer v2** a **pohybové senzory**. Akce, cíle, jas a barvu nastavíte přímo v integraci, bez automatizací pro každý ovladač a bez duplicitních entit ovladačů.
 
 Vyžaduje **Home Assistant 2026.10.1 nebo novější**, Hue Bridge s API v2 a nastavenou oficiální integraci **Philips Hue**. Projekt je nezávislý na Signify a Home Assistantu. Dokumentace sleduje aktuální vývoj; rozsah konkrétní nainstalované verze najdete v poznámkách k vydání.
 

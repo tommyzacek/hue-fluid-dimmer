@@ -1,5 +1,7 @@
 """Dial profiles and shared light selections."""
 
+from .motion import validate_startup
+
 GESTURES = ("short", "long", "double", "triple")
 
 
@@ -8,7 +10,9 @@ def button_actions(binding: dict, index: int) -> dict:
     value = binding.get(f"button_{index}", {})
     if isinstance(value, dict):
         actions = {key: targets(value.get(key)) for key in GESTURES if value.get(key)}
-        if value.get("long_operation") == "dial":
+        # Earlier versions could omit the inherited long target. Keep that fallback
+        # only for those legacy bindings; explicit per-gesture targets always win.
+        if value.get("long_operation") == "dial" and not actions.get("long"):
             actions["long"] = targets(value.get("short"))
         return actions
     return {"short": targets(value)} if value else {}
@@ -63,7 +67,11 @@ def resolve_binding(binding: dict) -> dict:
         result["adaptive_transition"] = True
     if result.get("dial_linked"):
         selected = button_actions(result, 1).get("short", [])
-        result["lights"] = selected if percentage_targets(selected) else []
+        result["lights"] = (
+            targets(result.get("dial_targets")) if result.get("dial_override") else selected
+        )
+        if not percentage_targets(result["lights"]):
+            result["lights"] = []
         return result
     source = result.get("dial_source", "custom")
     if source != "custom":
@@ -101,6 +109,8 @@ def form_values(binding: dict) -> dict:
         "shared_targets": binding.get("shared_targets", []),
         "enabled": binding.get("enabled", False),
         "dial": {
+            "override": binding.get("dial_override", False),
+            "targets": binding.get("dial_targets", []),
             "profile": profile,
             "adaptive_transition": binding.get("adaptive_transition", False),
             "nonlight_sensitivity": binding.get("custom_nonlight_sensitivity", 1.5),
@@ -138,6 +148,12 @@ def form_values(binding: dict) -> dict:
                     f"{action}_percentage": button_operation(binding, i, action)[1]
                     for action in GESTURES
                 },
+                **{
+                    f"{action}_startup": binding[f"button_{i}"][f"{action}_startup"]
+                    for action in GESTURES
+                    if isinstance(binding.get(f"button_{i}"), dict)
+                    and f"{action}_startup" in binding[f"button_{i}"]
+                },
             }
             for i in range(1, 5)
         },
@@ -163,6 +179,18 @@ def form_values(binding: dict) -> dict:
 
 def parse_form(values: dict) -> tuple[dict, str | None]:
     """Flatten the form, preserving custom values independently of the preset."""
+    values = {**values}
+    for i in range(1, 5):
+        name = f"button_{i}"
+        section = dict(values.get(name, {}))
+        for action in GESTURES:
+            payload = section.get(f"{action}_operation")
+            if isinstance(payload, dict):
+                section[f"{action}_operation"] = payload.get("operation", "toggle")
+                section[f"{action}_percentage"] = payload.get("percentage", 100)
+                section[f"{action}_startup"] = payload.get("startup", {})
+        if name in values:
+            values[name] = section
     kind = values.get("controller_kind", "tap_dial")
     dial = values.get("dial", form_values({})["dial"])
     sensitivity, transition = PROFILES.get(
@@ -177,6 +205,10 @@ def parse_form(values: dict) -> tuple[dict, str | None]:
         if dial["profile"] in PROFILES
         else dial.get("adaptive_transition", False),
         "dial_linked": True,
+        "dial_override": kind == "tap_dial" and bool(dial.get("override")),
+        "dial_targets": targets(dial.get("targets"))
+        if kind == "tap_dial" and dial.get("override")
+        else [],
         "custom_sensitivity": dial["sensitivity"],
         "custom_transition": dial["transition"],
         "custom_nonlight_sensitivity": dial.get("nonlight_sensitivity", 1.5),
@@ -201,16 +233,14 @@ def parse_form(values: dict) -> tuple[dict, str | None]:
             if not section.get(f"{action}_enabled", False):
                 continue
             operation = section.get(f"{action}_operation", "toggle")
-            if action == "long" and operation == "dial":
+            if operation == "dial":
                 if kind != "tap_dial":
                     return result, "dial_target_required"
-                selected = (
-                    targets(section.get("short_targets")) if section.get("short_enabled") else []
-                )
+                selected = targets(section.get(f"{action}_targets"))
                 if index == 1 or not percentage_targets(selected):
                     return result, "dial_target_required"
-                actions["long"] = selected
-                actions["long_operation"] = "dial"
+                actions[action] = selected
+                actions[f"{action}_operation"] = "dial"
                 continue
             other_targets = section.get(f"{action}_other_targets")
             selected = targets(section.get(f"{action}_targets"))
@@ -247,11 +277,25 @@ def parse_form(values: dict) -> tuple[dict, str | None]:
                 operation = section.get(f"{action}_operation", "toggle")
                 percentage = section.get(f"{action}_percentage", 100.0)
                 if (
-                    operation not in ("toggle", "previous", "configured", "step_up", "step_down")
+                    operation
+                    not in ("toggle", "previous", "configured", "on", "off", "step_up", "step_down")
                     or not isinstance(percentage, (int, float))
                     or not 0 < percentage <= 100
                 ):
                     return result, "button_percentage_invalid"
+                if (
+                    light_targets(selected)
+                    and f"{action}_startup" in section
+                    and operation in ("toggle", "previous", "configured", "on")
+                ):
+                    try:
+                        startup = validate_startup(section[f"{action}_startup"])
+                    except ValueError:
+                        return result, "motion_start_invalid"
+                    actions[f"{action}_startup"] = startup
+                    # New light actions use one power operation; brightness is independent.
+                    if operation in ("previous", "configured"):
+                        operation = "toggle"
                 # Keep legacy bindings compact while preserving explicit numeric on levels.
                 if operation != "toggle" or numeric_target:
                     actions[f"{action}_operation"] = operation
@@ -268,14 +312,11 @@ def parse_form(values: dict) -> tuple[dict, str | None]:
                 actions["long_direction"] = "up" if index == 2 else "down"
         if actions:
             result[field] = actions
+    if result["dial_override"] and not percentage_targets(result["dial_targets"]):
+        return result, "dial_target_required"
     if result["enabled"] and kind == "tap_dial":
         main = button_actions(result, 1).get("short", [])
-        if main and not percentage_targets(main):
-            return result, "dial_target_required"
-        if not main and any(
-            result.get(f"button_{index}", {}).get("long_operation") == "dial"
-            for index in range(2, 5)
-        ):
+        if main and not result["dial_override"] and not percentage_targets(main):
             return result, "dial_target_required"
         if not resolve_binding(result).get("lights") and not any(
             button_actions(result, index) for index in range(1, 5)
