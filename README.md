@@ -8,6 +8,8 @@ An experimental Home Assistant companion for Philips Hue **Tap Dial**, **Smart B
 
 Requires **Home Assistant 2026.10.1 or newer**, a Hue Bridge with API v2 and the configured official **Philips Hue** integration. This project is independent of Signify and Home Assistant. Documentation follows the latest development; use the release notes for the scope of a specific installed version.
 
+The official **Philips Hue** integration is required. **Adaptive Lighting** is a separate, optional custom integration installed through **HACS**. If you use it, enable cooperation in Hue Fluid Dimmer’s Bridge settings to report manual brightness/color control. Hue Fluid Dimmer works without Adaptive Lighting.
+
 ## User guides
 
 | Group | Guide |

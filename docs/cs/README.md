@@ -15,6 +15,8 @@
 
 Hue Fluid Dimmer vyžaduje Home Assistant **2026.10.1 nebo novější**, Hue Bridge s API v2 a nastavenou oficiální integraci **Philips Hue**. Její zařízení ani entity nenahrazuje. Vlastní panel se přidá automaticky a je dostupný správcům HA.
 
+**Adaptive Lighting je volitelná integrace z HACS**, nikoli součást oficiální Hue integrace. Bez ní Hue Fluid Dimmer normálně funguje. Pokud ji používáte, můžete zapnout [spolupráci v nastavení Bridge](bridge.md#spolupráce-s-adaptive-lighting).
+
 V postranním panelu otevřete **Hue Fluid Dimmer → váš Bridge → skupinu ovladačů → konkrétní zařízení**. Nové ovladače mají ovládání vypnuté. Nastavení se uplatní po odeslání formuláře.
 
 Příslušenství, které přebírá Hue Fluid Dimmer, nastavte v aplikaci Hue na **„Konfigurovat v jiné aplikaci“**, aby jej současně neovládala i aplikace Hue. Pro stejné vstupy vypněte také případné blueprinty a automatizace. Dva nezávislé systémy mohou jinak současně měnit jas, barvu nebo napájení. Oficiální integraci Philips Hue v Home Assistantu ponechte zapnutou.
