@@ -13,13 +13,13 @@
 
 ## Skôr než začnete
 
-Hue Fluid Dimmer vyžaduje Home Assistant **2026.10.1 alebo novší**, Hue Bridge s API v2 a nastavenú oficiálnu integráciu **Philips Hue**. Nenahrádza jej zariadenia ani entity. Vlastný panel sa pridá automaticky a je dostupný správcom HA.
+Hue Reconfigo vyžaduje Home Assistant **2026.10.1 alebo novší**, Hue Bridge s API v2 a nastavenú oficiálnu integráciu **Philips Hue**. Nenahrádza jej zariadenia ani entity. Vlastný panel sa pridá automaticky a je dostupný správcom HA.
 
-**Adaptive Lighting je voliteľná integrácia z HACS**, nie súčasť oficiálnej Hue integrácie. Bez nej Hue Fluid Dimmer normálne funguje. Ak ju používate, môžete zapnúť [spoluprácu v nastavení Bridge](bridge.md#spolupráca-s-adaptive-lighting).
+**Adaptive Lighting je voliteľná integrácia z HACS**, nie súčasť oficiálnej Hue integrácie. Bez nej Hue Reconfigo normálne funguje. Ak ju používate, môžete zapnúť [spoluprácu v nastavení Bridge](bridge.md#spolupráca-s-adaptive-lighting).
 
-V bočnom paneli otvorte **Hue Fluid Dimmer → váš Bridge → skupinu ovládačov → zariadenie**. Nové ovládače majú ovládanie vypnuté. Nastavenia sa použijú po odoslaní formulára.
+V bočnom paneli otvorte **Hue Reconfigo → váš Bridge → skupinu ovládačov → zariadenie**. Nové ovládače majú ovládanie vypnuté. Nastavenia sa použijú po odoslaní formulára.
 
-Príslušenstvo, ktoré preberá Hue Fluid Dimmer, nastavte v aplikácii Hue na **„Konfigurovať v inej aplikácii“**, aby ho súčasne neovládala aj aplikácia Hue. Pre rovnaké vstupy vypnite aj prípadné blueprinty a automatizácie. Dva nezávislé systémy môžu inak súčasne meniť jas, farbu alebo zapnutie. Oficiálnu integráciu Philips Hue v Home Assistante ponechajte zapnutú.
+Príslušenstvo, ktoré preberá Hue Reconfigo, nastavte v aplikácii Hue na **„Konfigurovať v inej aplikácii“**, aby ho súčasne neovládala aj aplikácia Hue. Pre rovnaké vstupy vypnite aj prípadné blueprinty a automatizácie. Dva nezávislé systémy môžu inak súčasne meniť jas, farbu alebo zapnutie. Oficiálnu integráciu Philips Hue v Home Assistante ponechajte zapnutú.
 
 Po aktualizácii reštartujte HA a obnovte stránku prehliadača, aby sa načítali nové formuláre. Jazyk rozhrania určuje profil HA: čeština, slovenčina, inak angličtina. Tieto návody používajú slovenské názvy polí.
 

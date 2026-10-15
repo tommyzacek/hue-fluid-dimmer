@@ -232,7 +232,7 @@ class HueFluidDimmerFlow(ConfigFlow, domain=DOMAIN):
             await self.async_set_unique_id(entry_id)
             self._abort_if_unique_id_configured()
             return self.async_create_entry(
-                title=f"Hue Fluid Dimmer – {bridges[entry_id]}", data={CONF_HUE_ENTRY: entry_id}
+                title=f"Hue Reconfigo – {bridges[entry_id]}", data={CONF_HUE_ENTRY: entry_id}
             )
         return self.async_show_form(
             step_id="user", data_schema=p.Schema({p.Required(CONF_HUE_ENTRY): select(bridges)})

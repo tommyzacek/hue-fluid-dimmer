@@ -6,10 +6,10 @@
 
 ## Inštalácia a otvorenie nastavení
 
-1. V HACS pridajte `https://github.com/tommyzacek/hue-fluid-dimmer` ako vlastný repozitár typu **Integration**.
+1. V HACS pridajte `https://github.com/tommyzacek/hue-reconfigo` ako vlastný repozitár typu **Integration**.
 2. Stiahnite požadované vydanie a reštartujte Home Assistant. Pre predbežné vydania povoľte ich zobrazovanie v HACS.
-3. V **Nastavenia → Zariadenia a služby → Pridať integráciu** vyberte Hue Fluid Dimmer a existujúci Hue Bridge.
-4. Otvorte bočný panel **Hue Fluid Dimmer**. Ovládače sú rozdelené na Dial, Button, Dimmer a Motion.
+3. V **Nastavenia → Zariadenia a služby → Pridať integráciu** vyberte Hue Reconfigo a existujúci Hue Bridge.
+4. Otvorte bočný panel **Hue Reconfigo**. Ovládače sú rozdelené na Dial, Button, Dimmer a Motion.
 
 Ozubené koliesko vedľa názvu Bridge otvorí spoločné nastavenia priamo v paneli. Dostupné zostávajú aj štandardné nastavenia integrácie v Zariadenia a služby. Panel nevyžaduje samostatnú inštaláciu, nevytvára ďalší Bridge ani duplicitné entity a sám nepridáva pravidelné dopytovanie.
 
@@ -32,7 +32,7 @@ Podmienka obmedzuje akcie integrácie. Nenahrádza zabezpečovací systém.
 
 ## Spolupráca s Adaptive Lighting
 
-**Adaptive Lighting (AL) je samostatná, voliteľná vlastná integrácia inštalovaná cez HACS.** Nie je súčasťou oficiálnej integrácie Philips Hue a pre fungovanie Hue Fluid Dimmer nie je potrebná. Oficiálna integrácia Philips Hue je naopak vyžadovaná a musí zostať zapnutá.
+**Adaptive Lighting (AL) je samostatná, voliteľná vlastná integrácia inštalovaná cez HACS.** Nie je súčasťou oficiálnej integrácie Philips Hue a pre fungovanie Hue Reconfigo nie je potrebná. Oficiálna integrácia Philips Hue je naopak vyžadovaná a musí zostať zapnutá.
 
 Ak používate Adaptive Lighting (AL), môžete zapnúť spoluprácu. Integrácia vyhľadá zodpovedajúce konfigurácie AL a pri ručnej regulácii jasu či farby oznámi ručné ovládanie službou `adaptive_lighting.set_manual_control`.
 

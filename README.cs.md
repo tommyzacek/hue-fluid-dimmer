@@ -1,14 +1,16 @@
-# Hue Fluid Dimmer
+# Hue Reconfigo
 
 [Čeština](README.cs.md) | [Slovenčina](README.sk.md) | [English](README.md)
 
-*Plynulé stmívání. Nízká latence.*
+*Centrum nastavení Hue Tap Dial, Dimmer, Smart Button a pohybových senzorů v Home Assistantu.*
 
 Experimentální doplněk Home Assistantu pro Philips Hue **Tap Dial**, **Smart Button**, **Dimmer v2** a **pohybové senzory**. Akce, cíle, jas a barvu nastavíte přímo v integraci, bez automatizací pro každý ovladač a bez duplicitních entit ovladačů.
 
 Vyžaduje **Home Assistant 2026.10.1 nebo novější**, Hue Bridge s API v2 a nastavenou oficiální integraci **Philips Hue**. Projekt je nezávislý na Signify a Home Assistantu. Dokumentace sleduje aktuální vývoj; rozsah konkrétní nainstalované verze najdete v poznámkách k vydání.
 
-Oficiální integrace **Philips Hue** je nutná. **Adaptive Lighting** je samostatná, volitelná vlastní integrace instalovaná přes **HACS**. Pokud ji používáte, zapněte spolupráci v nastavení Bridge v Hue Fluid Dimmer, aby mu oznamoval ruční řízení jasu a barvy. Hue Fluid Dimmer funguje i bez Adaptive Lighting.
+Oficiální integrace **Philips Hue** je nutná. **Adaptive Lighting** je samostatná, volitelná vlastní integrace instalovaná přes **HACS**. Pokud ji používáte, zapněte spolupráci v nastavení Bridge v Hue Reconfigo, aby mu oznamoval ruční řízení jasu a barvy. Hue Reconfigo funguje i bez Adaptive Lighting.
+
+Integrace se dříve jmenovala **Hue Fluid Dimmer**. Technická doména i složka zůstávají `hue_fluid_dimmer`, aby se zachovalo stávající nastavení. Nové párování není potřeba.
 
 ## Uživatelské návody
 
@@ -25,11 +27,11 @@ Začněte částí [Než začnete](docs/cs/README.md#než-začnete). Návody obs
 
 ## Rychlá instalace
 
-1. Do HACS přidejte `https://github.com/tommyzacek/hue-fluid-dimmer` jako vlastní repozitář typu **Integration**.
+1. Do HACS přidejte `https://github.com/tommyzacek/hue-reconfigo` jako vlastní repozitář typu **Integration**.
 2. Stáhněte vydání a restartujte Home Assistant.
-3. V **Nastavení → Zařízení a služby** přidejte **Hue Fluid Dimmer** a vyberte existující Hue Bridge.
+3. V **Nastavení → Zařízení a služby** přidejte **Hue Reconfigo** a vyberte existující Hue Bridge.
 4. V Hue nastavte příslušenství na **Konfigurovat v jiné aplikaci**. Vypněte konkurenční automatizace pro stejné vstupy; oficiální Hue integraci ponechte zapnutou.
-5. Jako správce otevřete boční panel **Hue Fluid Dimmer**. Vyberte ovladač, nastavte cíle/akce a zapněte ovládání. Kolo vedle Bridge otevře společná nastavení. Po aktualizacích obnovte stránku.
+5. Jako správce otevřete boční panel **Hue Reconfigo**. Vyberte ovladač, nastavte cíle/akce a zapněte ovládání. Kolo vedle Bridge otevře společná nastavení. Po aktualizacích obnovte stránku.
 
 Při ruční instalaci zkopírujte `custom_components/hue_fluid_dimmer` do `custom_components` konfigurace HA a restartujte. Boční panel je součástí, neinstaluje se zvlášť.
 

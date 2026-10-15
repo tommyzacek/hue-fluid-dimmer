@@ -8,7 +8,7 @@ Tap Dial má otočné koliesko a štyri tlačidlá. Koliesko reguluje percentuá
 
 ## Hlavný cieľ kolieska
 
-Otvorte **Hue Fluid Dimmer → Bridge → Dial → váš ovládač**. Koliesko štandardne používa ciele krátkeho stlačenia tlačidla 1. Ak má koliesko ovládať celú miestnosť a tlačidlo 1 len časť, zapnite vlastný výber cieľa kolieska a zvoľte širšiu skupinu.
+Otvorte **Hue Reconfigo → Bridge → Dial → váš ovládač**. Koliesko štandardne používa ciele krátkeho stlačenia tlačidla 1. Ak má koliesko ovládať celú miestnosť a tlačidlo 1 len časť, zapnite vlastný výber cieľa kolieska a zvoľte širšiu skupinu.
 
 Hlavný cieľ musí podporovať reguláciu: svetlá, ventilátory alebo vhodné číselné entity. Skript nemá priebežnú percentuálnu hodnotu a nemôže byť cieľom kolieska. V jednom výbere používajte svetlá alebo kompatibilné ostatné percentuálne entity.
 

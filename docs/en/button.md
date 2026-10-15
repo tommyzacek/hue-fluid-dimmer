@@ -8,7 +8,7 @@ Button has one physical button. The integration distinguishes short, long, doubl
 
 ## Basic setup
 
-1. Open **Hue Fluid Dimmer → Bridge → Button → your controller**.
+1. Open **Hue Reconfigo → Bridge → Button → your controller**.
 2. Select **Default lights / devices**.
 3. Enable the gestures you want and select each action.
 4. For long press, you can choose **Continuous regulation while held**.

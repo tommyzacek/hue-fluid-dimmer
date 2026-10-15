@@ -8,7 +8,7 @@ Tap Dial má otočné kolečko a čtyři tlačítka. Kolečko reguluje procentn�
 
 ## Hlavní cíl kolečka
 
-Otevřete **Hue Fluid Dimmer → Bridge → Dial → váš ovladač**. Standardně kolečko používá cíle krátkého stisku tlačítka 1. Chcete-li kolečkem ovládat například celou místnost, ale tlačítkem 1 jen její část, zapněte vlastní výběr cíle kolečka a zvolte širší skupinu.
+Otevřete **Hue Reconfigo → Bridge → Dial → váš ovladač**. Standardně kolečko používá cíle krátkého stisku tlačítka 1. Chcete-li kolečkem ovládat například celou místnost, ale tlačítkem 1 jen její část, zapněte vlastní výběr cíle kolečka a zvolte širší skupinu.
 
 Hlavní cíl musí být regulovatelný: světla, ventilátory nebo odpovídající číselné entity. Skript nemá průběžnou procentní hodnotu a cílem kolečka být nemůže. Pro jeden výběr používejte světla, nebo kompatibilní ostatní procentní entity.
 

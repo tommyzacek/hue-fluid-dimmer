@@ -101,7 +101,7 @@ class Runtime:
 
     def create_task(self, coro) -> asyncio.Task:
         return self.entry.async_create_background_task(
-            self.hass, coro, "Hue Fluid Dimmer worker", eager_start=False
+            self.hass, coro, "Hue Reconfigo worker", eager_start=False
         )
 
     def credentials(self) -> tuple[str, str]:

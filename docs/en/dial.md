@@ -8,7 +8,7 @@ Tap Dial has a wheel and four buttons. The wheel adjusts a percentage value, whi
 
 ## Main wheel targets
 
-Open **Hue Fluid Dimmer → Bridge → Dial → your controller**. By default, the wheel uses button 1's short-press targets. To control a whole room with the wheel but only part of it with button 1, enable the wheel's independent target selection and choose the larger group.
+Open **Hue Reconfigo → Bridge → Dial → your controller**. By default, the wheel uses button 1's short-press targets. To control a whole room with the wheel but only part of it with button 1, enable the wheel's independent target selection and choose the larger group.
 
 Main targets must support regulation: lights, fans or suitable number entities. Scripts have no continuous percentage value and cannot be wheel targets. Use lights or compatible other percentage entities in one selection.
 

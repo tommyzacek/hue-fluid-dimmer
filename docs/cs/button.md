@@ -8,7 +8,7 @@ Button je ovladač s jedním fyzickým tlačítkem. Integrace rozlišuje krátk�
 
 ## Základní nastavení
 
-1. Otevřete **Hue Fluid Dimmer → Bridge → Button → váš ovladač**.
+1. Otevřete **Hue Reconfigo → Bridge → Button → váš ovladač**.
 2. Vyberte **Výchozí světla / zařízení**.
 3. Zapněte požadované stisky a u každého nastavte akci.
 4. Pro dlouhý stisk lze zvolit **Plynulou regulaci**.

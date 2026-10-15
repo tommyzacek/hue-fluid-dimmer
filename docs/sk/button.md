@@ -8,7 +8,7 @@ Button má jedno fyzické tlačidlo. Integrácia rozlišuje krátke, dlhé stla�
 
 ## Základné nastavenie
 
-1. Otvorte **Hue Fluid Dimmer → Bridge → Button → váš ovládač**.
+1. Otvorte **Hue Reconfigo → Bridge → Button → váš ovládač**.
 2. Vyberte **Predvolené svetlá / zariadenia**.
 3. Zapnite požadované stlačenia a nastavte akcie.
 4. Pre dlhé stlačenie možno zvoliť **Plynulú reguláciu pri držaní**.

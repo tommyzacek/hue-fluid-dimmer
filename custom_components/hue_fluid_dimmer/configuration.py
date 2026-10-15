@@ -84,3 +84,12 @@ def initialize_controllers(hass: HomeAssistant, entry: ConfigEntry) -> None:
     for device in dr.async_entries_for_config_entry(devices, entry.entry_id):
         if any(domain == DOMAIN for domain, _ in device.identifiers):
             devices.async_remove_device(device.id)
+
+
+def update_brand_title(hass, entry):
+    """Rename only the old generated title; preserve user titles and configuration."""
+    prefix = "Hue Fluid Dimmer – "
+    if entry.title.startswith(prefix):
+        hass.config_entries.async_update_entry(
+            entry, title="Hue Reconfigo – " + entry.title[len(prefix) :]
+        )
