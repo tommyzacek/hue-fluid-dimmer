@@ -3,8 +3,8 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from custom_components.hue_fluid_dimmer.adaptive import AdaptiveCooperation, matches
-from custom_components.hue_fluid_dimmer.bindings import form_values, parse_form, resolve_binding
+from custom_components.hue_reconfigo.adaptive import AdaptiveCooperation, matches
+from custom_components.hue_reconfigo.bindings import form_values, parse_form, resolve_binding
 
 
 def fake_hass():
@@ -53,7 +53,7 @@ def test_separate_main_dial_targets_and_clearing_override(enabled):
 
 
 async def test_marks_all_matching_profiles_through_public_service(monkeypatch):
-    from custom_components.hue_fluid_dimmer import adaptive
+    from custom_components.hue_reconfigo import adaptive
 
     hass = fake_hass()
     hass.services = SimpleNamespace(has_service=lambda *args: True, async_call=AsyncMock())

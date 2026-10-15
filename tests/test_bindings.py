@@ -2,8 +2,8 @@ import probatio as p
 import pytest
 from homeassistant.helpers import config_validation as cv
 
-from custom_components.hue_fluid_dimmer.bindings import form_values, parse_form, resolve_binding
-from custom_components.hue_fluid_dimmer.config_flow import VisibleOperation, binding_schema
+from custom_components.hue_reconfigo.bindings import form_values, parse_form, resolve_binding
+from custom_components.hue_reconfigo.config_flow import VisibleOperation, binding_schema
 
 
 @pytest.mark.parametrize("selection", ["light.bulb", "light.group", ["light.a", "light.b"]])
@@ -79,12 +79,12 @@ def test_all_press_types_accept_number_actions_and_preserve_operation(action, op
 def test_smooth_adjustment_only_appears_in_long_press_operation_list():
     assert (
         "dimming"
-        in VisibleOperation("long").serialize()["selector"]["hfd_button_action"]["options"]
+        in VisibleOperation("long").serialize()["selector"]["hrc_button_action"]["options"]
     )
     for action in ("short", "double", "triple"):
         assert (
             "dimming"
-            not in VisibleOperation(action).serialize()["selector"]["hfd_button_action"]["options"]
+            not in VisibleOperation(action).serialize()["selector"]["hrc_button_action"]["options"]
         )
 
 
@@ -166,7 +166,7 @@ def test_dial_takeover_uses_own_target_without_short_press():
     assert parse_form(values)[1] is None
     assert (
         "dial"
-        not in VisibleOperation("long", 1).serialize()["selector"]["hfd_button_action"]["options"]
+        not in VisibleOperation("long", 1).serialize()["selector"]["hrc_button_action"]["options"]
     )
 
 

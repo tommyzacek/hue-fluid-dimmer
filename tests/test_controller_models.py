@@ -8,9 +8,9 @@ import pytest
 from homeassistant.helpers import config_validation as cv
 from test_runtime import make_runtime
 
-from custom_components.hue_fluid_dimmer.bindings import button_actions, form_values, parse_form
-from custom_components.hue_fluid_dimmer.config_flow import binding_schema
-from custom_components.hue_fluid_dimmer.controller_models import HoldDirections, controller_kind
+from custom_components.hue_reconfigo.bindings import button_actions, form_values, parse_form
+from custom_components.hue_reconfigo.config_flow import binding_schema
+from custom_components.hue_reconfigo.controller_models import HoldDirections, controller_kind
 
 
 @pytest.mark.parametrize(
@@ -141,7 +141,7 @@ def test_scene_controls_are_removed_from_form_and_parser():
     button = next(field for field in fields if field["name"] == "button_1")
     children = {field["name"]: field for field in button["schema"]}
     assert "scenes" not in children and "cycle_off" not in children
-    assert "cycle" not in children["short_operation"]["selector"]["hfd_button_action"]["options"]
+    assert "cycle" not in children["short_operation"]["selector"]["hrc_button_action"]["options"]
     assert "scene" not in children["short_targets"]["selector"]["entity"]["domain"]
     values = form_values({"controller_kind": "button"})
     values["button_1"].update(
@@ -160,7 +160,7 @@ def test_scene_controls_are_removed_from_form_and_parser():
     ],
 )
 def test_motion_mapping_separates_readings_from_enable_switches(entity, unique, expected):
-    from custom_components.hue_fluid_dimmer.controller_models import motion_service_role
+    from custom_components.hue_reconfigo.controller_models import motion_service_role
 
     assert (
         motion_service_role(

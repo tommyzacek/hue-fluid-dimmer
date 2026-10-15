@@ -3,9 +3,9 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from custom_components.hue_fluid_dimmer import motion
-from custom_components.hue_fluid_dimmer.config_flow import MotionTimeout, binding_schema
-from custom_components.hue_fluid_dimmer.motion import DEFAULTS, MotionLighting, parse_motion
+from custom_components.hue_reconfigo import motion
+from custom_components.hue_reconfigo.config_flow import MotionTimeout, binding_schema
+from custom_components.hue_reconfigo.motion import DEFAULTS, MotionLighting, parse_motion
 
 
 def manager():

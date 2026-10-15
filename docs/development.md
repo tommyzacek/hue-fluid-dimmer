@@ -24,7 +24,7 @@ REST snapshots and timestamped button SSE reports share a gesture state machine.
 
 The default polling interval is 100 ms and activity window 3 s. Each resource type uses one batch request per Bridge (`relative_rotary`, `button`), independent of controller count. Continuous mode at 100 ms is approximately 20 REST requests/s per Bridge plus an SSE stream. Requests do not overlap; failures apply backoff. These experimental intervals are not verified vendor recommendations.
 
-Unloading cancels polling, subscriptions, gesture timers, routing and ramps. Controller configuration updates are handled separately; Motion configuration changes explicitly reset that Motion's running cycle. Diagnostics redact controller bindings. The `hue_fluid_dimmer_event` bus event remains available for advanced rotary automations.
+Unloading cancels polling, subscriptions, gesture timers, routing and ramps. Controller configuration updates are handled separately; Motion configuration changes explicitly reset that Motion's running cycle. Diagnostics redact controller bindings. The `hue_reconfigo_event` bus event remains available for advanced rotary automations.
 
 ## Frontend and models
 

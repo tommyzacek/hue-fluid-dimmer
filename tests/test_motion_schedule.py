@@ -5,9 +5,9 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from custom_components.hue_fluid_dimmer.config_flow import binding_schema
-from custom_components.hue_fluid_dimmer.motion import DEFAULTS, parse_motion
-from custom_components.hue_fluid_dimmer.motion_schedule import effective_binding, periods_for
+from custom_components.hue_reconfigo.config_flow import binding_schema
+from custom_components.hue_reconfigo.motion import DEFAULTS, parse_motion
+from custom_components.hue_reconfigo.motion_schedule import effective_binding, periods_for
 
 setup = runpy.run_path("tests/test_motion_policies.py")["setup"]
 
@@ -92,7 +92,7 @@ async def test_period_targets_and_timer_do_not_mutate_original():
 
 
 async def test_previous_brightness_does_not_halve_each_cycle(monkeypatch):
-    from custom_components.hue_fluid_dimmer import motion
+    from custom_components.hue_reconfigo import motion
 
     engine, states, call, binding = setup()
     engine.adaptive.mark = AsyncMock()

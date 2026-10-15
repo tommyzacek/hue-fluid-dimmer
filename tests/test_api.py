@@ -2,7 +2,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from custom_components.hue_fluid_dimmer.api import BridgeClient, BridgeError
+from custom_components.hue_reconfigo.api import BridgeClient, BridgeError
 
 
 def client(payload, status=200, headers=None):

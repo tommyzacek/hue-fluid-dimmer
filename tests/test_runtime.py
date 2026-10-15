@@ -7,14 +7,14 @@ from unittest.mock import AsyncMock, Mock
 import pytest
 from homeassistant.core import Event
 
-from custom_components.hue_fluid_dimmer.api import BridgeError
-from custom_components.hue_fluid_dimmer.const import CONF_MODE, EVENT_ROTATION
-from custom_components.hue_fluid_dimmer.runtime import Runtime
+from custom_components.hue_reconfigo.api import BridgeError
+from custom_components.hue_reconfigo.const import CONF_MODE, EVENT_ROTATION
+from custom_components.hue_reconfigo.runtime import Runtime
 
 
 def make_runtime(monkeypatch, options):
     monkeypatch.setattr(
-        "custom_components.hue_fluid_dimmer.runtime.aiohttp_client.async_get_clientsession",
+        "custom_components.hue_reconfigo.runtime.aiohttp_client.async_get_clientsession",
         lambda *a, **kw: None,
     )
     fired = []
@@ -164,7 +164,7 @@ async def test_temporary_dial_target_returns_to_button_one_after_idle(monkeypatc
     runtime, _ = make_runtime(monkeypatch, {})
     clock = [0.0]
     monkeypatch.setattr(
-        "custom_components.hue_fluid_dimmer.runtime.time",
+        "custom_components.hue_reconfigo.runtime.time",
         SimpleNamespace(monotonic=lambda: clock[0]),
     )
     binding = {
@@ -273,7 +273,7 @@ async def test_sse_reconnect_cancels_gesture_and_backoffs(monkeypatch, resource)
         sleeps.append(delay)
         runtime.closed = True
 
-    monkeypatch.setattr("custom_components.hue_fluid_dimmer.runtime.asyncio.sleep", sleep)
+    monkeypatch.setattr("custom_components.hue_reconfigo.runtime.asyncio.sleep", sleep)
     await runtime.listen_buttons()
     assert sleeps == [60] and not runtime.gestures.pending
     assert runtime.button_map == {"button-a": ("dial-a", 2)}

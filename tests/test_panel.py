@@ -4,7 +4,7 @@ from unittest.mock import Mock
 import pytest
 from homeassistant.exceptions import Unauthorized
 
-from custom_components.hue_fluid_dimmer.panel import describe_entries, websocket_overview
+from custom_components.hue_reconfigo.panel import describe_entries, websocket_overview
 
 
 def test_overview_exports_only_identifiers_titles_family_and_enable_state():
@@ -50,25 +50,25 @@ def test_overview_api_requires_admin():
         websocket_overview(
             SimpleNamespace(),
             SimpleNamespace(user=SimpleNamespace(is_admin=False)),
-            {"id": 1, "type": "hue_fluid_dimmer/overview"},
+            {"id": 1, "type": "hue_reconfigo/overview"},
         )
 
 
 def test_overview_api_uses_current_entries():
     connection = SimpleNamespace(user=SimpleNamespace(is_admin=True), send_result=Mock())
     hass = SimpleNamespace(config_entries=SimpleNamespace(async_entries=lambda domain: []))
-    websocket_overview(hass, connection, {"id": 10, "type": "hue_fluid_dimmer/overview"})
+    websocket_overview(hass, connection, {"id": 10, "type": "hue_reconfigo/overview"})
     connection.send_result.assert_called_once_with(10, [])
 
 
 async def test_overview_does_not_replace_bridge_options_dialog(monkeypatch):
     from unittest.mock import AsyncMock
 
-    from custom_components.hue_fluid_dimmer import panel
+    from custom_components.hue_reconfigo import panel
 
     register = AsyncMock()
     monkeypatch.setattr(panel.panel_custom, "async_register_panel", register)
-    hass = SimpleNamespace(data={"hfd_overview_api": True})
+    hass = SimpleNamespace(data={"hrc_overview_api": True})
     await panel.async_setup_panel(hass)
     assert register.await_args.kwargs["require_admin"] is True
     assert "config_panel_domain" not in register.await_args.kwargs

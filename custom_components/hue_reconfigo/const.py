@@ -1,8 +1,8 @@
 """Constants for Hue Reconfigo."""
 
-DOMAIN = "hue_fluid_dimmer"
+DOMAIN = "hue_reconfigo"
 HUE_DOMAIN = "hue"
-EVENT_ROTATION = "hue_fluid_dimmer_event"
+EVENT_ROTATION = "hue_reconfigo_event"
 CONF_HUE_ENTRY = "hue_entry_id"
 CONF_MODE = "polling_mode"
 CONF_INTERVAL = "poll_interval"

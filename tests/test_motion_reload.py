@@ -1,7 +1,7 @@
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
-from custom_components.hue_fluid_dimmer import async_reload_entry
+from custom_components.hue_reconfigo import async_reload_entry
 
 
 async def test_binding_save_preserves_live_timers():
@@ -22,7 +22,7 @@ async def test_binding_save_preserves_live_timers():
 async def test_save_restarts_only_changed_motion_with_new_binding(monkeypatch):
     import runpy
 
-    from custom_components.hue_fluid_dimmer.runtime import Runtime
+    from custom_components.hue_reconfigo.runtime import Runtime
 
     setup = runpy.run_path("tests/test_motion_policies.py")["setup"]
     engine, states, call, binding = setup()
@@ -36,7 +36,7 @@ async def test_save_restarts_only_changed_motion_with_new_binding(monkeypatch):
     states["binary_sensor.bath"] = SimpleNamespace(state="on")
     fresh = {**binding, "motion_timeout": 60}
     monkeypatch.setattr(
-        "custom_components.hue_fluid_dimmer.runtime.controller_binding",
+        "custom_components.hue_reconfigo.runtime.controller_binding",
         lambda entry, resource: dict(fresh),
     )
     runtime = object.__new__(Runtime)

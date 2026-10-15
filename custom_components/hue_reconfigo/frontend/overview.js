@@ -1,5 +1,5 @@
 /* Grouped controller overview, composed from HA configuration components. */
-class HfdControllerOverview extends HTMLElement {
+class HrcControllerOverview extends HTMLElement {
  constructor(){super();this.attachShadow({mode:'open'});this.groups=new Set();this.collapsed=new Set();this.bridges=[];this.addEventListener('show-dialog',ev=>{if(ev.detail?.dialogTag!=='dialog-data-entry-flow')return;const p=ev.detail.dialogParams,prev=p.dialogClosedCallback;p.dialogClosedCallback=r=>{prev?.(r);if(this.isConnected)this.load();};});}
  set hass(v){const changed=this._hass?.language!==v?.language;this._hass=v;for(const e of this.shadowRoot.querySelectorAll('ha-config-sub-entry-row,ha-config-entry-row'))e.hass=v;if(this.loader)this.loader.hass=v;if(this.isConnected&&!this.started){this.started=true;this.initialize();}else if(changed&&this.ready)this.render();}
  get hass(){return this._hass;}
@@ -12,13 +12,13 @@ class HfdControllerOverview extends HTMLElement {
   if(!customElements.get('ha-config-sub-entry-row')){
    // The standard HA router loads its config components; no hashed chunk URLs
    // or prototype patches. This hidden loader is removed once they are defined.
-   const e=document.createElement('partial-panel-resolver');e.hidden=true;e.hass=this._hass;e.route={prefix:'',path:'/config/integrations/integration/hue_fluid_dimmer'};this.loader=e;this.shadowRoot.append(e);let timer;
+   const e=document.createElement('partial-panel-resolver');e.hidden=true;e.hass=this._hass;e.route={prefix:'',path:'/config/integrations/integration/hue_reconfigo'};this.loader=e;this.shadowRoot.append(e);let timer;
    try{await Promise.race([customElements.whenDefined('ha-config-sub-entry-row'),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Config component unavailable')),20000);})]);}finally{clearTimeout(timer);e.remove();this.loader=null;}
   }
   await customElements.whenDefined('ha-config-entry-row');
-  await Promise.all([this._hass.loadFragmentTranslation('config'),this._hass.loadBackendTranslation('config_subentries','hue_fluid_dimmer'),this._hass.loadBackendTranslation('selector','hue_fluid_dimmer')]);this.ready=true;await this.load();
+  await Promise.all([this._hass.loadFragmentTranslation('config'),this._hass.loadBackendTranslation('config_subentries','hue_reconfigo'),this._hass.loadBackendTranslation('selector','hue_reconfigo')]);this.ready=true;await this.load();
  }catch(e){this.error=this.text().error;this.render();}}
- async load(){try{this.bridges=await this._hass.callWS({type:'hue_fluid_dimmer/overview'});this.error=null;this.render();}catch(e){this.error=this.text().error;this.render();}}
+ async load(){try{this.bridges=await this._hass.callWS({type:'hue_reconfigo/overview'});this.error=null;this.render();}catch(e){this.error=this.text().error;this.render();}}
  el(tag,text,cls){const e=document.createElement(tag);if(text!=null)e.textContent=text;if(cls)e.className=cls;return e;}
  render(){const t=this.text();this.shadowRoot.innerHTML=`<style>
  :host{display:block;min-height:100%;background:var(--primary-background-color);color:var(--primary-text-color);font-family:var(--paper-font-body1_-_font-family,Roboto,sans-serif)}*{box-sizing:border-box}header{display:flex;align-items:center;gap:16px;padding:12px 20px;background:var(--app-header-background-color,var(--card-background-color));border-bottom:1px solid var(--divider-color);min-height:64px}h1{font-size:20px;font-weight:500;margin:0;flex:1}.menu{border:0;background:none;color:inherit;padding:8px;cursor:pointer}main{max-width:1050px;margin:0 auto;padding:28px 24px}nav{display:flex;justify-content:flex-end;margin-bottom:24px}a{color:var(--primary-color);text-decoration:none}a:hover{text-decoration:underline}details.bridge{border:1px solid var(--divider-color);border-radius:12px;background:var(--card-background-color);margin-bottom:20px}summary{display:flex;align-items:center;gap:12px;cursor:pointer;list-style:none;padding:20px;font-weight:500}summary::-webkit-details-marker{display:none}summary::before{content:'›';font-size:24px;display:inline-block;transition:transform .12s}details[open]>summary::before{transform:rotate(90deg)}summary .label{flex:1;min-width:0;overflow-wrap:anywhere}.count{font-size:13px;font-weight:400;color:var(--secondary-text-color)}.families{padding:0 16px 16px}details.family{border:1px solid var(--divider-color);border-radius:10px;margin:10px 0}details.family>summary{padding:14px 16px}.controls{padding:0 12px 12px}.controller{display:flex;align-items:center;gap:16px;padding:14px 12px;width:100%;border:0;border-top:1px solid var(--divider-color);background:transparent;color:inherit;text-align:left;cursor:pointer;font:inherit}.controller:hover{background:var(--secondary-background-color)}.copy{flex:1;min-width:0}.name{display:block;overflow-wrap:anywhere}.state{display:block;font-size:12px;color:var(--secondary-text-color);margin-top:5px}.gear{color:var(--secondary-text-color)}.notice{padding:20px 0;color:var(--secondary-text-color)}.retry{font:inherit;padding:10px 16px;color:var(--primary-color);background:var(--card-background-color);border:1px solid var(--divider-color);border-radius:8px;cursor:pointer}.native{display:none}button:focus-visible,summary:focus-visible{outline:2px solid var(--primary-color);outline-offset:2px}@media(max-width:600px){main{padding:18px 12px}header{padding:12px}.families{padding:0 8px 8px}.controls{padding:0 4px 6px}}
@@ -38,4 +38,4 @@ class HfdControllerOverview extends HTMLElement {
  }
  }
 }
-if(!customElements.get('hfd-controller-overview'))customElements.define('hfd-controller-overview',HfdControllerOverview);
+if(!customElements.get('hrc-controller-overview'))customElements.define('hrc-controller-overview',HrcControllerOverview);

@@ -6,9 +6,9 @@ from unittest.mock import AsyncMock
 import pytest
 from test_runtime import make_runtime
 
-from custom_components.hue_fluid_dimmer.bindings import form_values, parse_form
-from custom_components.hue_fluid_dimmer.config_flow import binding_schema
-from custom_components.hue_fluid_dimmer.motion import START_DEFAULTS
+from custom_components.hue_reconfigo.bindings import form_values, parse_form
+from custom_components.hue_reconfigo.config_flow import binding_schema
+from custom_components.hue_reconfigo.motion import START_DEFAULTS
 
 
 @pytest.mark.parametrize("kind", ["tap_dial", "dimmer", "button"])

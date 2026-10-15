@@ -1,5 +1,5 @@
 {
-  "domain": "hue_fluid_dimmer",
+  "domain": "hue_reconfigo",
   "name": "Hue Reconfigo",
   "codeowners": [
     "@tommyzacek"

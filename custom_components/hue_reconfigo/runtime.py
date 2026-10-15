@@ -499,7 +499,7 @@ class Runtime:
         else:
             self._schedule_brightness_delta(resources, delta, duration_ms)
         _LOGGER.debug(
-            "HFD_TRACE ramp_start key=%s bridge_brightness=%.1f delta=%.1f duration_ms=%d",
+            "HRC_TRACE ramp_start key=%s bridge_brightness=%.1f delta=%.1f duration_ms=%d",
             key,
             current,
             delta,

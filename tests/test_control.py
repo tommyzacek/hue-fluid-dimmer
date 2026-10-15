@@ -2,7 +2,7 @@ import asyncio
 
 import pytest
 
-from custom_components.hue_fluid_dimmer.control import Dimmer
+from custom_components.hue_reconfigo.control import Dimmer
 
 BINDING = {"enabled": True, "lights": ["light.test"], "sensitivity": 1.5, "transition": 1}
 

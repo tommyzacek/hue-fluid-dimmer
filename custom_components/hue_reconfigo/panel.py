@@ -10,7 +10,7 @@ from homeassistant.core import callback
 
 from .const import DOMAIN, SUBENTRY_TAP_DIAL
 
-PANEL_PATH = "hue-fluid-dimmer"
+PANEL_PATH = "hue-reconfigo"
 
 
 def describe_entries(entries):
@@ -43,7 +43,7 @@ def describe_entries(entries):
     return bridges
 
 
-@websocket_api.websocket_command({p.Required("type"): "hue_fluid_dimmer/overview"})
+@websocket_api.websocket_command({p.Required("type"): "hue_reconfigo/overview"})
 @websocket_api.require_admin
 @callback
 def websocket_overview(hass, connection, msg):
@@ -51,29 +51,29 @@ def websocket_overview(hass, connection, msg):
 
 
 async def async_setup_panel(hass):
-    if not hass.data.get("hfd_overview_api"):
+    if not hass.data.get("hrc_overview_api"):
         websocket_api.async_register_command(hass, websocket_overview)
         await hass.http.async_register_static_paths(
             [
                 StaticPathConfig(
-                    "/hue_fluid_dimmer/overview.js",
+                    "/hue_reconfigo/overview.js",
                     str(Path(__file__).parent / "frontend" / "overview.js"),
                     False,
                 )
             ]
         )
-        hass.data["hfd_overview_api"] = True
-    if not hass.data.get("hfd_overview_panel"):
+        hass.data["hrc_overview_api"] = True
+    if not hass.data.get("hrc_overview_panel"):
         await panel_custom.async_register_panel(
             hass,
             frontend_url_path=PANEL_PATH,
-            webcomponent_name="hfd-controller-overview",
+            webcomponent_name="hrc-controller-overview",
             sidebar_title="Hue Reconfigo",
             sidebar_icon="mdi:tune-variant",
-            module_url="/hue_fluid_dimmer/overview.js?v=2",
+            module_url="/hue_reconfigo/overview.js?v=2",
             require_admin=True,
         )
-        hass.data["hfd_overview_panel"] = True
+        hass.data["hrc_overview_panel"] = True
 
 
 def async_unload_panel(hass, entry):
@@ -82,4 +82,4 @@ def async_unload_panel(hass, entry):
         for e in hass.config_entries.async_entries(DOMAIN)
     ):
         frontend.async_remove_panel(hass, PANEL_PATH)
-        hass.data.pop("hfd_overview_panel", None)
+        hass.data.pop("hrc_overview_panel", None)

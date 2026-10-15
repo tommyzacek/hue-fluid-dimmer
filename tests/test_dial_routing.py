@@ -2,7 +2,7 @@
 
 from unittest.mock import Mock
 
-from custom_components.hue_fluid_dimmer.dial_routing import DialRouting
+from custom_components.hue_reconfigo.dial_routing import DialRouting
 
 
 async def test_unused_takeover_expires_after_five_seconds(monkeypatch):

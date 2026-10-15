@@ -5,7 +5,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from custom_components.hue_fluid_dimmer.gestures import BATCH_GRACE, CLICK_WINDOW, Gestures
+from custom_components.hue_reconfigo.gestures import BATCH_GRACE, CLICK_WINDOW, Gestures
 
 
 @pytest.fixture

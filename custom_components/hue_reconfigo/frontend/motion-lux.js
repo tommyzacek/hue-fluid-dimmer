@@ -1,5 +1,5 @@
 /* Isolated config-flow selector. Does not patch Home Assistant components. */
-class HfdLuxSelector extends HTMLElement {
+class HrcLuxSelector extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({mode: 'open'});
@@ -44,14 +44,14 @@ class HfdLuxSelector extends HTMLElement {
     this.shadowRoot.querySelector('output').textContent=text;
     const language=this._hass?.language||'en';
     const labels=language.startsWith('cs')?['Aktuální osvětlení','Při tomto osvětlení a nastavení prahu se světla ','ZAPNOU','NEZAPNOU','Výsledek nelze vyhodnotit – měření není dostupné.']:language.startsWith('sk')?['Aktuálne osvetlenie','Pri tomto osvetlení a nastavení prahu sa svetlá ','ZAPNÚ','NEZAPNÚ','Výsledok nemožno vyhodnotiť – meranie nie je dostupné.']:['Current illuminance','At this illuminance and threshold, the lights will turn ','ON','OFF','Cannot evaluate – the reading is unavailable.'];
-    const entity=this._selector?.hfd_lux?.entity;
+    const entity=this._selector?.hrc_lux?.entity;
     const state=this._hass?.states?.[entity]?.state;
     const current=state!=null && state!=='' && Number.isFinite(Number(state)) ? `${new Intl.NumberFormat(language,{maximumFractionDigits:1}).format(Number(state))} lx`:'—';
-    const disabled=this._hass?.states?.[this._selector?.hfd_lux?.enabled_entity]?.state==='off';
+    const disabled=this._hass?.states?.[this._selector?.hrc_lux?.enabled_entity]?.state==='off';
     const warning=this.shadowRoot.querySelector('.warning');
     warning.hidden=!disabled;
     warning.textContent=language.startsWith('cs')?'Senzor osvětlení je vypnutý v oficiální integraci Hue. Pro použití této funkce jej zapněte.':language.startsWith('sk')?'Senzor osvetlenia je vypnutý v oficiálnej integrácii Hue. Ak chcete používať túto funkciu, zapnite ho.':'The illuminance sensor is disabled in the official Hue integration. Enable it to use this feature.';
-    const enabledEntity=this._selector?.hfd_lux?.enabled_entity;
+    const enabledEntity=this._selector?.hrc_lux?.enabled_entity;
     const enabledState=this._hass?.states?.[enabledEntity]?.state;
     const valid=current!=='—' && (!enabledEntity || enabledState==='on');
     const result=value>650?true:(valid?Number(state)<value:null);
@@ -69,9 +69,9 @@ class HfdLuxSelector extends HTMLElement {
     }
   }
 }
-if(!customElements.get('ha-selector-hfd_lux'))customElements.define('ha-selector-hfd_lux',HfdLuxSelector);
+if(!customElements.get('ha-selector-hrc_lux'))customElements.define('ha-selector-hrc_lux',HrcLuxSelector);
 
-class HfdSensitivitySelector extends HfdLuxSelector {
+class HrcSensitivitySelector extends HrcLuxSelector {
   constructor() {
     super();
     this.slider.id = 'sensitivity';
@@ -97,9 +97,9 @@ class HfdSensitivitySelector extends HfdLuxSelector {
     this.shadowRoot.querySelector('.reading').hidden=true;
   }
 }
-if(!customElements.get('ha-selector-hfd_sensitivity'))customElements.define('ha-selector-hfd_sensitivity',HfdSensitivitySelector);
+if(!customElements.get('ha-selector-hrc_sensitivity'))customElements.define('ha-selector-hrc_sensitivity',HrcSensitivitySelector);
 
-class HfdMotionEnabled extends HTMLElement {
+class HrcMotionEnabled extends HTMLElement {
   constructor(){
     super();this.attachShadow({mode:'open'});
     this.shadowRoot.innerHTML=`<style>:host{display:block;color:var(--primary-text-color)}.row{display:flex;align-items:center;justify-content:space-between;gap:16px}.warning{color:var(--error-color,#db4437);font-weight:bold;margin-top:8px}</style><div class="row"><label></label><ha-switch></ha-switch></div><div class="warning"></div>`;
@@ -120,15 +120,15 @@ class HfdMotionEnabled extends HTMLElement {
     this.shadowRoot.querySelector('label').textContent=this._label||'Enable control';
     this.control.setAttribute('aria-label',this._label||'Enable control');
     const warning=this.shadowRoot.querySelector('.warning');
-    warning.hidden=this._hass?.states?.[this._selector?.hfd_motion_enabled?.entity]?.state!=='off';
+    warning.hidden=this._hass?.states?.[this._selector?.hrc_motion_enabled?.entity]?.state!=='off';
     const language=this._hass?.language||'en';
     warning.textContent=language.startsWith('cs')?'Pohybový senzor je vypnutý v oficiální integraci Hue. Pro použití ovládání pohybem jej zapněte.':language.startsWith('sk')?'Pohybový senzor je vypnutý v oficiálnej integrácii Hue. Ak chcete používať ovládanie pohybom, zapnite ho.':'The motion sensor is disabled in the official Hue integration. Enable it to use motion control.';
   }
 }
-if(!customElements.get('ha-selector-hfd_motion_enabled'))customElements.define('ha-selector-hfd_motion_enabled',HfdMotionEnabled);
+if(!customElements.get('ha-selector-hrc_motion_enabled'))customElements.define('ha-selector-hrc_motion_enabled',HrcMotionEnabled);
 
 // Keep HA's native colored temperature bar, snapping only this instance to 100 K.
-class HfdTemperatureSelector extends HTMLElement {
+class HrcTemperatureSelector extends HTMLElement {
   constructor(){
     super();this.attachShadow({mode:'open'});
     this.control=document.createElement('ha-selector');
@@ -180,9 +180,9 @@ class HfdTemperatureSelector extends HTMLElement {
     if(slider)slider.step=100;
   }
 }
-if(!customElements.get('ha-selector-hfd_temperature'))customElements.define('ha-selector-hfd_temperature',HfdTemperatureSelector);
+if(!customElements.get('ha-selector-hrc_temperature'))customElements.define('ha-selector-hrc_temperature',HrcTemperatureSelector);
 
-class HfdTimeoutSelector extends HfdLuxSelector {
+class HrcTimeoutSelector extends HrcLuxSelector {
   constructor(){
     super();
     this.slider.min='0';this.slider.max='68';this.slider.step='1';
@@ -208,12 +208,12 @@ class HfdTimeoutSelector extends HfdLuxSelector {
     limits[0].textContent='1 min';limits[1].textContent='60 min';
   }
 }
-if(!customElements.get('ha-selector-hfd_timeout'))customElements.define('ha-selector-hfd_timeout',HfdTimeoutSelector);
+if(!customElements.get('ha-selector-hrc_timeout'))customElements.define('ha-selector-hrc_timeout',HrcTimeoutSelector);
 
 // Motion period editor: HA owns entity/color selectors; times partition the day.
-class HfdMotionPeriods extends HTMLElement {
+class HrcMotionPeriods extends HTMLElement {
   constructor(){super();this.attachShadow({mode:'open'});this._value=[];this.openIds=new Set();}
-  connectedCallback(){this._stopStyling=hfdOutlineMotionForm(this);}
+  connectedCallback(){this._stopStyling=hrcOutlineMotionForm(this);}
   disconnectedCallback(){this._stopStyling?.();}
   set hass(value){const language=this._hass?.language;this._hass=value;if(language!==value?.language)this.render();else for(const control of this.shadowRoot.querySelectorAll('ha-selector'))control.hass=value;}
   set value(value){const next=Array.isArray(value)?structuredClone(value):[];if(JSON.stringify(next)===JSON.stringify(this._value))return;this._value=next;if(!this.initialized&&next.length){this.openIds.add(next[0].id);this.initialized=true;}this.render();}
@@ -260,11 +260,11 @@ class HfdMotionPeriods extends HTMLElement {
         const st=p.startup||(p.startup={brightness:'unchanged',percentage:50,color:'unchanged',temperature:2700,rgb:[255,180,100]});
         select(t.brightness,st.brightness||'unchanged',[['unchanged',t.previous],['configured',t.configured]],value=>{st.brightness=value;this.emit();this.render();});
         const brightnessNote=document.createElement('div');brightnessNote.className='note';brightnessNote.textContent=t.help;body.append(brightnessNote);
-        if(st.brightness==='configured')field(t.percent,{hfd_brightness:{}},st.percentage??50,value=>{st.percentage=value;this.emit();});
+        if(st.brightness==='configured')field(t.percent,{hrc_brightness:{}},st.percentage??50,value=>{st.percentage=value;this.emit();});
         select(t.color,st.color||'unchanged',[['unchanged',t.unchanged],['temperature',t.temperature],['rgb',t.rgb]],value=>{st.color=value;this.emit();this.render();});
-        if(st.color==='temperature')field(t.temperature,{hfd_temperature:{}},st.temperature??2700,value=>{st.temperature=value;this.emit();});
-        if(st.color==='rgb')field(t.rgb,{hfd_rgb:{}},st.rgb??[255,180,100],value=>{st.rgb=value;this.emit();});
-        field(t.timeout,{hfd_timeout:{}},p.timeout??300,value=>{p.timeout=value;this.emit();});
+        if(st.color==='temperature')field(t.temperature,{hrc_temperature:{}},st.temperature??2700,value=>{st.temperature=value;this.emit();});
+        if(st.color==='rgb')field(t.rgb,{hrc_rgb:{}},st.rgb??[255,180,100],value=>{st.rgb=value;this.emit();});
+        field(t.timeout,{hrc_timeout:{}},p.timeout??300,value=>{p.timeout=value;this.emit();});
         toggle(t.override,!!p.override_targets,value=>{p.override_targets=value;this.emit();this.render();});
         if(p.override_targets)field(t.targets,{entity:{domain:'light',multiple:true}},p.targets||[],value=>{p.targets=value;this.emit();});
       }
@@ -273,9 +273,9 @@ class HfdMotionPeriods extends HTMLElement {
     const add=document.createElement('button');add.type='button';add.textContent=`+ ${t.add}`;add.disabled=!!this._disabled;add.addEventListener('click',()=>this.add());this.shadowRoot.append(add);
   }
 }
-if(!customElements.get('ha-selector-hfd_motion_periods'))customElements.define('ha-selector-hfd_motion_periods',HfdMotionPeriods);
+if(!customElements.get('ha-selector-hrc_motion_periods'))customElements.define('ha-selector-hrc_motion_periods',HrcMotionPeriods);
 
-class HfdBrightnessSelector extends HfdLuxSelector {
+class HrcBrightnessSelector extends HrcLuxSelector {
   constructor(){
     super();this.slider.min='1';this.slider.max='100';this.slider.step='1';
     this.shadowRoot.querySelector('.reading').hidden=true;
@@ -293,19 +293,19 @@ class HfdBrightnessSelector extends HfdLuxSelector {
     limits[0].textContent='1 %';limits[1].textContent='100 %';
   }
 }
-if(!customElements.get('ha-selector-hfd_brightness'))customElements.define('ha-selector-hfd_brightness',HfdBrightnessSelector);
+if(!customElements.get('ha-selector-hrc_brightness'))customElements.define('ha-selector-hrc_brightness',HrcBrightnessSelector);
 
-function hfdRgbToHs(rgb){
+function hrcRgbToHs(rgb){
   const [r,g,b]=rgb.map(x=>x/255),max=Math.max(r,g,b),min=Math.min(r,g,b),delta=max-min;
   let hue=0;if(delta){hue=max===r?((g-b)/delta)%6:max===g?(b-r)/delta+2:(r-g)/delta+4;hue=(hue*60+360)%360;}
   return [Math.round(hue)%360,max===0?0:Math.round(delta/max*100)];
 }
-function hfdHsToRgb(hue,saturation){
+function hrcHsToRgb(hue,saturation){
   const s=saturation/100,c=s,x=c*(1-Math.abs((hue/60)%2-1)),m=1-c;
   const channels=hue<60?[c,x,0]:hue<120?[x,c,0]:hue<180?[0,c,x]:hue<240?[0,x,c]:hue<300?[x,0,c]:[c,0,x];
   return channels.map(v=>Math.round((v+m)*255));
 }
-class HfdRgbSelector extends HTMLElement {
+class HrcRgbSelector extends HTMLElement {
   constructor(){
     super();this.attachShadow({mode:'open'});
     this.shadowRoot.innerHTML=`<style>
@@ -317,7 +317,7 @@ class HfdRgbSelector extends HTMLElement {
     for(const input of [this.hue,this.saturation]){
       input.addEventListener('input',()=>{
         this._hue=Number(this.hue.value);this._saturation=Number(this.saturation.value);
-        this._value=hfdHsToRgb(this._hue,this._saturation);this.refresh();
+        this._value=hrcHsToRgb(this._hue,this._saturation);this.refresh();
         this.dispatchEvent(new CustomEvent('value-changed',{detail:{value:[...this._value]},bubbles:true,composed:true}));
       });input.addEventListener('change',event=>event.stopPropagation());
     }
@@ -330,7 +330,7 @@ class HfdRgbSelector extends HTMLElement {
   set required(value){this._required=value;}
   set value(value){
     if(!Array.isArray(value)||value.length!==3)return;
-    if(JSON.stringify(value)!==JSON.stringify(this._value)){this._value=[...value];[this._hue,this._saturation]=hfdRgbToHs(value);}
+    if(JSON.stringify(value)!==JSON.stringify(this._value)){this._value=[...value];[this._hue,this._saturation]=hrcRgbToHs(value);}
     this.refresh();
   }
   get value(){return this._value;}
@@ -354,10 +354,10 @@ class HfdRgbSelector extends HTMLElement {
     this.hue.setAttribute('aria-valuetext',`${hue}°`);this.saturation.setAttribute('aria-valuetext',`${saturation} %`);
   }
 }
-if(!customElements.get('ha-selector-hfd_rgb'))customElements.define('ha-selector-hfd_rgb',HfdRgbSelector);
+if(!customElements.get('ha-selector-hrc_rgb'))customElements.define('ha-selector-hrc_rgb',HrcRgbSelector);
 
 // Scope native-picker cosmetics to this Motion form; retain HA's entity search.
-function hfdOutlineMotionForm(element){
+function hrcOutlineMotionForm(element){
   let host=element,form;
   while(host){const root=host.getRootNode();host=root.host;if(host?.localName==='ha-form'){form=host;break;}}
   if(!form?.shadowRoot)return ()=>{};
@@ -368,7 +368,7 @@ function hfdOutlineMotionForm(element){
     ha-combo-box-item:focus-within{border-color:var(--primary-color)}
     ha-combo-box-item:has(>span[slot="overline"]){--md-list-item-one-line-container-height:46px;--md-list-item-two-line-container-height:46px}
     span[slot="overline"]{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
-    .hfd-picker-label{margin-bottom:8px;font-size:14px;line-height:20px;color:var(--primary-text-color)}
+    .hrc-picker-label{margin-bottom:8px;font-size:14px;line-height:20px;color:var(--primary-text-color)}
   `;
   const enqueue=()=>{if(!closed&&!frame)frame=requestAnimationFrame(scan);};
   function scan(){
@@ -377,10 +377,10 @@ function hfdOutlineMotionForm(element){
     function walk(root){
       if(!observers.has(root)){const observer=new MutationObserver(enqueue);observer.observe(root,{childList:true,subtree:true});observers.set(root,observer);}
       for(const node of root.querySelectorAll('*')){
-        if(node.localName==='ha-picker-field'&&node.shadowRoot&&!node.shadowRoot.querySelector('style[data-hfd-outlined]')){
-          const style=document.createElement('style');style.dataset.hfdOutlined='';style.textContent=css;node.shadowRoot.append(style);
+        if(node.localName==='ha-picker-field'&&node.shadowRoot&&!node.shadowRoot.querySelector('style[data-hrc-outlined]')){
+          const style=document.createElement('style');style.dataset.hrcOutlined='';style.textContent=css;node.shadowRoot.append(style);
           const overline=node.shadowRoot.querySelector('span[slot="overline"]');
-          if(overline){const label=document.createElement('div');label.className='hfd-picker-label';label.setAttribute('aria-hidden','true');label.textContent=overline.textContent.replace(/\s*\*\s*$/,'');node.shadowRoot.prepend(label);}
+          if(overline){const label=document.createElement('div');label.className='hrc-picker-label';label.setAttribute('aria-hidden','true');label.textContent=overline.textContent.replace(/\s*\*\s*$/,'');node.shadowRoot.prepend(label);}
         }
         if(node.shadowRoot)walk(node.shadowRoot);
       }
@@ -391,9 +391,9 @@ function hfdOutlineMotionForm(element){
   return ()=>{closed=true;if(frame)cancelAnimationFrame(frame);for(const observer of observers.values())observer.disconnect();observers.clear();};
 }
 
-class HfdBridgeSettings extends HTMLElement {
+class HrcBridgeSettings extends HTMLElement {
   constructor(){super();this.attachShadow({mode:'open'});this._value={};this.open=true;}
-  connectedCallback(){this._stopStyling=hfdOutlineMotionForm(this);}
+  connectedCallback(){this._stopStyling=hrcOutlineMotionForm(this);}
   disconnectedCallback(){this._stopStyling?.();}
   set hass(value){const lang=this._hass?.language;this._hass=value;if(lang!==value?.language)this.render();else for(const c of this.shadowRoot.querySelectorAll('ha-selector'))c.hass=value;}
   set value(value){if(JSON.stringify(value)===JSON.stringify(this._value))return;this._value=structuredClone(value||{});this.render();}
@@ -434,20 +434,20 @@ class HfdBridgeSettings extends HTMLElement {
     const note=document.createElement('div');note.className='note';note.textContent=t.pollingNote;this.shadowRoot.append(note);
   }
 }
-if(!customElements.get('ha-selector-hfd_bridge_settings'))customElements.define('ha-selector-hfd_bridge_settings',HfdBridgeSettings);
+if(!customElements.get('ha-selector-hrc_bridge_settings'))customElements.define('ha-selector-hrc_bridge_settings',HrcBridgeSettings);
 
 // Reuse the Motion form's switches, outlined pickers and slider geometry.
-class HfdControlEnabled extends HfdMotionEnabled {
-  connectedCallback(){this._stopStyling=hfdOutlineMotionForm(this);}
+class HrcControlEnabled extends HrcMotionEnabled {
+  connectedCallback(){this._stopStyling=hrcOutlineMotionForm(this);}
   disconnectedCallback(){this._stopStyling?.();}
 }
-if(!customElements.get('ha-selector-hfd_control_enabled'))customElements.define('ha-selector-hfd_control_enabled',HfdControlEnabled);
+if(!customElements.get('ha-selector-hrc_control_enabled'))customElements.define('ha-selector-hrc_control_enabled',HrcControlEnabled);
 
-class HfdNumberSelector extends HfdLuxSelector {
-  reportValidity(){const c=this._selector?.hfd_number||{};return Number.isFinite(this._value)&&this._value>=c.min&&this._value<=c.max;}
+class HrcNumberSelector extends HrcLuxSelector {
+  reportValidity(){const c=this._selector?.hrc_number||{};return Number.isFinite(this._value)&&this._value>=c.min&&this._value<=c.max;}
   refresh(){
     if(!this.slider)return;
-    const c=this._selector?.hfd_number||{min:0.1,max:10,step:0.05};
+    const c=this._selector?.hrc_number||{min:0.1,max:10,step:0.05};
     this.slider.min=String(c.min);this.slider.max=String(c.max);this.slider.step=String(c.step||1);
     const value=this._value??c.min,format=new Intl.NumberFormat(this._hass?.language||'en',{maximumFractionDigits:2});
     const text=format.format(value)+(c.unit_of_measurement?' '+c.unit_of_measurement:'');
@@ -457,9 +457,9 @@ class HfdNumberSelector extends HfdLuxSelector {
     this.shadowRoot.querySelector('.reading').hidden=true;this.shadowRoot.querySelector('.warning').hidden=true;
   }
 }
-if(!customElements.get('ha-selector-hfd_number'))customElements.define('ha-selector-hfd_number',HfdNumberSelector);
+if(!customElements.get('ha-selector-hrc_number'))customElements.define('ha-selector-hrc_number',HrcNumberSelector);
 
-class HfdHeading extends HTMLElement {
+class HrcHeading extends HTMLElement {
   constructor(){super();this.attachShadow({mode:'open'});this.shadowRoot.innerHTML='<style>:host{display:block;margin:12px 0 0;color:var(--primary-text-color);font-weight:600}h3{font:inherit;margin:0}</style><h3></h3>';}
   set label(value){this.shadowRoot.querySelector('h3').textContent=value||'';}
   set value(value){this._value=value;}
@@ -469,10 +469,10 @@ class HfdHeading extends HTMLElement {
   set disabled(value){}
   reportValidity(){return true;}
 }
-if(!customElements.get('ha-selector-hfd_heading'))customElements.define('ha-selector-hfd_heading',HfdHeading);
+if(!customElements.get('ha-selector-hrc_heading'))customElements.define('ha-selector-hrc_heading',HrcHeading);
 
 // Shared switch-on appearance for all controller button gestures.
-class HfdButtonAction extends HTMLElement {
+class HrcButtonAction extends HTMLElement {
   constructor(){super();this.attachShadow({mode:'open'});this._value={};}
   connectedCallback(){
     this.forms=[];let host=this;
@@ -490,7 +490,7 @@ class HfdButtonAction extends HTMLElement {
   set required(v){}
   set disabled(v){if(this._disabled===!!v)return;this._disabled=!!v;this.render();}
   targetType(){
-    const config=this._selector?.hfd_button_action||{},action=config.action;
+    const config=this._selector?.hrc_button_action||{},action=config.action;
     const section=this.forms?.find(f=>f.data&&Object.hasOwn(f.data,action+'_enabled'))?.data;
     const outer=this.forms?.find(f=>f.data&&Object.hasOwn(f.data,'shared_targets'))?.data;
     let selected=section?.[action+'_targets']??config.targets??[];
@@ -499,10 +499,10 @@ class HfdButtonAction extends HTMLElement {
   }
   emit(){this.dispatchEvent(new CustomEvent('value-changed',{detail:{value:structuredClone(this._value)},bubbles:true,composed:true}));}
   render(){
-    if(!this.shadowRoot)return;this.type=this.targetType();const type=this.type,c=this._selector?.hfd_button_action||{},v=this._value;
-    const motionText=HfdMotionPeriods.prototype.text.call(this),lang=this._hass?.language||'en';
+    if(!this.shadowRoot)return;this.type=this.targetType();const type=this.type,c=this._selector?.hrc_button_action||{},v=this._value;
+    const motionText=HrcMotionPeriods.prototype.text.call(this),lang=this._hass?.language||'en';
     const local=lang.startsWith('cs')?{action:'Akce',power:'Zapnutí / vypnutí',on:'Pouze zapnout',off:'Pouze vypnout',previous:'Předchozí stav obnoví uložený jas; po dohasnutí Motionu použije jas před ztlumením. Bez uložené hodnoty se jas neposílá. Barva se nastavuje samostatně.'}:lang.startsWith('sk')?{action:'Akcia',power:'Zapnutie / vypnutie',on:'Iba zapnúť',off:'Iba vypnúť',previous:'Predchádzajúci stav obnoví uložený jas; po dohasnutí Motionu použije jas pred stlmením. Bez uloženej hodnoty sa jas neposiela. Farba sa nastavuje samostatne.'}:{action:'Action',power:'Turn on / off',on:'Turn on only',off:'Turn off only',previous:'Previous state restores saved brightness; after Motion fades, it uses the pre-fade level. Without a saved level no brightness is sent. Color is configured separately.'};
-    const labels=this._hass?.localize?key=>this._hass.localize('component.hue_fluid_dimmer.selector.button_operation.options.'+key)||key:key=>key;
+    const labels=this._hass?.localize?key=>this._hass.localize('component.hue_reconfigo.selector.button_operation.options.'+key)||key:key=>key;
     this.shadowRoot.innerHTML=`<style>:host{display:grid;gap:16px;color:var(--primary-text-color);font:inherit}.field{display:grid;gap:8px;font-size:14px}select{font:inherit;color:inherit;background:var(--card-background-color,#fff);border:1px solid var(--divider-color,#ccc);border-radius:8px;padding:12px;width:100%;box-sizing:border-box}.note{color:var(--secondary-text-color);font-size:13px;line-height:1.5}</style>`;
     const choose=(name,value,choices,change)=>{const label=document.createElement('label');label.className='field';label.append(document.createTextNode(name));const select=document.createElement('select');select.disabled=this._disabled;for(const [key,text] of choices){const o=document.createElement('option');o.value=key;o.textContent=text;select.append(o);}select.value=value;select.addEventListener('change',()=>{change(select.value);this.emit();this.render();});label.append(select);this.shadowRoot.append(label);};
     const field=(name,selector,value,change)=>{const control=document.createElement('ha-selector');control.hass=this._hass;control.label=name;control.selector=selector;control.value=value;control.required=true;control.disabled=this._disabled;control.addEventListener('value-changed',e=>{e.stopPropagation();control.value=e.detail.value;change(e.detail.value);this.emit();});this.shadowRoot.append(control);};
@@ -513,20 +513,20 @@ class HfdButtonAction extends HTMLElement {
     if(c.action==='long')options.push(['dimming',labels('dimming')]);
     if(c.kind==='tap_dial'&&c.index>1)options.push(['dial',labels('dial')]);
     if(options.length>1)choose(local.action,type==='light'&&['previous','configured'].includes(v.operation)?'toggle':v.operation||'toggle',options,value=>{v.operation=value;});
-    if(type==='percentage'&&['configured','on'].includes(v.operation))field(motionText.percent,{hfd_brightness:{}},v.percentage??100,value=>{v.percentage=value;});
+    if(type==='percentage'&&['configured','on'].includes(v.operation))field(motionText.percent,{hrc_brightness:{}},v.percentage??100,value=>{v.percentage=value;});
     if(type!=='light'||!power)return;
     const st=v.startup||(v.startup={brightness:v.operation==='configured'?'configured':'unchanged',percentage:v.percentage??100,color:'unchanged',temperature:2700,rgb:[255,180,100]});
     choose(motionText.brightness,st.brightness||'unchanged',[['unchanged',motionText.previous],['configured',motionText.configured]],value=>{st.brightness=value;if(v.operation!=='on')v.operation='toggle';});
-    if(st.brightness==='configured')field(motionText.percent,{hfd_brightness:{}},st.percentage??50,value=>{st.percentage=value;});
+    if(st.brightness==='configured')field(motionText.percent,{hrc_brightness:{}},st.percentage??50,value=>{st.percentage=value;});
     else {const note=document.createElement('div');note.className='note';note.textContent=local.previous;this.shadowRoot.append(note);}
     choose(motionText.color,st.color||'unchanged',[['unchanged',motionText.unchanged],['temperature',motionText.temperature],['rgb',motionText.rgb]],value=>{st.color=value;if(v.operation!=='on')v.operation='toggle';});
-    if(st.color==='temperature')field(motionText.temperature,{hfd_temperature:{}},st.temperature??2700,value=>{st.temperature=value;});
-    if(st.color==='rgb')field(motionText.rgb,{hfd_rgb:{}},st.rgb??[255,180,100],value=>{st.rgb=value;});
+    if(st.color==='temperature')field(motionText.temperature,{hrc_temperature:{}},st.temperature??2700,value=>{st.temperature=value;});
+    if(st.color==='rgb')field(motionText.rgb,{hrc_rgb:{}},st.rgb??[255,180,100],value=>{st.rgb=value;});
   }
 }
-if(!customElements.get('ha-selector-hfd_button_action'))customElements.define('ha-selector-hfd_button_action',HfdButtonAction);
+if(!customElements.get('ha-selector-hrc_button_action'))customElements.define('ha-selector-hrc_button_action',HrcButtonAction);
 
-class HfdMotionBehavior extends HTMLElement {
+class HrcMotionBehavior extends HTMLElement {
  constructor(){super();this.attachShadow({mode:'open'});this._value={};this.open=false;}
  set value(v){
   const next=structuredClone(v||{});
@@ -562,4 +562,4 @@ class HfdMotionBehavior extends HTMLElement {
   select(t.manualOff,'manual_off','hold',[['resume',t.resume],['hold',t.hold]]);
  }
 }
-if(!customElements.get('ha-selector-hfd_motion_behavior'))customElements.define('ha-selector-hfd_motion_behavior',HfdMotionBehavior);
+if(!customElements.get('ha-selector-hrc_motion_behavior'))customElements.define('ha-selector-hrc_motion_behavior',HrcMotionBehavior);
