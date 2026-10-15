@@ -1,6 +1,6 @@
 # User guides
 
-[Čeština](../cs/README.md) | [Slovenčina](../sk/README.md) | [English](../en/README.md)
+[Čeština](../cs/README.md) | [Slovenština](../sk/README.md) | [English](../en/README.md)
 
 | What you want to configure | Guide |
 | --- | --- |

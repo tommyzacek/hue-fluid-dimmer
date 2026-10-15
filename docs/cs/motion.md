@@ -1,6 +1,6 @@
 # Motion
 
-[Čeština](../cs/motion.md) | [Slovenčina](../sk/motion.md) | [English](../en/motion.md)
+[Čeština](../cs/motion.md) | [Slovenština](../sk/motion.md) | [English](../en/motion.md)
 
 [Všechny návody](README.md) · [Bridge a Adaptive Lighting](bridge.md)
 

@@ -14,7 +14,7 @@ Dokončené přejmenování na Hue Reconfigo v celé integraci: technická domé
 
 Chování ovladačů ani jejich nastavení se nemění. Oficiální integrace Hue je nadále vyžadována, Adaptive Lighting zůstává volitelné.
 
-## Slovenčina
+## Slovensky
 
 Dokončené premenovanie na Hue Reconfigo v celej integrácii: technická doména aj priečinok `hue_reconfigo`, panel `/hue-reconfigo`, prvky formulárov, súbory rozhrania a API. Udalosť rotácie sa po novom volá `hue_reconfigo_event`.
 
@@ -32,7 +32,7 @@ No device-control or configuration behavior changes from 1.0.0. Existing setting
 
 Stabilní servisní vydání: plná kontrola HACS včetně loga, bez vynechaných kontrol. Příprava pro žádost o zařazení do výchozího katalogu. Chování zařízení ani konfigurace se oproti 1.0.0 nemění.
 
-## Slovenčina
+## Slovensky
 
 Stabilné servisné vydanie: úplná kontrola HACS vrátane loga, bez vynechaných kontrol. Príprava žiadosti o zaradenie do predvoleného katalógu. Správanie zariadení ani konfigurácie sa oproti 1.0.0 nemení.
 
@@ -86,7 +86,7 @@ Ověření: **358 testů**, Ruff a syntaxe JavaScriptu. Funkční zdroje porovna
 
 [České návody](https://github.com/tommyzacek/hue-reconfigo/tree/main/docs/cs)
 
-## Slovenčina
+## Slovensky
 
 **Prvé stabilné vydanie Hue Reconfigo**, predtým Hue Fluid Dimmer. Zverejňuje verziu odladenú v internej inštalácii HA.
 

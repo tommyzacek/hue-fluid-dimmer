@@ -1,6 +1,6 @@
 # Dimmer v2
 
-[Čeština](../cs/dimmer.md) | [Slovenčina](../sk/dimmer.md) | [English](../en/dimmer.md)
+[Čeština](../cs/dimmer.md) | [Slovenština](../sk/dimmer.md) | [English](../en/dimmer.md)
 
 [Všetky návody](README.md) · [Spoločné akcie tlačidiel](akce-tlacitek.md)
 

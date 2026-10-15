@@ -1,6 +1,6 @@
 # Technical notes and development
 
-[Čeština](../README.cs.md) | [Slovenčina](../README.sk.md) | [English](../README.md)
+[Čeština](../README.cs.md) | [Slovenština](../README.sk.md) | [English](../README.md)
 
 These implementation notes complement the user guides. Documentation follows the current development state; published release notes identify the features in each release.
 
