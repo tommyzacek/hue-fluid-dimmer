@@ -6,8 +6,9 @@
   ],
   "config_flow": true,
   "dependencies": [
-    "hue",
-    "frontend"
+    "frontend",
+    "http",
+    "hue"
   ],
   "documentation": "https://github.com/tommyzacek/hue-fluid-dimmer",
   "integration_type": "hub",
@@ -16,3 +17,4 @@
   "requirements": [],
   "version": "0.9.0"
 }
+
