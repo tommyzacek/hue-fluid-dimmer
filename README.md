@@ -10,7 +10,7 @@ Requires **Home Assistant 2026.10.1 or newer**, a Hue Bridge with API v2 and the
 
 The official **Philips Hue** integration is required. **Adaptive Lighting** is a separate, optional custom integration installed through **HACS**. If you use it, enable cooperation in Hue Reconfigo’s Bridge settings to report manual brightness/color control. Hue Reconfigo works without Adaptive Lighting.
 
-The integration was previously named **Hue Fluid Dimmer**. Its technical domain and component directory are now `hue_reconfigo`. Existing installations must complete the [domain migration](docs/en/domain-migration.md) before restarting with this version. Hue Bridge pairing is preserved.
+The integration was previously named **Hue Fluid Dimmer**. Its technical domain and component directory are now `hue_reconfigo`.
 
 ## User guides
 

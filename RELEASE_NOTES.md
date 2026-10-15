@@ -1,3 +1,27 @@
+# v1.1.0 — Complete Hue Reconfigo rename
+
+**Stable release. Requires Home Assistant 2026.10.1+.**
+
+Complete the Hue Reconfigo name across the integration: technical domain and component directory `hue_reconfigo`, sidebar panel `/hue-reconfigo`, frontend selectors, static assets and overview API. The rotary event is now `hue_reconfigo_event`.
+
+Controller behavior and settings are unchanged. The official Hue integration remains required; Adaptive Lighting remains optional.
+
+Validation: 364 tests, Ruff, JavaScript syntax, hassfest and complete HACS validation.
+
+## Česky
+
+Dokončené přejmenování na Hue Reconfigo v celé integraci: technická doména i adresář `hue_reconfigo`, panel `/hue-reconfigo`, prvky formulářů, soubory rozhraní a API. Událost rotace se nově jmenuje `hue_reconfigo_event`.
+
+Chování ovladačů ani jejich nastavení se nemění. Oficiální integrace Hue je nadále vyžadována, Adaptive Lighting zůstává volitelné.
+
+## Slovenčina
+
+Dokončené premenovanie na Hue Reconfigo v celej integrácii: technická doména aj priečinok `hue_reconfigo`, panel `/hue-reconfigo`, prvky formulárov, súbory rozhrania a API. Udalosť rotácie sa po novom volá `hue_reconfigo_event`.
+
+Správanie ovládačov ani ich nastavenia sa nemenia. Oficiálna integrácia Hue je naďalej vyžadovaná, Adaptive Lighting zostáva voliteľné.
+
+---
+
 # v1.0.1 — Full HACS validation
 
 Stable maintenance release. Enable the complete HACS validation, including bundled brand assets, with no ignored checks. This release prepares the repository for a HACS default-catalog submission.

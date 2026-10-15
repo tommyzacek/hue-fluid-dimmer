@@ -10,7 +10,7 @@ Vyžaduje **Home Assistant 2026.10.1 alebo novší**, Hue Bridge s API v2 a nast
 
 Oficiálna integrácia **Philips Hue** je potrebná. **Adaptive Lighting** je samostatná, voliteľná vlastná integrácia inštalovaná cez **HACS**. Ak ju používate, zapnite spoluprácu v nastavení Bridge v Hue Reconfigo, aby jej oznamoval ručné ovládanie jasu a farby. Hue Reconfigo funguje aj bez Adaptive Lighting.
 
-Integrácia sa predtým volala **Hue Fluid Dimmer**. Technická doména aj priečinok sú teraz `hue_reconfigo`. Existujúce inštalácie musia pred spustením tejto verzie vykonať [prevod domény](docs/sk/domain-migration.md). Párovanie Hue Bridge zostáva zachované.
+Integrácia sa predtým volala **Hue Fluid Dimmer**. Technická doména aj priečinok sú teraz `hue_reconfigo`.
 
 ## Používateľské návody
 
