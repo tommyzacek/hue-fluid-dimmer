@@ -11,12 +11,18 @@ Requires **Home Assistant 2026.10.1 or newer**, a Hue v2 bridge and the configur
 1. Add `https://github.com/tommyzacek/hue-fluid-dimmer` to HACS custom repositories as an **Integration**.
 2. Download the release and restart Home Assistant.
 3. Add **Hue Fluid Dimmer** in **Settings → Devices & services**, then select your existing Hue bridge.
-4. Open a controller's **Configure** gear, select targets and enable control. New controller rows start disabled.
-5. The bridge's **Configure** button opens shared control conditions, Adaptive Lighting cooperation and polling settings. Refresh the browser after updating to load new form translations.
+4. Open **Hue Fluid Dimmer** in the sidebar (administrators only). Expand your bridge and a **Dial / Button / Dimmer / Motion** group, then click a controller to open its configuration. Select targets and enable control. New controller rows start disabled.
+5. The gear beside the bridge opens shared control conditions, Adaptive Lighting cooperation and polling settings directly in the panel. The original integration page and its configuration gears remain available. Refresh the browser after updating to load the new panel and form controls.
 
 Alternatively copy `custom_components/hue_fluid_dimmer` into your HA configuration's `custom_components` directory and restart.
 
 Disable competing direct Hue assignments, blueprints or automations for any gestures enabled here. Otherwise both systems may send commands. No official Hue integration settings, automations, scripts or scenes are modified by this integration.
+
+## Controller overview and forms
+
+The grouped sidebar panel is installed automatically with the integration; no separate dashboard or frontend download is needed. It lists real configured controllers and their enable flags, and opens Home Assistant's native configuration dialogs. It creates no extra bridges, devices or entities. The overview endpoint is restricted to administrators and exports only controller names, identifiers, types and enable flags. It adds no periodic polling.
+
+Button, Dimmer and Tap Dial forms share Motion's switches, outlined selections and sliders. Custom Dial settings retain separate Lights and Other entities sections. Existing controller bindings, values and runtime behavior are preserved. The overview composes Home Assistant frontend components and therefore depends on their compatibility with the supported HA version.
 
 ## Supported controllers
 

@@ -427,3 +427,38 @@ class HfdBridgeSettings extends HTMLElement {
   }
 }
 if(!customElements.get('ha-selector-hfd_bridge_settings'))customElements.define('ha-selector-hfd_bridge_settings',HfdBridgeSettings);
+
+// Reuse the Motion form's switches, outlined pickers and slider geometry.
+class HfdControlEnabled extends HfdMotionEnabled {
+  connectedCallback(){this._stopStyling=hfdOutlineMotionForm(this);}
+  disconnectedCallback(){this._stopStyling?.();}
+}
+if(!customElements.get('ha-selector-hfd_control_enabled'))customElements.define('ha-selector-hfd_control_enabled',HfdControlEnabled);
+
+class HfdNumberSelector extends HfdLuxSelector {
+  reportValidity(){const c=this._selector?.hfd_number||{};return Number.isFinite(this._value)&&this._value>=c.min&&this._value<=c.max;}
+  refresh(){
+    if(!this.slider)return;
+    const c=this._selector?.hfd_number||{min:0.1,max:10,step:0.05};
+    this.slider.min=String(c.min);this.slider.max=String(c.max);this.slider.step=String(c.step||1);
+    const value=this._value??c.min,format=new Intl.NumberFormat(this._hass?.language||'en',{maximumFractionDigits:2});
+    const text=format.format(value)+(c.unit_of_measurement?' '+c.unit_of_measurement:'');
+    this.slider.value=String(value);this.slider.disabled=!!this._disabled;this.slider.setAttribute('aria-valuetext',text);
+    this.shadowRoot.querySelector('label').textContent=this._label||'';this.shadowRoot.querySelector('output').textContent=text;
+    const limits=this.shadowRoot.querySelectorAll('.limits span');limits[0].textContent=format.format(c.min);limits[1].textContent=format.format(c.max);
+    this.shadowRoot.querySelector('.reading').hidden=true;this.shadowRoot.querySelector('.warning').hidden=true;
+  }
+}
+if(!customElements.get('ha-selector-hfd_number'))customElements.define('ha-selector-hfd_number',HfdNumberSelector);
+
+class HfdHeading extends HTMLElement {
+  constructor(){super();this.attachShadow({mode:'open'});this.shadowRoot.innerHTML='<style>:host{display:block;margin:12px 0 0;color:var(--primary-text-color);font-weight:600}h3{font:inherit;margin:0}</style><h3></h3>';}
+  set label(value){this.shadowRoot.querySelector('h3').textContent=value||'';}
+  set value(value){this._value=value;}
+  get value(){return this._value;}
+  set hass(value){}
+  set selector(value){}
+  set disabled(value){}
+  reportValidity(){return true;}
+}
+if(!customElements.get('ha-selector-hfd_heading'))customElements.define('ha-selector-hfd_heading',HfdHeading);

@@ -8,13 +8,14 @@
   "dependencies": [
     "frontend",
     "http",
-    "hue"
+    "hue",
+    "panel_custom",
+    "websocket_api"
   ],
   "documentation": "https://github.com/tommyzacek/hue-fluid-dimmer",
   "integration_type": "hub",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/tommyzacek/hue-fluid-dimmer/issues",
   "requirements": [],
-  "version": "0.9.0"
+  "version": "0.9.5"
 }
-

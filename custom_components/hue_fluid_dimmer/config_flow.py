@@ -50,7 +50,16 @@ def number(minimum: float, maximum: float, step: float) -> selector.NumberSelect
 
 class VisibleNumber(selector.NumberSelector):
     def serialize(self):
-        return {**super().serialize(), "visible": {"field": "profile", "value": "custom"}}
+        config = super().serialize()["selector"]["number"]
+        return {
+            "selector": {"hfd_number": config},
+            "visible": {"field": "profile", "value": "custom"},
+        }
+
+
+class ControllerEnabled(selector.BooleanSelector):
+    def serialize(self):
+        return {"selector": {"hfd_control_enabled": {}}}
 
 
 class VisibleCustomBoolean(selector.BooleanSelector):
@@ -62,7 +71,7 @@ class CustomHeading(selector.ConstantSelector):
     """Display a static heading only for the custom dial profile."""
 
     def serialize(self):
-        return {**super().serialize(), "visible": {"field": "profile", "value": "custom"}}
+        return {"selector": {"hfd_heading": {}}, "visible": {"field": "profile", "value": "custom"}}
 
 
 class VisibleLights(selector.EntitySelector):
@@ -134,7 +143,7 @@ class VisiblePercentage(selector.NumberSelector):
 
     def serialize(self):
         return {
-            **super().serialize(),
+            "selector": {"hfd_brightness": {}},
             "visible": {"field": f"{self.action}_operation", "value": "configured"},
         }
 
@@ -358,7 +367,7 @@ def binding_schema(old: dict, submitted: dict | None = None) -> p.Schema:
     kind = old.get("controller_kind", "tap_dial")
     dial = data["dial"]
     schema = {
-        p.Required("enabled", default=data["enabled"]): selector.BooleanSelector(),
+        p.Required("enabled", default=data["enabled"]): ControllerEnabled(),
         p.Required("dial", default=data["dial"]): section(
             p.Schema(
                 {
@@ -368,7 +377,7 @@ def binding_schema(old: dict, submitted: dict | None = None) -> p.Schema:
                         {
                             "options": ["gentle", "balanced", "swift", "custom"],
                             "translation_key": "dial_profile",
-                            "mode": "list",
+                            "mode": "dropdown",
                         }
                     ),
                     p.Required(
@@ -381,7 +390,13 @@ def binding_schema(old: dict, submitted: dict | None = None) -> p.Schema:
                         {"min": 0.1, "max": 10, "step": 0.05, "mode": "box"}
                     ),
                     p.Required("transition", default=dial["transition"]): VisibleNumber(
-                        {"min": 0.1, "max": 3, "step": 0.1, "mode": "box"}
+                        {
+                            "min": 0.1,
+                            "max": 3,
+                            "step": 0.1,
+                            "mode": "box",
+                            "unit_of_measurement": "s",
+                        }
                     ),
                     p.Optional("other_heading", default="other"): CustomHeading(
                         {"value": "other", "label": ""}
@@ -391,14 +406,22 @@ def binding_schema(old: dict, submitted: dict | None = None) -> p.Schema:
                     ): VisibleNumber({"min": 0.1, "max": 10, "step": 0.05, "mode": "box"}),
                     p.Required(
                         "nonlight_transition", default=dial["nonlight_transition"]
-                    ): VisibleNumber({"min": 0.1, "max": 3, "step": 0.05, "mode": "box"}),
+                    ): VisibleNumber(
+                        {
+                            "min": 0.1,
+                            "max": 3,
+                            "step": 0.05,
+                            "mode": "box",
+                            "unit_of_measurement": "s",
+                        }
+                    ),
                 }
             )
         ),
     }
     if kind != "tap_dial":
         schema = {
-            p.Required("enabled", default=data["enabled"]): selector.BooleanSelector(),
+            p.Required("enabled", default=data["enabled"]): ControllerEnabled(),
             p.Required(
                 "shared_targets", default=data.get("shared_targets", [])
             ): selector.EntitySelector({"domain": ["light", "fan", "number"], "multiple": True}),

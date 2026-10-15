@@ -10,6 +10,7 @@ from homeassistant.exceptions import ConfigEntryNotReady
 
 from .api import BridgeError
 from .configuration import controller_binding, initialize_controllers
+from .panel import async_setup_panel, async_unload_panel
 from .runtime import Runtime
 
 type HueFluidDimmerEntry = ConfigEntry[Runtime]
@@ -38,6 +39,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: HueFluidDimmerEntry) -> 
     runtime.reload_config = (dict(entry.data), dict(entry.options))
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
     runtime.start()
+    await async_setup_panel(hass)
     return True
 
 
@@ -55,4 +57,5 @@ async def async_reload_entry(hass: HomeAssistant, entry: HueFluidDimmerEntry) ->
 
 async def async_unload_entry(hass: HomeAssistant, entry: HueFluidDimmerEntry) -> bool:
     await entry.runtime_data.close()
+    async_unload_panel(hass, entry)
     return True

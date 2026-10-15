@@ -1,3 +1,23 @@
+# v0.9.5 — Grouped controller overview and consistent forms
+
+**Pre-release / experimental.** Requires Home Assistant 2026.10.1+, a Hue v2 Bridge and the official Hue integration.
+
+- Add an automatically installed, administrator-only **Hue Fluid Dimmer** sidebar panel. Expand the bridge and **Dial / Button / Dimmer / Motion** groups to configure each controller.
+- Open the existing native Home Assistant controller dialogs directly from the overview. No duplicate bridges, devices or entities are created.
+- Add a gear beside each bridge that opens its shared settings in place, without leaving the panel. Preserve the original integration page and its Bridge settings gear.
+- Unify Button, Dimmer and Tap Dial forms with Motion: switches, outlined selections, profile dropdowns, percentage and numeric sliders. Retain separate **Lights / Other entities** headings for Custom Dial settings.
+- Preserve existing bindings, configuration values and controller behavior. The overview adds no periodic polling, and its admin-only endpoint exports only names, identifiers, types and enable flags.
+
+Validation: **277 tests passed**, Ruff lint/format and JavaScript syntax checks. The grouped panel, controller dialogs and both Bridge settings entry points were verified on the development HA installation. The panel reuses Home Assistant frontend components; compatibility with future HA frontend changes is not guaranteed.
+
+Update through HACS, **restart Home Assistant and fully refresh the browser**. No separate panel installation is needed. All v0.9.0 compatibility notes, including Adaptive Lighting group limitations and native Hue transition reporting, still apply.
+
+## Česky
+
+Nový seskupený přehled v postranním panelu: Bridge → Dial / Button / Dimmer / Motion → nastavení konkrétního ovladače. Ozubené kolečko u Bridge otevře hlavní nastavení přímo nad panelem. Původní stránka integrace i její nastavení zůstávají dostupné. Formuláře Buttonu, Dimmeru a Dialu mají sjednocené přepínače, výběry a posuvníky. Nastavené hodnoty ani chování ovladačů se nemění. Po aktualizaci restartuj HA a obnov celou stránku prohlížeče. Panel se zpřístupní automaticky administrátorům.
+
+---
+
 # v0.9.0 — Motion schedules, shared control conditions and Adaptive Lighting cooperation
 
 **Pre-release / experimental.** Requires Home Assistant 2026.10.1+, Hue v2 Bridge and the official Hue integration.
