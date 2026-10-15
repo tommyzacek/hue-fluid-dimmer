@@ -27,6 +27,8 @@ Začněte částí [Než začnete](docs/cs/README.md#než-začnete). Návody obs
 
 ## Rychlá instalace
 
+[![Otevřít v HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=tommyzacek&repository=hue-reconfigo&category=integration)
+
 1. Do HACS přidejte `https://github.com/tommyzacek/hue-reconfigo` jako vlastní repozitář typu **Integration**.
 2. Stáhněte vydání a restartujte Home Assistant.
 3. V **Nastavení → Zařízení a služby** přidejte **Hue Reconfigo** a vyberte existující Hue Bridge.
@@ -34,6 +36,10 @@ Začněte částí [Než začnete](docs/cs/README.md#než-začnete). Návody obs
 5. Jako správce otevřete boční panel **Hue Reconfigo**. Vyberte ovladač, nastavte cíle/akce a zapněte ovládání. Kolo vedle Bridge otevře společná nastavení. Po aktualizacích obnovte stránku.
 
 Při ruční instalaci zkopírujte `custom_components/hue_reconfigo` do `custom_components` konfigurace HA a restartujte. Boční panel je součástí, neinstaluje se zvlášť.
+
+Po stažení a restartu Home Assistantu přidejte integraci:
+
+[![Přidat integraci](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=hue_reconfigo)
 
 ## Podporovaná zařízení
 

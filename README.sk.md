@@ -27,6 +27,8 @@ Začnite časťou [Skôr než začnete](docs/sk/README.md#skôr-než-začnete). 
 
 ## Rýchla inštalácia
 
+[![Otvoriť v HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=tommyzacek&repository=hue-reconfigo&category=integration)
+
 1. Do HACS pridajte `https://github.com/tommyzacek/hue-reconfigo` ako vlastný repozitár typu **Integration**.
 2. Stiahnite vydanie a reštartujte Home Assistant.
 3. V **Nastavenia → Zariadenia a služby** pridajte **Hue Reconfigo** a vyberte existujúci Hue Bridge.
@@ -34,6 +36,10 @@ Začnite časťou [Skôr než začnete](docs/sk/README.md#skôr-než-začnete). 
 5. Ako správca otvorte bočný panel **Hue Reconfigo**. Vyberte ovládač, nastavte ciele/akcie a zapnite ovládanie. Koliesko vedľa Bridge otvorí spoločné nastavenia. Po aktualizáciách obnovte stránku.
 
 Pri ručnej inštalácii skopírujte `custom_components/hue_reconfigo` do `custom_components` konfigurácie HA a reštartujte. Bočný panel je súčasťou, neinštaluje sa samostatne.
+
+Po stiahnutí a reštarte Home Assistantu pridajte integráciu:
+
+[![Pridať integráciu](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=hue_reconfigo)
 
 ## Podporované zariadenia
 

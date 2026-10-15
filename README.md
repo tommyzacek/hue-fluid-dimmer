@@ -27,6 +27,8 @@ Start with [Before you start](docs/en/README.md#before-you-start). Each guide in
 
 ## Quick installation
 
+[![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=tommyzacek&repository=hue-reconfigo&category=integration)
+
 1. Add `https://github.com/tommyzacek/hue-reconfigo` to HACS custom repositories as an **Integration**.
 2. Download a release and restart Home Assistant.
 3. Add **Hue Reconfigo** in **Settings → Devices & services**, then select your existing Hue Bridge.
@@ -34,6 +36,10 @@ Start with [Before you start](docs/en/README.md#before-you-start). Each guide in
 5. Open **Hue Reconfigo** in the sidebar as an administrator. Select a controller, configure its targets/actions and enable control. The Bridge gear opens shared settings. Refresh the browser after updates.
 
 For manual installation, copy `custom_components/hue_reconfigo` into your HA configuration's `custom_components` directory and restart. The sidebar panel is included; no separate dashboard installation is needed.
+
+After downloading and restarting Home Assistant, add the integration:
+
+[![Add integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=hue_reconfigo)
 
 ## Supported devices
 
