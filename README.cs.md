@@ -1,6 +1,6 @@
 # Hue Reconfigo
 
-[Čeština](README.cs.md) | [Slovenčina](README.sk.md) | [English](README.md)
+[Čeština](README.cs.md) | [Slovenština](README.sk.md) | [English](README.md)
 
 *Centrum nastavení Hue Tap Dial, Dimmer, Smart Button a pohybových senzorů v Home Assistantu.*
 

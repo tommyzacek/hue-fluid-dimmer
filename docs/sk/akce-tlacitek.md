@@ -1,6 +1,6 @@
 # Spoločné akcie tlačidiel
 
-[Čeština](../cs/akce-tlacitek.md) | [Slovenčina](../sk/akce-tlacitek.md) | [English](../en/akce-tlacitek.md)
+[Čeština](../cs/akce-tlacitek.md) | [Slovenština](../sk/akce-tlacitek.md) | [English](../en/akce-tlacitek.md)
 
 [Všetky návody](README.md) · [Button](button.md) · [Dimmer](dimmer.md) · [Dial](dial.md)
 

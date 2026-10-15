@@ -1,6 +1,6 @@
 # Tap Dial
 
-[Čeština](../cs/dial.md) | [Slovenčina](../sk/dial.md) | [English](../en/dial.md)
+[Čeština](../cs/dial.md) | [Slovenština](../sk/dial.md) | [English](../en/dial.md)
 
 [All guides](README.md) · [Shared button actions](akce-tlacitek.md)
 

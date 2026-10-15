@@ -1,6 +1,6 @@
 # Hue Reconfigo
 
-[Čeština](README.cs.md) | [Slovenčina](README.sk.md) | [English](README.md)
+[Čeština](README.cs.md) | [Slovenština](README.sk.md) | [English](README.md)
 
 *Home Assistant control hub for Hue Tap Dial, Dimmer, Smart Button and Motion sensors.*
 

@@ -1,6 +1,6 @@
 # Uživatelské návody
 
-[Čeština](../cs/README.md) | [Slovenčina](../sk/README.md) | [English](../en/README.md)
+[Čeština](../cs/README.md) | [Slovenština](../sk/README.md) | [English](../en/README.md)
 
 | Co chcete nastavit | Návod |
 | --- | --- |

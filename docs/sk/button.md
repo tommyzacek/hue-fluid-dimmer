@@ -1,6 +1,6 @@
 # Button
 
-[Čeština](../cs/button.md) | [Slovenčina](../sk/button.md) | [English](../en/button.md)
+[Čeština](../cs/button.md) | [Slovenština](../sk/button.md) | [English](../en/button.md)
 
 [Všetky návody](README.md) · [Spoločné akcie tlačidiel](akce-tlacitek.md)
 

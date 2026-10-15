@@ -1,6 +1,6 @@
 # Používateľské návody
 
-[Čeština](../cs/README.md) | [Slovenčina](../sk/README.md) | [English](../en/README.md)
+[Čeština](../cs/README.md) | [Slovenština](../sk/README.md) | [English](../en/README.md)
 
 | Čo chcete nastaviť | Návod |
 | --- | --- |
@@ -21,7 +21,7 @@ V bočnom paneli otvorte **Hue Reconfigo → váš Bridge → skupinu ovládačo
 
 Príslušenstvo, ktoré preberá Hue Reconfigo, nastavte v aplikácii Hue na **„Konfigurovať v inej aplikácii“**, aby ho súčasne neovládala aj aplikácia Hue. Pre rovnaké vstupy vypnite aj prípadné blueprinty a automatizácie. Dva nezávislé systémy môžu inak súčasne meniť jas, farbu alebo zapnutie. Oficiálnu integráciu Philips Hue v Home Assistante ponechajte zapnutú.
 
-Po aktualizácii reštartujte HA a obnovte stránku prehliadača, aby sa načítali nové formuláre. Jazyk rozhrania určuje profil HA: čeština, slovenčina, inak angličtina. Tieto návody používajú slovenské názvy polí.
+Po aktualizácii reštartujte HA a obnovte stránku prehliadača, aby sa načítali nové formuláre. Jazyk rozhrania určuje profil HA: čeština, slovenština, inak angličtina. Tieto návody používajú slovenské názvy polí.
 
 ## Odporúčaný prvý test
 

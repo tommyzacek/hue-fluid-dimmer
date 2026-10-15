@@ -1,6 +1,6 @@
 # Bridge and shared settings
 
-[Čeština](../cs/bridge.md) | [Slovenčina](../sk/bridge.md) | [English](../en/bridge.md)
+[Čeština](../cs/bridge.md) | [Slovenština](../sk/bridge.md) | [English](../en/bridge.md)
 
 [All guides](README.md)
 
