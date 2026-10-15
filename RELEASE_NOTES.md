@@ -2,23 +2,23 @@
 
 **Stable release. Requires Home Assistant 2026.10.1+.**
 
-Hue Reconfigo now uses the technical domain and component directory `hue_reconfigo`. The sidebar panel is `/hue-reconfigo`; static assets, frontend selectors and the overview API use the new name. The rotary event is now `hue_reconfigo_event`.
+Complete the Hue Reconfigo name across the integration: technical domain and component directory `hue_reconfigo`, sidebar panel `/hue-reconfigo`, frontend selectors, static assets and overview API. The rotary event is now `hue_reconfigo_event`.
 
-**Existing installations:** do not treat this as an ordinary one-click update from `hue_fluid_dimmer`. Follow the [domain migration guide](https://github.com/tommyzacek/hue-reconfigo/blob/v1.1.0/docs/en/domain-migration.md) before restarting with this release. The offline tool preserves Bridge/controller IDs, settings and brightness memories, updates HACS metadata and backs up the old component and affected storage. New installations need no migration. Installations already migrated internally can use this release normally. Update custom event listeners and panel links separately.
+Controller behavior and settings are unchanged. The official Hue integration remains required; Adaptive Lighting remains optional.
 
-Controller behavior is unchanged. The official Hue integration remains required; Adaptive Lighting remains optional. Validation includes 364 tests, migration conflict/rollback tests, Ruff, JavaScript syntax, hassfest and complete HACS validation.
+Validation: 364 tests, Ruff, JavaScript syntax, hassfest and complete HACS validation.
 
 ## Česky
 
-Dokončené přejmenování: technická doména i adresář jsou `hue_reconfigo`, panel je na `/hue-reconfigo` a událost rotace se jmenuje `hue_reconfigo_event`. Chování ovladačů se nemění.
+Dokončené přejmenování na Hue Reconfigo v celé integraci: technická doména i adresář `hue_reconfigo`, panel `/hue-reconfigo`, prvky formulářů, soubory rozhraní a API. Událost rotace se nově jmenuje `hue_reconfigo_event`.
 
-**Stávající instalace se starou doménou musí před restartem provést [převod konfigurace](https://github.com/tommyzacek/hue-reconfigo/blob/v1.1.0/docs/cs/domain-migration.md). Nejde o běžnou aktualizaci jedním kliknutím.** Nástroj zachová ID, nastavení i paměť jasů a vytvoří zálohu. Nové a již převedené instalace převod nepotřebují. Vlastní odkazy na panel a posluchače staré události upravte samostatně.
+Chování ovladačů ani jejich nastavení se nemění. Oficiální integrace Hue je nadále vyžadována, Adaptive Lighting zůstává volitelné.
 
 ## Slovenčina
 
-Dokončené premenovanie: technická doména aj priečinok sú `hue_reconfigo`, panel je na `/hue-reconfigo` a udalosť rotácie sa volá `hue_reconfigo_event`. Správanie ovládačov sa nemení.
+Dokončené premenovanie na Hue Reconfigo v celej integrácii: technická doména aj priečinok `hue_reconfigo`, panel `/hue-reconfigo`, prvky formulárov, súbory rozhrania a API. Udalosť rotácie sa po novom volá `hue_reconfigo_event`.
 
-**Existujúce inštalácie so starou doménou musia pred reštartom vykonať [prevod konfigurácie](https://github.com/tommyzacek/hue-reconfigo/blob/v1.1.0/docs/sk/domain-migration.md). Nejde o bežnú aktualizáciu jedným kliknutím.** Nástroj zachová ID, nastavenia aj pamäť jasu a vytvorí zálohu. Nové a už prevedené inštalácie prevod nepotrebujú. Vlastné odkazy na panel a poslucháčov starej udalosti upravte samostatne.
+Správanie ovládačov ani ich nastavenia sa nemenia. Oficiálna integrácia Hue je naďalej vyžadovaná, Adaptive Lighting zostáva voliteľné.
 
 ---
 
