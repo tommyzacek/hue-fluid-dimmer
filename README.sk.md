@@ -8,6 +8,8 @@ Experimentálny doplnok Home Assistanta pre Philips Hue **Tap Dial**, **Smart Bu
 
 Vyžaduje **Home Assistant 2026.10.1 alebo novší**, Hue Bridge s API v2 a nastavenú oficiálnu integráciu **Philips Hue**. Projekt je nezávislý od Signify a Home Assistanta. Dokumentácia sleduje aktuálny vývoj; rozsah konkrétnej nainštalovanej verzie nájdete v poznámkach k vydaniu.
 
+Oficiálna integrácia **Philips Hue** je potrebná. **Adaptive Lighting** je samostatná, voliteľná vlastná integrácia inštalovaná cez **HACS**. Ak ju používate, zapnite spoluprácu v nastavení Bridge v Hue Fluid Dimmer, aby jej oznamoval ručné ovládanie jasu a farby. Hue Fluid Dimmer funguje aj bez Adaptive Lighting.
+
 ## Používateľské návody
 
 | Skupina | Návod |

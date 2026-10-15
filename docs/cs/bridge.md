@@ -32,6 +32,8 @@ Podmínka omezuje akce integrace. Nenahrazuje zabezpečovací systém.
 
 ## Spolupráce s Adaptive Lighting
 
+**Adaptive Lighting (AL) je samostatná, volitelná vlastní integrace instalovaná přes HACS.** Není součástí oficiální integrace Philips Hue a pro fungování Hue Fluid Dimmer není nutná. Oficiální integrace Philips Hue je naopak vyžadována a musí zůstat zapnutá.
+
 Pokud používáte Adaptive Lighting (AL), můžete zapnout spolupráci. Integrace vyhledá odpovídající konfigurace AL a při ruční regulaci jasu či barvy oznámí ruční řízení službou `adaptive_lighting.set_manual_control`.
 
 - Ruční příznak patří do AL, nikoli do žárovky nebo Hue Bridge.

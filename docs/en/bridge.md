@@ -32,6 +32,8 @@ This condition limits integration actions. It is not a security system.
 
 ## Adaptive Lighting cooperation
 
+**Adaptive Lighting (AL) is a separate, optional custom integration installed through HACS.** It is not part of the official Philips Hue integration and is not required by Hue Fluid Dimmer. The official Philips Hue integration, in contrast, is required and must remain enabled.
+
 If you use Adaptive Lighting (AL), you can enable cooperation. The integration discovers matching AL configurations and reports manual brightness/color control using `adaptive_lighting.set_manual_control`.
 
 - The manual flag belongs to AL, not the bulb or Hue Bridge.
