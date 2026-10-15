@@ -70,10 +70,12 @@ class PercentageRamp:
                 return
         except KeyError, TypeError, ValueError:
             return
-        if current > 0:
+        if current > 0 and operation != "on":
             self.previous[entity] = max(0, min(100, current))
             if self.storage is not None:
                 await self.storage.async_save({"previous": dict(self.previous)})
+            desired = 0.0
+        elif operation == "off":
             desired = 0.0
         elif operation == "previous":
             desired = self.previous.get(entity)
@@ -88,7 +90,7 @@ class PercentageRamp:
                     )
                 return
         else:
-            desired = percentage if operation == "configured" else 100.0
+            desired = percentage if operation in ("configured", "on") else 100.0
         data = {"entity_id": entity}
         if domain == "number":
             raw = low + desired * (high - low) / 100

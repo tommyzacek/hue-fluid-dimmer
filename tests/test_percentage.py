@@ -134,3 +134,30 @@ async def test_number_dial_rotates_in_both_directions_without_endpoint_reversal(
     await ramp.ramps[key].task
     assert call.await_args.args[2]["value"] == 49
     await ramp.close()
+
+
+@pytest.mark.parametrize(
+    "entity,state,attributes",
+    [
+        ("number.pwm", "35", {"min": 0, "max": 100, "step": 1}),
+        ("fan.test", "on", {"percentage": 35}),
+    ],
+)
+async def test_one_way_percentage_actions_do_not_toggle(entity, state, attributes):
+    from types import SimpleNamespace
+    from unittest.mock import AsyncMock
+
+    from custom_components.hue_fluid_dimmer.percentage import PercentageRamp
+
+    current = SimpleNamespace(state=state, attributes=attributes)
+    call = AsyncMock()
+    ramp = PercentageRamp(
+        SimpleNamespace(
+            states=SimpleNamespace(get=lambda _: current), services=SimpleNamespace(async_call=call)
+        ),
+        lambda coro: None,
+    )
+    await ramp.action(entity, "on", 70)
+    assert call.await_args.args[2].get("value", call.await_args.args[2].get("percentage")) == 70
+    await ramp.action(entity, "off", 70)
+    assert call.await_args.args[2].get("value", call.await_args.args[2].get("percentage")) == 0

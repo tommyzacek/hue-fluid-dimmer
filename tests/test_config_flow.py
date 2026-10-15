@@ -47,11 +47,19 @@ async def test_polling_form_uses_real_ha_schema(tmp_path):
     flow = options_flow(tmp_path)
     result = await flow.async_step_polling()
     validated = result["data_schema"](
-        {"polling_mode": "continuous", "poll_interval": 0.1, "active_window": 3}
+        {
+            "bridge_settings": {
+                "polling_mode": "continuous",
+                "poll_interval": 0.1,
+                "active_window": 3,
+            }
+        }
     )
-    assert validated["poll_interval"] == 0.1
-    invalid = {"polling_mode": "continuous", "poll_interval": 0.01, "active_window": 3}
-    with pytest.raises(Exception, match="too small"):
+    assert validated["bridge_settings"]["poll_interval"] == 0.1
+    invalid = {
+        "bridge_settings": {"polling_mode": "continuous", "poll_interval": 0.01, "active_window": 3}
+    }
+    with pytest.raises(Exception, match="at least 0.1"):
         result["data_schema"](invalid)
 
 
@@ -161,3 +169,90 @@ async def test_setup_requires_official_hue_v2(tmp_path):
     )
     result = await flow.async_step_user()
     assert result["reason"] == "no_hue"
+
+
+@pytest.mark.parametrize("kind", ["button", "dimmer"])
+async def test_button_validation_error_keeps_form_open(tmp_path, kind):
+    flow, _ = subentry_flow(tmp_path, {"dial-a": {"controller_kind": kind}})
+    result = await flow.async_step_reconfigure()
+    submitted = result["data_schema"]({})
+    result = await getattr(flow, f"async_step_reconfigure_{kind}")(submitted)
+    assert result["type"] == "form"
+    assert result["step_id"] == f"reconfigure_{kind}"
+    assert result["errors"] == {"base": "button_target_required"}
+    await flow.hass.async_stop()
+
+
+async def test_motion_error_keeps_live_sensor_metadata(tmp_path):
+    from custom_components.hue_fluid_dimmer.motion import DEFAULTS
+
+    flow, config_entry = subentry_flow(tmp_path, {"dial-a": {"controller_kind": "motion"}})
+    config_entry.runtime_data = SimpleNamespace(
+        control_devices={
+            "dial-a": {
+                "lux_entity": "sensor.room_lux",
+                "motion_enabled_entity": "switch.motion",
+                "lux_enabled_entity": "switch.lux",
+            }
+        }
+    )
+    result = await flow.async_step_reconfigure(
+        {**DEFAULTS, "enabled": True, "motion_targets": [], "motion_lux_slider": 50}
+    )
+    assert result["errors"]
+    selectors = {key.schema: value for key, value in result["data_schema"].schema.items()}
+    assert (
+        selectors["motion_lux_slider"].serialize()["selector"]["hfd_lux"]["entity"]
+        == "sensor.room_lux"
+    )
+    assert (
+        selectors["enabled"].serialize()["selector"]["hfd_motion_enabled"]["entity"]
+        == "switch.motion"
+    )
+
+
+async def test_motion_periods_save_replaces_only_selected_controller(tmp_path):
+    from unittest.mock import AsyncMock
+
+    from custom_components.hue_fluid_dimmer.config_flow import binding_schema
+
+    flow, config_entry = subentry_flow(
+        tmp_path,
+        {
+            "dial-a": {"controller_kind": "motion", "enabled": False, "motion_timeout": 420},
+            "dial-b": {"controller_kind": "motion", "motion_timeout": 300},
+        },
+    )
+    config_entry.runtime_data = SimpleNamespace(reconfigure_motion=AsyncMock())
+    flow.save_motion = AsyncMock()
+    values = binding_schema({"controller_kind": "motion", "motion_timeout": 420})({})
+    result = await flow.async_step_reconfigure(values)
+    assert result["type"] == "abort"
+    saved = {s.unique_id: s.data for s in config_entry.subentries.values()}
+    assert saved["dial-a"]["motion_periods"][0]["timeout"] == 420
+    assert saved["dial-b"]["motion_timeout"] == 300
+    config_entry.runtime_data.reconfigure_motion.assert_awaited_once_with("dial-a")
+    await flow.hass.async_stop()
+
+
+async def test_motion_gate_requires_explicit_entity_and_states(tmp_path):
+    flow = options_flow(tmp_path)
+    result = await flow.async_step_polling({"motion_gate_enabled": True})
+    assert result["errors"] == {"base": "motion_gate_required"}
+    result = await flow.async_step_polling(
+        {
+            "motion_gate_enabled": True,
+            "motion_gate_entity": "sensor.house",
+            "motion_gate_states": "unknown",
+        }
+    )
+    assert result["errors"] == {"base": "motion_gate_required"}
+    result = await flow.async_step_polling(
+        {
+            "motion_gate_enabled": True,
+            "motion_gate_entity": "sensor.house",
+            "motion_gate_states": "doma",
+        }
+    )
+    assert result["type"] == "create_entry"
+    assert result["data"]["motion_gate_states"] == "doma"

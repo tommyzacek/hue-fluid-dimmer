@@ -77,10 +77,14 @@ def test_all_press_types_accept_number_actions_and_preserve_operation(action, op
 
 
 def test_smooth_adjustment_only_appears_in_long_press_operation_list():
-    assert "dimming" in VisibleOperation("long").serialize()["selector"]["select"]["options"]
+    assert (
+        "dimming"
+        in VisibleOperation("long").serialize()["selector"]["hfd_button_action"]["options"]
+    )
     for action in ("short", "double", "triple"):
         assert (
-            "dimming" not in VisibleOperation(action).serialize()["selector"]["select"]["options"]
+            "dimming"
+            not in VisibleOperation(action).serialize()["selector"]["hfd_button_action"]["options"]
         )
 
 
@@ -149,20 +153,21 @@ def test_disabled_gestures_remove_hidden_targets_and_shared_dial_uses_short():
     assert resolve_binding(binding)["lights"] == ["light.group"]
 
 
-def test_dial_takeover_inherits_short_target_and_has_no_independent_long_target():
+def test_dial_takeover_uses_own_target_without_short_press():
     values = form_values(
         {"enabled": True, "button_1": ["light.main"], "button_2": {"short": ["number.pwm"]}}
     )
-    values["button_2"].update(
-        long_enabled=True, long_operation="dial", long_targets=["scene.ignored"]
-    )
+    values["button_2"].update(long_enabled=True, long_operation="dial", long_targets=["fan.other"])
     binding, error = parse_form(values)
     assert error is None
-    assert binding["button_2"]["long"] == ["number.pwm"]
+    assert binding["button_2"]["long"] == ["fan.other"]
     assert binding["button_2"]["long_operation"] == "dial"
     values["button_2"]["short_enabled"] = False
-    assert parse_form(values)[1] == "dial_target_required"
-    assert "dial" not in VisibleOperation("long", 1).serialize()["selector"]["select"]["options"]
+    assert parse_form(values)[1] is None
+    assert (
+        "dial"
+        not in VisibleOperation("long", 1).serialize()["selector"]["hfd_button_action"]["options"]
+    )
 
 
 def test_enabled_action_requires_target_and_ui_hides_only_its_field():

@@ -4,7 +4,7 @@
 
 *Home Assistant control hub for Hue Tap Dial, Dimmer, Smart Button and Motion sensors.*
 
-An experimental Home Assistant companion for Philips Hue **Tap Dial**, **Smart Button**, **Dimmer v2** and **Motion sensors**. Configure actions, targets, brightness and color directly in the integration, without per-controller automations or duplicate controller entities.
+A Home Assistant companion for Philips Hue **Tap Dial**, **Smart Button**, **Dimmer v2** and **Motion sensors**. Configure actions, targets, brightness and color directly in the integration, without per-controller automations or duplicate controller entities.
 
 Requires **Home Assistant 2026.10.1 or newer**, a Hue Bridge with API v2 and the configured official **Philips Hue** integration. This project is independent of Signify and Home Assistant. Documentation follows the latest development; use the release notes for the scope of a specific installed version.
 

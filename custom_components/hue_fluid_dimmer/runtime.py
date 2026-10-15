@@ -15,6 +15,7 @@ from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.storage import Store
 
+from .adaptive import AdaptiveCooperation
 from .api import BridgeClient, BridgeError
 from .bindings import (
     button_actions,
@@ -38,10 +39,14 @@ from .const import (
     MODE_CONTINUOUS,
 )
 from .control import Dimmer
-from .controller_models import HoldDirections, controller_kind
+from .controller_models import HoldDirections, controller_kind, motion_service_role
 from .dial_routing import DialRouting
+from .gate import allows
 from .gestures import CLICK_WINDOW, Gestures
 from .models import ReportTracker
+from .motion import MotionLighting
+from .motion_bridge import request as motion_request
+from .motion_targets import expand_targets, hue_group_members
 from .percentage import PercentageRamp
 
 _LOGGER = logging.getLogger(__name__)
@@ -51,6 +56,12 @@ RAMP_MIN_TRANSITION = 0.2
 RAMP_MAX_TRANSITION = 1.0
 RAMP_DUPLICATE_REPEAT_WINDOW = 0.15
 RAMP_STEP = 10.0
+
+
+def kind(item):
+    if any(s.get("rtype") == "motion" for s in item.get("services", [])):
+        return "motion"
+    return controller_kind(item.get("product_data", {}).get("model_id"))
 
 
 class Runtime:
@@ -69,6 +80,24 @@ class Runtime:
             aiohttp_client.async_get_clientsession(hass, verify_ssl=False),
             self.credentials,
         )
+        self.adaptive = AdaptiveCooperation(
+            hass, lambda: self.entry.options.get("adaptive_lighting", False)
+        )
+        self.motion = MotionLighting(
+            hass,
+            self.create_task,
+            self.adaptive,
+            storage=Store(hass, 1, f"{DOMAIN}.{entry.entry_id}.motion_levels")
+            if hasattr(entry, "entry_id")
+            else None,
+        )
+        self.motion.gate_options = lambda: self.entry.options
+        self.motion.stop_ramps = self.stop_motion_ramps
+        self.motion_unsubscribe = None
+        self.motion_groups = {}
+        self.motion.expand = lambda selected: expand_targets(
+            self.hass, selected, self.motion_groups
+        )
         self.dimmer = Dimmer(self.read_brightness, self.send_brightness, self.create_task)
         storage = (
             Store(hass, 1, f"{DOMAIN}.{entry.entry_id}.levels")
@@ -77,6 +106,7 @@ class Runtime:
         )
         self.percentage = PercentageRamp(hass, self.create_task, storage=storage)
         self.dial_routing = DialRouting(clock=lambda: time.monotonic())
+
         self.control_devices = {}
         self.hold_directions = HoldDirections()
         self.native_commands = {}
@@ -116,27 +146,132 @@ class Runtime:
 
     async def initialize(self) -> None:
         await self.percentage.load()
+        await self.motion.load()
         self.resources = await self.client.rotary_resources()
         self.tracker.baseline(self.resources)
         devices = await self.client.device_resources()
+        if any(kind(item) == "motion" for item in devices):
+            groups = []
+            try:
+                for resource_type in ("room", "zone"):
+                    groups.extend(await motion_request(self.client, resource_type))
+                registry = er.async_get(self.hass)
+                entities = {
+                    e.unique_id.rsplit(":", 1)[-1]: e.entity_id
+                    for e in registry.entities.values()
+                    if e.platform == HUE_DOMAIN
+                    and e.config_entry_id == self.entry.data[CONF_HUE_ENTRY]
+                    and e.entity_id.startswith("light.")
+                }
+                self.motion_groups = hue_group_members(devices, groups, entities)
+            except BridgeError:
+                _LOGGER.warning(
+                    "Hue room membership unavailable; only exposed HA group members can be resolved"
+                )
         rotary_owners = {item.get("owner", {}).get("rid") for item in self.resources}
         self.control_devices = {
             item["id"]: {
                 "name": item.get("metadata", {}).get("name", item["id"]),
-                "kind": controller_kind(item.get("product_data", {}).get("model_id")),
+                "kind": kind(item),
+                "services": item.get("services", []),
                 "model": item.get("product_data", {}).get("model_id"),
             }
             for item in devices
-            if item.get("id") not in rotary_owners
-            and controller_kind(item.get("product_data", {}).get("model_id"))
+            if item.get("id") not in rotary_owners and kind(item)
         }
 
     @callback
     def start(self) -> None:
+        self.motion_entities = {}
+        registry = er.async_get(self.hass)
+        for resource, device in self.control_devices.items():
+            if device["kind"] != "motion":
+                continue
+            services = {s["rtype"]: s["rid"] for s in device.get("services", [])}
+            for entity in registry.entities.values():
+                if (
+                    entity.platform != HUE_DOMAIN
+                    or entity.config_entry_id != self.entry.data[CONF_HUE_ENTRY]
+                ):
+                    continue
+                role = motion_service_role(entity.entity_id, entity.unique_id, services)
+                if role == "motion":
+                    self.motion_entities[entity.entity_id] = resource
+                elif role in ("lux", "motion_enabled", "lux_enabled"):
+                    device[role + "_entity"] = entity.entity_id
+        self.motion_unsubscribe = self.hass.bus.async_listen("state_changed", self.on_motion_state)
         self.unsubscribe = self.hass.bus.async_listen("hue_event", self.on_hue_event)
         self.task = self.create_task(self.poll())
         self.button_task = self.create_task(self.listen_buttons())
         self.button_poll_task = self.create_task(self.poll_buttons())
+
+    async def reconfigure_motion(self, resource):
+        """Discard only this motion's old cycle, then adopt current occupancy."""
+        await self.motion.disable(resource)
+        binding = controller_binding(self.entry, resource)
+        if not binding.get("enabled"):
+            return
+        entity = next((e for e, r in self.motion_entities.items() if r == resource), None)
+        state = self.hass.states.get(entity) if entity else None
+        if not state or state.state != "on":
+            return
+        binding["motion_lux_entity"] = self.control_devices[resource].get("lux_entity", "")
+        binding["motion_lux_enabled_entity"] = self.control_devices[resource].get(
+            "lux_enabled_entity", ""
+        )
+        await self.motion.update(resource, binding, True)
+
+    @callback
+    def on_motion_state(self, event):
+        entity = event.data.get("entity_id")
+        if self.entry.options.get("motion_gate_enabled") and entity == self.entry.options.get(
+            "motion_gate_entity"
+        ):
+            self.create_task(self.gate_changed())
+        if entity and entity.startswith("light."):
+            new_state = event.data.get("new_state")
+            if new_state:
+                self.motion.light_state(
+                    entity,
+                    new_state.state,
+                    event.data.get("old_state").state if event.data.get("old_state") else None,
+                )
+        resource = self.motion_entities.get(entity)
+        if not resource:
+            return
+        old, new = event.data.get("old_state"), event.data.get("new_state")
+        if (
+            old is None
+            or new is None
+            or old.state not in ("on", "off")
+            or new.state not in ("on", "off")
+            or old.state == new.state
+        ):
+            return
+        binding = controller_binding(self.entry, resource)
+        binding["motion_lux_entity"] = self.control_devices[resource].get("lux_entity", "")
+        binding["motion_lux_enabled_entity"] = self.control_devices[resource].get(
+            "lux_enabled_entity", ""
+        )
+        self.motion.event(resource, binding, new.state == "on")
+
+    def control_allowed(self, resource, binding=None):
+        binding = binding or controller_binding(self.entry, resource)
+        family = (
+            binding.get("controller_kind")
+            or self.control_devices.get(resource, {}).get("kind")
+            or "dial"
+        )
+        return allows(self.hass, self.entry.options, "dial" if family == "tap_dial" else family)
+
+    async def gate_changed(self):
+        await self.motion.gate_changed()
+        for resource, index in list(self.button_ramp_timestamps):
+            if not self.control_allowed(resource):
+                self.button_hold_event(resource, index, "release", time.monotonic())
+        for key in list(self.percentage.ramps):
+            if not self.control_allowed(key[0]):
+                self.percentage.stop(key)
 
     def device(self, owner_id: str):
         return dr.async_get(self.hass).async_get_device_by_identifier(
@@ -182,6 +317,8 @@ class Runtime:
     def button_hold_event(self, resource_id: str, index: int, event: str, updated: float) -> None:
         """Run or stop the light ramp only for a configured long-dimming button."""
         binding = controller_binding(self.entry, resource_id)
+        if event != "release" and not self.control_allowed(resource_id, binding):
+            return
         mode, _ = button_long_mode(binding, index)
         if not binding.get("enabled") or mode != "dimming":
             return
@@ -217,6 +354,7 @@ class Runtime:
         if any(not entity.startswith("light.") for entity in lights):
             return
         if event == "start":
+            self.motion.manual_action(lights)
             resources = self.hue_dimming_resources(lights)
             self.button_ramp_timestamps[key] = updated
             if resources:
@@ -327,6 +465,7 @@ class Runtime:
 
     async def _start_button_ramp(self, key: tuple[str, int], state: dict[str, Any]) -> None:
         """Read the actual Hue level, then begin with one small upward step."""
+        await self.adaptive.mark(state["lights"])
         resources = state["resources"]
         try:
             levels = await asyncio.gather(
@@ -412,6 +551,21 @@ class Runtime:
         for result in results:
             if isinstance(result, Exception):
                 _LOGGER.warning("Unable to start native Hue dimming", exc_info=result)
+
+    async def stop_motion_ramps(self, levels):
+        """Stop collateral Hue ramps natively; freeze other lights at estimated levels."""
+        fallback = {}
+        for entity, brightness in levels.items():
+            resources = self.hue_dimming_resources((entity,))
+            if resources:
+                try:
+                    for resource_type, resource_id in resources:
+                        await self.client.stop_dimming(resource_type, resource_id)
+                except BridgeError:
+                    fallback[entity] = brightness
+            else:
+                fallback[entity] = brightness
+        await self.motion.freeze_ramps(fallback)
 
     async def _cancel_and_stop_native(self, resources):
         pending = tuple(self.native_commands.pop(resources, ()))
@@ -709,13 +863,14 @@ class Runtime:
         return sum(values) / len(values) if values else None
 
     def rotate_dial(self, controller: str, binding: dict, steps: int) -> None:
-        if not binding.get("enabled") or not steps:
+        if not binding.get("enabled") or not steps or not self.control_allowed(controller, binding):
             return
         borrowed = self.dial_routing.motion(controller)
         selected = tuple(borrowed or binding.get("lights", ()))
         if not percentage_targets(selected):
             return
         if all(entity.startswith("light.") for entity in selected):
+            self.motion.manual_action(selected)
             self.dimmer.rotate({**binding, "lights": list(selected)}, steps)
         else:
             key = controller, 0
@@ -757,6 +912,9 @@ class Runtime:
     async def send_brightness(
         self, lights: tuple[str, ...], brightness: float, transition: float
     ) -> None:
+        if brightness <= 0:
+            self.motion.manual_action(lights, off=True)
+        await self.adaptive.mark(lights)
         data = {"entity_id": list(lights), "transition": transition}
         if brightness > 0:
             data["brightness_pct"] = max(1, round(brightness))
@@ -768,9 +926,12 @@ class Runtime:
         self, resource_id: str, binding: dict, index: int, action: str = "short"
     ) -> None:
         async with self.button_locks.setdefault(resource_id, asyncio.Lock()):
+            if not self.control_allowed(resource_id, binding):
+                return
             operation, percentage = button_operation(binding, index, action)
             if operation in ("step_up", "step_down"):
                 selected = targets(button_actions(binding, index).get(action))
+                self.motion.manual_action(selected)
                 sign = 1 if operation == "step_up" else -1
                 if selected and all(x.startswith("light.") for x in selected):
                     self.dimmer.button_step(
@@ -784,8 +945,12 @@ class Runtime:
                             self.percentage.stop(other_key)
                     self.percentage.rotate((resource_id, index), selected, sign * 10, 0.3)
                 return
-            if action == "long" and operation == "dial" and index > 1:
-                selected = targets(button_actions(binding, index).get("short"))
+            if (
+                operation == "dial"
+                and index > 1
+                and binding.get("controller_kind", "tap_dial") == "tap_dial"
+            ):
+                selected = targets(button_actions(binding, index).get(action))
                 if percentage_targets(selected):
                     self.dial_routing.borrow(resource_id, selected)
                     self.active_until = max(self.active_until, time.monotonic() + 5)
@@ -802,6 +967,24 @@ class Runtime:
                 return
             if domain not in ("light", "fan", "number") and len(selected) != 1:
                 return
+            startup = binding.get(f"button_{index}", {})
+            startup = startup.get(f"{action}_startup") if isinstance(startup, dict) else None
+            saved_levels = dict(self.motion.remembered) if domain == "light" and startup else {}
+            if domain == "light":
+                if operation in ("configured", "previous"):
+                    for entity in selected:
+                        state = self.hass.states.get(entity)
+                        self.motion.manual_action([entity], off=bool(state and state.state == "on"))
+                else:
+                    is_off = operation == "off" or (
+                        operation != "on"
+                        and any(
+                            (state := self.hass.states.get(entity)) is not None
+                            and state.state == "on"
+                            for entity in selected
+                        )
+                    )
+                    self.motion.manual_action(selected, off=is_off)
             # Cancel the pending ramp before a button switches a light or scene.
             await self.dimmer.cancel_targets(tuple(set(binding.get("lights", [])).union(selected)))
             self.percentage.cancel_entities(selected)
@@ -812,6 +995,11 @@ class Runtime:
                     if ramp.get("resources"):
                         await self._cancel_and_stop_native(ramp["resources"])
             operation, percentage = button_operation(binding, index, action)
+            if domain == "light" and (startup is not None or operation in ("on", "off")):
+                await self.light_button_action(selected, startup or {}, saved_levels, operation)
+                return
+            if domain == "light" and operation in ("configured", "previous"):
+                await self.adaptive.mark(selected)
             if domain == "number" or (domain in ("light", "fan") and operation != "toggle"):
                 for entity in selected:
                     actual = None
@@ -824,6 +1012,19 @@ class Runtime:
                                 pass
                     await self.percentage.action(entity, operation, percentage, actual)
                 return
+            if domain == "script" and operation == "off":
+                service = "turn_off"
+            if domain == "light":
+                # Resolve the whole selection before Adaptive Lighting can intercept
+                # a toggle. Unavailable/missing members cannot count as lit.
+                service = (
+                    "turn_off"
+                    if any(
+                        (state := self.hass.states.get(entity)) is not None and state.state == "on"
+                        for entity in selected
+                    )
+                    else "turn_on"
+                )
             await self.hass.services.async_call(
                 domain,
                 service,
@@ -831,8 +1032,50 @@ class Runtime:
                 blocking=True,
             )
 
+    async def light_button_action(self, selected, startup, saved_levels, operation="toggle"):
+        """Share Motion's startup appearance and pre-fade brightness recovery."""
+        lights = sorted(self.motion.expand(selected))
+        any_on = any(
+            (state := self.hass.states.get(entity)) is not None and state.state == "on"
+            for entity in lights
+        )
+        if operation == "off" or (operation != "on" and any_on):
+            for entity in lights:
+                state = self.hass.states.get(entity)
+                if state is None or state.state != "on":
+                    continue
+                level = state.attributes.get("brightness")
+                resources = self.hue_dimming_resources((entity,))
+                if resources:
+                    try:
+                        actual = await self.client.read_brightness(*resources[0])
+                        if actual is not None:
+                            level = round(actual * 255 / 100)
+                    except BridgeError:
+                        pass
+                if isinstance(level, (int, float)) and 0 < level <= 255:
+                    self.motion.remembered[entity] = {"brightness": level, "owner": "controller"}
+            await self.motion.persist()
+            await self.hass.services.async_call(
+                "light", "turn_off", {"entity_id": selected}, blocking=True
+            )
+            return
+        for entity in lights:
+            if entity in saved_levels:
+                self.motion.remembered[entity] = saved_levels[entity]
+            elif entity not in self.motion.remembered and entity in self.percentage.previous:
+                # Migrate a previously saved button percentage without losing its value.
+                self.motion.remembered[entity] = {
+                    "brightness": max(1, round(self.percentage.previous[entity] * 255 / 100)),
+                    "owner": "controller",
+                }
+        await self.motion.turn_on(lights, {"motion_start": startup})
+
     async def close(self) -> None:
         self.closed = True
+        if self.motion_unsubscribe:
+            self.motion_unsubscribe()
+        await self.motion.close()
         self.dial_routing.close()
         if self.unsubscribe:
             self.unsubscribe()
