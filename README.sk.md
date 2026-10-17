@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/hue-reconfigo-logo.png" alt="Hue Reconfigo" width="360">
+</p>
+
 # Hue Reconfigo
 
 [Čeština](README.cs.md) | [Slovenština](README.sk.md) | [English](README.md)
