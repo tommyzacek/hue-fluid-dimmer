@@ -6,6 +6,10 @@
 
 Button has one physical button. The integration distinguishes short, long, double and triple presses. Supported model identifiers are ROM001, RDM003 and RDM005; RDM005 support is based on model mapping rather than physical validation of every feature.
 
+<p align="center">
+  <img src="../assets/screenshots/button.png" alt="Settings form (Czech interface)" width="420">
+</p>
+
 ## Basic setup
 
 1. Open **Hue Reconfigo → Bridge → Button → your controller**.

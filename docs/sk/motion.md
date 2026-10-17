@@ -6,6 +6,10 @@
 
 Motion rozsvieti vybrané svetlá pri pohybe a po čase bez pohybu ich podľa nastavenia zhasne. Pohyb a osvetlenie preberá z oficiálnej Hue integrácie, nepridáva rýchly polling pohybového senzora.
 
+<p align="center">
+  <img src="../assets/screenshots/motion.png" alt="Ukážka formulára nastavenia" width="420">
+</p>
+
 ## Prvé nastavenie
 
 1. Otvorte **Hue Reconfigo → Bridge → Motion → váš senzor**.

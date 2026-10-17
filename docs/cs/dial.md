@@ -6,6 +6,10 @@
 
 Tap Dial má otočné kolečko a čtyři tlačítka. Kolečko reguluje procentní hodnotu, tlačítka mají samostatné akce pro jednotlivé stisky.
 
+<p align="center">
+  <img src="../assets/screenshots/dial.png" alt="Ukázka formuláře nastavení" width="420">
+</p>
+
 ## Hlavní cíl kolečka
 
 Otevřete **Hue Reconfigo → Bridge → Dial → váš ovladač**. Standardně kolečko používá cíle krátkého stisku tlačítka 1. Chcete-li kolečkem ovládat například celou místnost, ale tlačítkem 1 jen její část, zapněte vlastní výběr cíle kolečka a zvolte širší skupinu.

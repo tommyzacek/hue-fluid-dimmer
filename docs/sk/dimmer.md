@@ -15,6 +15,10 @@ Návod platí pre **Hue Dimmer v2, model RWL022**. Dimmer v1 ani nástenné modu
 
 Symbol neurčuje funkciu napevno. Podporované stlačenia nastavíte vo formulári. HUE tu automaticky necykluje scény.
 
+<p align="center">
+  <img src="../assets/screenshots/dimmer.png" alt="Ukážka formulára nastavenia" width="420">
+</p>
+
 ## Základné nastavenie
 
 Otvorte **Hue Reconfigo → Bridge → Dimmer → váš ovládač**, vyberte predvolené ciele a nastavte tlačidlá. Nové nastavenia majú pre + a − pripravený krátky krok a dlhú reguláciu. Pred uložením ich skontrolujte; predtým uložené voľby sa môžu líšiť.

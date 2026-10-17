@@ -6,6 +6,10 @@
 
 Tap Dial má otočné koliesko a štyri tlačidlá. Koliesko reguluje percentuálnu hodnotu, tlačidlá majú samostatné akcie pre jednotlivé stlačenia.
 
+<p align="center">
+  <img src="../assets/screenshots/dial.png" alt="Ukážka formulára nastavenia" width="420">
+</p>
+
 ## Hlavný cieľ kolieska
 
 Otvorte **Hue Reconfigo → Bridge → Dial → váš ovládač**. Koliesko štandardne používa ciele krátkeho stlačenia tlačidla 1. Ak má koliesko ovládať celú miestnosť a tlačidlo 1 len časť, zapnite vlastný výber cieľa kolieska a zvoľte širšiu skupinu.
