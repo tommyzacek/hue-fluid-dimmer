@@ -6,15 +6,31 @@
 
 [Čeština](README.cs.md) | [Slovenština](README.sk.md) | [English](README.md)
 
-*Home Assistant control hub for Hue Tap Dial, Dimmer, Smart Button and Motion sensors.*
+Configure Hue **Tap Dial, Smart Button, Dimmer v2 and Motion sensors** directly in Home Assistant. Set actions, brightness, color and motion behavior through forms, without YAML or separate automations for each controller. Control lights and other compatible devices with an emphasis on fast response and smooth adjustment.
 
-A Home Assistant companion for Philips Hue **Tap Dial**, **Smart Button**, **Dimmer v2** and **Motion sensors**. Configure actions, targets, brightness and color directly in the integration, without per-controller automations or duplicate controller entities.
+<p align="center">
+  <img src="docs/assets/screenshots/panel.png" alt="Hue Reconfigo sidebar panel" width="760">
+</p>
 
-Requires **Home Assistant 2026.10.1 or newer**, a Hue Bridge with API v2 and the configured official **Philips Hue** integration. This project is independent of Signify and Home Assistant. Documentation follows the latest development; use the release notes for the scope of a specific installed version.
+Requires **Home Assistant 2026.10.1 or newer**, a **Hue Bridge with API v2** and the configured official **Philips Hue** integration.
 
-The official **Philips Hue** integration is required. **Adaptive Lighting** is a separate, optional custom integration installed through **HACS**. If you use it, enable cooperation in Hue Reconfigo’s Bridge settings to report manual brightness/color control. Hue Reconfigo works without Adaptive Lighting.
+**Adaptive Lighting is optional.** If you use it, enable cooperation in the Bridge settings so Hue Reconfigo reports manual brightness and color changes. [Connection details](docs/en/bridge.md#adaptive-lighting-cooperation).
 
-The integration was previously named **Hue Fluid Dimmer**. Its technical domain and component directory are now `hue_reconfigo`.
+## Quick installation
+
+[![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=tommyzacek&repository=hue-reconfigo&category=integration)
+
+1. Add `https://github.com/tommyzacek/hue-reconfigo` to HACS custom repositories as an **Integration**.
+2. Download a release and restart Home Assistant.
+3. Add **Hue Reconfigo** in **Settings → Devices & services**, then select your existing Hue Bridge.
+4. In the Hue app, set managed accessories to **Configure in another app**. Disable competing automations for the same inputs; keep the official Hue integration enabled.
+5. Open **Hue Reconfigo** in the sidebar as an administrator. Select a controller, configure its targets/actions and enable control. The Bridge gear opens shared settings. Refresh the browser after updates.
+
+After downloading and restarting Home Assistant:
+
+[![Add integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=hue_reconfigo)
+
+Manual installation: copy `custom_components/hue_reconfigo` into HA’s `custom_components` directory and restart. The sidebar panel is included.
 
 ## User guides
 
@@ -27,39 +43,6 @@ The integration was previously named **Hue Fluid Dimmer**. Its technical domain 
 | Motion | [Time periods, light sensitivity, timeout and manual intervention](docs/en/motion.md) |
 | Shared actions | [Power, brightness, color, held regulation, fans and scripts](docs/en/akce-tlacitek.md) |
 
-Start with [Before you start](docs/en/README.md#before-you-start). Each guide includes examples and explains how the options interact.
+The interface and guides are available in Czech, Slovak and English. New controllers start disabled. Native Hue transitions can report the target state before a fade finishes; response and smoothness depend on your devices and network.
 
-## Quick installation
-
-[![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=tommyzacek&repository=hue-reconfigo&category=integration)
-
-1. Add `https://github.com/tommyzacek/hue-reconfigo` to HACS custom repositories as an **Integration**.
-2. Download a release and restart Home Assistant.
-3. Add **Hue Reconfigo** in **Settings → Devices & services**, then select your existing Hue Bridge.
-4. In the Hue app, set managed accessories to **Configure in another app**. Disable competing automations for the same inputs; keep the official Hue integration enabled.
-5. Open **Hue Reconfigo** in the sidebar as an administrator. Select a controller, configure its targets/actions and enable control. The Bridge gear opens shared settings. Refresh the browser after updates.
-
-For manual installation, copy `custom_components/hue_reconfigo` into your HA configuration's `custom_components` directory and restart. The sidebar panel is included; no separate dashboard installation is needed.
-
-After downloading and restarting Home Assistant, add the integration:
-
-[![Add integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=hue_reconfigo)
-
-## Supported devices
-
-| Type | Scope |
-| --- | --- |
-| Tap Dial | Discovered rotary resources and four buttons |
-| Smart Button | ROM001, RDM003, RDM005 |
-| Dimmer v2 | RWL022; Dimmer v1 and wall modules are outside scope |
-| Hue Motion | Discovered motion services; official HA sensor entities required |
-
-New controllers start disabled. Lights/groups, fans, suitable number entities and one script can be used as button targets; regulation requires percentage-capable targets. Scene cycling is not provided directly. RDM005 mapping is not a claim of physical validation of every feature.
-
-## Development and limitations
-
-The UI supports Czech, Slovak and English, selected by the HA profile. Other languages fall back to English.
-
-Native Hue transitions may report the target state before the physical fade finishes. Smoothness and response depend on devices and network conditions. Synthetic tests do not replace physical verification.
-
-See [technical notes and development](docs/development.md) for testing, connection details and the historical Adaptive Lighting toggle observation. CI runs tests, Ruff, hassfest and HACS validation.
+An independent project, not affiliated with Signify or Home Assistant. Guides follow current development; see [release notes](https://github.com/tommyzacek/hue-reconfigo/releases) for your installed version and [technical notes](docs/development.md) for limitations.

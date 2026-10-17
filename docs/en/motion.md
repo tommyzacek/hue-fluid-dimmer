@@ -6,6 +6,10 @@
 
 Motion turns selected lights on when motion is detected, then off after a configured absence period. Motion/illuminance come from the official Hue integration; no fast motion-sensor polling is added.
 
+<p align="center">
+  <img src="../assets/screenshots/motion.png" alt="Settings form (Czech interface)" width="420">
+</p>
+
 ## First setup
 
 1. Open **Hue Reconfigo → Bridge → Motion → your sensor**.

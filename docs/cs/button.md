@@ -6,6 +6,10 @@
 
 Button je ovladač s jedním fyzickým tlačítkem. Integrace rozlišuje krátký stisk, dlouhý stisk, dvojklik a trojklik. Podporované modelové identifikátory jsou ROM001, RDM003 a RDM005; podpora RDM005 vychází z mapování modelu, nikoli fyzického ověření všech funkcí.
 
+<p align="center">
+  <img src="../assets/screenshots/button.png" alt="Ukázka formuláře nastavení" width="420">
+</p>
+
 ## Základní nastavení
 
 1. Otevřete **Hue Reconfigo → Bridge → Button → váš ovladač**.

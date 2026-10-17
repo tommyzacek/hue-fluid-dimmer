@@ -6,6 +6,10 @@
 
 Button má jedno fyzické tlačidlo. Integrácia rozlišuje krátke, dlhé stlačenie, dvojklik a trojklik. Podporované identifikátory sú ROM001, RDM003 a RDM005; podpora RDM005 vychádza z mapovania modelu, nie fyzického overenia všetkých funkcií.
 
+<p align="center">
+  <img src="../assets/screenshots/button.png" alt="Ukážka formulára nastavenia" width="420">
+</p>
+
 ## Základné nastavenie
 
 1. Otvorte **Hue Reconfigo → Bridge → Button → váš ovládač**.

@@ -15,6 +15,10 @@ This guide covers **Hue Dimmer v2, model RWL022**. Dimmer v1 and wall modules ar
 
 The printed symbol does not lock a button to one function. Configure its supported gestures in the form. HUE does not automatically cycle scenes here.
 
+<p align="center">
+  <img src="../assets/screenshots/dimmer.png" alt="Settings form (Czech interface)" width="420">
+</p>
+
 ## Basic setup
 
 Open **Hue Reconfigo → Bridge → Dimmer → your controller**, select default targets and configure the buttons. New configurations prepare a short step and long regulation for + and −. Check these before saving; previously saved choices may differ.

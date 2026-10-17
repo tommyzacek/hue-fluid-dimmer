@@ -6,15 +6,31 @@
 
 [Čeština](README.cs.md) | [Slovenština](README.sk.md) | [English](README.md)
 
-*Centrum nastavení Hue Tap Dial, Dimmer, Smart Button a pohybových senzorů v Home Assistantu.*
+Nastavte **Hue Tap Dial, Smart Button, Dimmer v2 a pohybové senzory** přímo v Home Assistantu. Akce, jas, barvu i chování při pohybu zvolíte ve formulářích, bez YAML a samostatných automatizací pro každý ovladač. Ovládejte světla i další kompatibilní zařízení s důrazem na rychlou odezvu a plynulou regulaci.
 
-Doplněk Home Assistantu pro Philips Hue **Tap Dial**, **Smart Button**, **Dimmer v2** a **pohybové senzory**. Akce, cíle, jas a barvu nastavíte přímo v integraci, bez automatizací pro každý ovladač a bez duplicitních entit ovladačů.
+<p align="center">
+  <img src="docs/assets/screenshots/panel.png" alt="Postranní panel Hue Reconfigo" width="760">
+</p>
 
-Vyžaduje **Home Assistant 2026.10.1 nebo novější**, Hue Bridge s API v2 a nastavenou oficiální integraci **Philips Hue**. Projekt je nezávislý na Signify a Home Assistantu. Dokumentace sleduje aktuální vývoj; rozsah konkrétní nainstalované verze najdete v poznámkách k vydání.
+Vyžaduje **Home Assistant 2026.10.1 nebo novější**, **Hue Bridge s API v2** a nastavenou oficiální integraci **Philips Hue**.
 
-Oficiální integrace **Philips Hue** je nutná. **Adaptive Lighting** je samostatná, volitelná vlastní integrace instalovaná přes **HACS**. Pokud ji používáte, zapněte spolupráci v nastavení Bridge v Hue Reconfigo, aby mu oznamoval ruční řízení jasu a barvy. Hue Reconfigo funguje i bez Adaptive Lighting.
+**Adaptive Lighting je volitelné.** Pokud ho používáte, zapněte spolupráci v nastavení Bridge, aby mu Hue Reconfigo oznamoval ruční změny jasu a barvy. [Podrobnosti propojení](docs/cs/bridge.md#spolupráce-s-adaptive-lighting).
 
-Integrace se dříve jmenovala **Hue Fluid Dimmer**. Technická doména i složka jsou nyní `hue_reconfigo`.
+## Rychlá instalace
+
+[![Otevřít v HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=tommyzacek&repository=hue-reconfigo&category=integration)
+
+1. Do HACS přidejte `https://github.com/tommyzacek/hue-reconfigo` jako vlastní repozitář typu **Integration**.
+2. Stáhněte vydání a restartujte Home Assistant.
+3. V **Nastavení → Zařízení a služby** přidejte **Hue Reconfigo** a vyberte existující Hue Bridge.
+4. V Hue nastavte příslušenství na **Konfigurovat v jiné aplikaci**. Vypněte konkurenční automatizace pro stejné vstupy; oficiální Hue integraci ponechte zapnutou.
+5. Jako správce otevřete boční panel **Hue Reconfigo**. Vyberte ovladač, nastavte cíle/akce a zapněte ovládání. Kolo vedle Bridge otevře společná nastavení. Po aktualizacích obnovte stránku.
+
+Po stažení a restartu Home Assistantu:
+
+[![Přidat integraci](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=hue_reconfigo)
+
+Ruční instalace: zkopírujte `custom_components/hue_reconfigo` do složky `custom_components` v konfiguraci HA a restartujte. Postranní panel je součástí integrace.
 
 ## Uživatelské návody
 
@@ -27,39 +43,6 @@ Integrace se dříve jmenovala **Hue Fluid Dimmer**. Technická doména i složk
 | Motion | [Časové bloky, citlivost na světlo, časovač a ruční zásah](docs/cs/motion.md) |
 | Společné akce | [Zapnutí, jas, barva, držení, ventilátory a skripty](docs/cs/akce-tlacitek.md) |
 
-Začněte částí [Než začnete](docs/cs/README.md#než-začnete). Návody obsahují příklady a vysvětlují souvislosti mezi volbami.
+Rozhraní i návody jsou česky, slovensky a anglicky. Nové ovladače začínají vypnuté. Nativní přechody Hue mohou hlásit cílový stav před dokončením ztlumení; odezva a plynulost závisejí na zařízeních a síti.
 
-## Rychlá instalace
-
-[![Otevřít v HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=tommyzacek&repository=hue-reconfigo&category=integration)
-
-1. Do HACS přidejte `https://github.com/tommyzacek/hue-reconfigo` jako vlastní repozitář typu **Integration**.
-2. Stáhněte vydání a restartujte Home Assistant.
-3. V **Nastavení → Zařízení a služby** přidejte **Hue Reconfigo** a vyberte existující Hue Bridge.
-4. V Hue nastavte příslušenství na **Konfigurovat v jiné aplikaci**. Vypněte konkurenční automatizace pro stejné vstupy; oficiální Hue integraci ponechte zapnutou.
-5. Jako správce otevřete boční panel **Hue Reconfigo**. Vyberte ovladač, nastavte cíle/akce a zapněte ovládání. Kolo vedle Bridge otevře společná nastavení. Po aktualizacích obnovte stránku.
-
-Při ruční instalaci zkopírujte `custom_components/hue_reconfigo` do `custom_components` konfigurace HA a restartujte. Boční panel je součástí, neinstaluje se zvlášť.
-
-Po stažení a restartu Home Assistantu přidejte integraci:
-
-[![Přidat integraci](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=hue_reconfigo)
-
-## Podporovaná zařízení
-
-| Typ | Rozsah |
-| --- | --- |
-| Tap Dial | Nalezené rotační prostředky a čtyři tlačítka |
-| Smart Button | ROM001, RDM003, RDM005 |
-| Dimmer v2 | RWL022; Dimmer v1 a nástěnné moduly nejsou zahrnuté |
-| Hue Motion | Nalezené pohybové služby; vyžadují oficiální senzorové entity HA |
-
-Nové ovladače začínají vypnuté. Cíle tlačítek mohou být světla/skupiny, ventilátory, vhodné číselné entity nebo jeden skript; regulace vyžaduje procentní cíle. Přímé cyklování scén není zahrnuté. Mapování RDM005 neznamená fyzické ověření každé funkce.
-
-## Vývoj a omezení
-
-Rozhraní podporuje češtinu, slovenštinu a angličtinu podle profilu HA. Pro ostatní jazyky se použije angličtina.
-
-Nativní přechody Hue mohou nahlásit cílový stav před dokončením fyzické rampy. Plynulost a odezva závisejí na zařízeních a síti. Syntetické testy nenahrazují fyzické ověření.
-
-[Technické poznámky a vývoj](docs/development.md) jsou anglicky a obsahují testování, podrobnosti připojení a historické pozorování toggle s Adaptive Lighting. CI spouští testy, Ruff, hassfest a HACS.
+Nezávislý projekt bez vazby na Signify či Home Assistant. Návody sledují aktuální vývoj; rozsah nainstalované verze najdete v [poznámkách k vydání](https://github.com/tommyzacek/hue-reconfigo/releases), omezení v [technických poznámkách](docs/development.md).

@@ -6,6 +6,10 @@
 
 Tap Dial has a wheel and four buttons. The wheel adjusts a percentage value, while buttons have separate actions for each gesture.
 
+<p align="center">
+  <img src="../assets/screenshots/dial.png" alt="Settings form (Czech interface)" width="420">
+</p>
+
 ## Main wheel targets
 
 Open **Hue Reconfigo → Bridge → Dial → your controller**. By default, the wheel uses button 1's short-press targets. To control a whole room with the wheel but only part of it with button 1, enable the wheel's independent target selection and choose the larger group.
